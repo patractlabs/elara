@@ -4,4 +4,4 @@ In Polkadot, Kusama and other parachains, RPC is the interface between DApp and 
 
 Elara is inspired by [Infura](infura.io) from the Ethereum ecosystem, named after Jupiter’s seventh moon. Elara's goal is to build a similar infrastructure and network public access services to provide developers with a unified access layer based on Substrate multi-chain. In addition, Elara will be used as part of the smart contract development service, and will be integrated with other components of the Patract toolchain in the future, in terms of contract development environment support, development tools component, contract deployment and DApp release. Elara will be Polkadot’s infrastructure, allowing developers to focus on building upper-level applications.
 
-Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:matrix.org
+Riot Group for disscusion: https://app.element.io/#/room/#PatractLabsDev:matrix.org
