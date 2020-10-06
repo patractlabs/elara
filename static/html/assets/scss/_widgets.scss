@@ -1,0 +1,115 @@
+/* ==============
+  Widgets
+===================*/
+
+.widget-chart li {
+    width: 31.5%;
+    display: inline-block;
+    padding: 0;
+    i {
+        font-size: 22px;
+    }
+}
+
+.mini-stat{
+    overflow: hidden;
+    .mini-stat-desc{
+        .verti-label{
+            transform: rotate(-90deg);
+            position: absolute;
+            top: 44px;
+            right: -9px;
+            letter-spacing: 2px;
+        }
+    }
+    .mini-stat-icon{
+        i{
+            position: absolute;
+            right: 46px;
+            top: -35px;
+            color: rgba($white, 0.3);
+        }
+    }
+}
+
+// Recent Activity
+.recent-activity-tab{
+    .nav-item{
+      position: relative;
+      padding-top: 30px;
+      border-top: 2px solid $gray-200;
+      &::before{
+        content: "";
+        position: absolute;
+        top: -7px;
+        width: 12px;
+        height: 12px;
+        background: $primary;
+        border-radius: 50%;
+        border: 2px solid rgba($white, 0.4);
+      }
+      .nav-link{
+        color: $dark;
+        border-radius: 30px;
+        position: relative;
+      }
+      .nav-link.active{
+        color: $white;
+        &:before{
+          content: "";
+          position: absolute;
+          width: 20px;
+          height: 16px;
+          background: $primary;
+          transform: rotate(-60deg) skew(60deg);
+          top: -7px;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .recent-activity-tab{
+      .nav-item{
+        .nav-link.active{
+          &:before{
+            left: 12px;
+          }
+        }
+      }
+    }
+  }
+
+// inbox widget
+.inbox-wid {
+    .inbox-item {
+        position: relative;
+        border-bottom: 1px solid rgba(243, 243, 243, 0.9);
+        overflow: hidden;
+        padding: 10px 0;
+        
+        .inbox-item-date {
+            font-size: 11px;
+            position: absolute;
+            right: 7px;
+            top: 8px;
+        }
+    }
+}
+
+// Order table
+.order-table{
+    .badge{
+      padding: 0.5em 0.6em;
+      text-transform: uppercase;
+    }
+    .badge-primary{
+      background: rgba($primary, 0.5);
+    }
+    .badge-success{
+      background: rgba($success, 0.5);
+    }
+    .badge-warning {
+      background: rgba($warning, 0.5);
+    }
+  }
