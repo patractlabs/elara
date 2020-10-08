@@ -1,5 +1,5 @@
 const { formateDate, sleep } = require('../lib/tool');
-const config = global.config = require('../config/index')();
+const config = global.config = require('../../config/index')();
 const redis = require('../lib/redis');
 const { logger } = require('../lib/log')
 const KEY = require('../api/KEY')
@@ -41,13 +41,13 @@ async function data(date) {
             }
         }
     }
-    total_delay =Math.floor( total_delay / (projects.length ? projects.length : 1))
+    total_delay = total_delay / (projects.length ? projects.length : 1)
 
     return {
         requests: total_requests,
         bandwidth: total_bandwidth,
         timeout: total_timeout,
-        delay: total_delay,
+        delay: total_delay.toFixed(2),
         method: total_method
     }
 }

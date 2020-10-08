@@ -1,12 +1,13 @@
 const Result = require('../lib/result')
 const WebSocket = require('ws')
 const { logger } = require('../lib/log')
-const Stat = require("../api/stat")
+const Stat = require("./stat")
 
 let websocketPair = new Set()
 
 class SocketPair {
-    constructor(client, chain, pid, request) {
+    constructor(id, client, chain, pid, request) {
+        this.id = id
         this.client = client
         this.server = new WebSocket('ws://' + config.chain[chain].ws[0])
         this.chain = chain
@@ -19,6 +20,12 @@ class SocketPair {
 
         websocketPair.add(this)
 
+        this.server.on("open", () => {
+            for (let m in global.message[this.id]) {
+                this.server.send(global.message[this.id][m])
+            }
+            global.message[this.id] = []
+        })
         this.server.on('unexpected-response', async (req, resp) => {
             logger.error('unexpected-response', resp.statusCode, resp.statusMessage)
             this.client.terminate()
@@ -48,6 +55,8 @@ class SocketPair {
             await this.report(message)
 
         })
+
+        this.client.removeAllListeners('message')
         this.client.on('message', (message) => {
             if (!(message.trim()))
                 return
@@ -59,7 +68,13 @@ class SocketPair {
             } catch (e) {
             }
             this.reqStartTime = (new Date()).getTime()
-            this.server.send(message)
+
+            if (this.server.readyState != 1) {
+                global.message[this.id].push(message)
+            }
+            else {
+                this.server.send(message)
+            }
         })
         this.client.on('close', (code, reason) => {
             websocketPair.delete(this)

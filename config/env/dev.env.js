@@ -12,9 +12,9 @@ module.exports = {
         }
     },
     redis: {
-        host: 'r-wz919a511967b574pd.redis.rds.aliyuncs.com',
-        port: '6379',
-        password: 'LinkWeb3'
+        host: '***',
+        port: '***',
+        password: '***'
     },
     timeout: 5000,// ms
     requests: 1000//

@@ -3,6 +3,7 @@ const extend = require('extend')
 
 module.exports = function config() {
     const env = process.env.NODE_ENV || 'dev'
+    console.log('Current NODE_ENV'　,env)
     const config = {}
 
     const envPath = path.resolve(__dirname + `/env/${env}.env.js`)

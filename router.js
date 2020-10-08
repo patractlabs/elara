@@ -10,10 +10,10 @@ const addMapping = (router, mapping) => {
 }
 
 module.exports = function () {
-    let files = fs.readdirSync(__dirname + '/routers');
+    let files = fs.readdirSync(__dirname + '/src/routers');
     var jsFiles = files.filter((f) => { return f.endsWith('js') });
     for (var f of jsFiles) {
-        let mapping = require(__dirname + '/routers/' + f);
+        let mapping = require(__dirname + '/src/routers/' + f);
         addMapping(router, mapping);
     }
 

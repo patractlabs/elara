@@ -2,15 +2,18 @@ const Koa = require('koa')
 const koaBody = require('koa-body')
 const session = require("koa-session2");
 const router = require('./router')
-const { logger, accessLogger } = require('./lib/log')
-const Result = require('./lib/result')
+const { logger, accessLogger } = require('./src/lib/log')
+const Result = require('./src/lib/result')
 const config = global.config = require('./config/index')()
 const path = require('path')
 const static = require('koa-static')
 const app = new Koa()
 const WebSocketServer = require('ws').Server;
-const { accept } = require('./routers/ws')
-const RedisStore = require('./lib/store')
+const { accept } = require('./src/routers/ws')
+const RedisStore = require('./src/lib/store')
+const crypto = require("crypto");
+
+global.message = {}
 
 app.keys = config.keys
 app
@@ -25,7 +28,6 @@ app
         maxAge: 86400000,
         store: new RedisStore()
     }))
-
     .use(koaBody({ multipart: true }))
     .use(accessLogger())
     .use(async (ctx, next) => {
@@ -66,7 +68,13 @@ let server = app.listen(config.port)
 let wss = new WebSocketServer({ server: server, clientTracking: true });
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
-    accept(ws, request)
+    let id = crypto.randomBytes(16).toString('hex');
+    global.message[id] = []
+    ws.on('message', function (m) {
+        global.message[id].push(m) 
+    })
+
+    accept(id,ws, request)
 })
 
 wss.on('error', (error) => {
