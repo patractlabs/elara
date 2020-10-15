@@ -1,11 +1,12 @@
+
 const { logger } = require('../lib/log');
 const redis = require('../lib/redis')
 const { midnight, now, formateDate } = require('../lib/tool');
 const KEY = require('./KEY')
 
 class Stat {
-    static async createProject(mail, pid) {
-        await redis.sadd(KEY.PROJECT(mail), pid);
+    static async createProject(uid, pid) {
+        await redis.sadd(KEY.PROJECT(uid), pid);
         await redis.sadd(KEY.PROJECTS(), pid);
     }
     static async stat(info) {
@@ -23,7 +24,7 @@ class Stat {
         let end = info.end
 
         await Stat._request_response(info)
-        await Stat._timeout(pid, end - start)
+        await Stat._timeout(pid, (end-start))
         await Stat._today_request(pid)
         await Stat._method(pid, method)
         await Stat._bandwidth(pid, bandwidth)
@@ -39,12 +40,12 @@ class Stat {
     static async _timeout(pid, delay) {
         let date = formateDate(new Date())
 
-        if (delay > config.timeout)
+        if (delay >= config.timeout)
             await redis.incr(KEY.TIMEOUT(pid, date))
         let average = await redis.get(KEY.DELAY(pid, date))
         if (average) {
             let requests = await redis.get(KEY.REQUEST(pid, date))
-            average = Math.floor((requests * average + delay) / (requests + 1))
+            average = ((requests * average + delay) / (requests + 1)).toFixed(2)
             await redis.set(KEY.DELAY(pid, date), average)
         }
         else {
@@ -127,8 +128,8 @@ class Stat {
         return total
     }
 
-    static async countByAccount(mail) {
-        let count = await redis.scard(KEY.PROJECT(mail))
+    static async countByAccount(uid) {
+        let count = await redis.scard(KEY.PROJECT(uid))
         return count ? count : 0
     }
 

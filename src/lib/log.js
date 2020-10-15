@@ -21,7 +21,8 @@ log4js.configure({
         default: { appenders: ['out'], level: 'info' },
         access: { appenders: ['access'], level: 'info' },
         application: { appenders: ['application'], level: 'info' },
-    }
+    },
+    pm2: process.env.NODE_ENV !== 'dev' ? true : false
 })
 
 module.exports.accessLogger = () => log4js.koaLogger(log4js.getLogger('access'))

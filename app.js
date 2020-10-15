@@ -18,7 +18,10 @@ global.message = {}
 app.keys = config.keys
 app
     .use(async (ctx, next) => {
-        if ('/dashboard' == ctx.path)
+        if( '/' == ctx.path){
+            ctx.body='coming soon...'
+        }
+        else if ('/demo' == ctx.path)
             ctx.path = '/dashboard.html'
         return next()
     })

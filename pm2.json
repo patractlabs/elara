@@ -19,5 +19,8 @@
     "out_file": "./logs/app-out.log",
     "env": {
         "NODE_ENV": "dev"
+    },
+    "env_demo": {
+        "NODE_ENV": "demo"
     }
 }

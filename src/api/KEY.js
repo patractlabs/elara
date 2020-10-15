@@ -1,6 +1,6 @@
 
 module.exports = {
-    PROJECT: (mail) => 'project_' + mail,
+    PROJECT: (uid) => 'project_' + uid,
     PROJECTS: () => 'projects',
     REQUEST_RESPONSE: () => 'request_response',
     TIMEOUT: (pid, date) => pid + '_timeout_' + date,

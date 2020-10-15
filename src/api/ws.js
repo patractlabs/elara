@@ -16,7 +16,7 @@ class SocketPair {
 
         this.req = ''
         this.reqMethod = ''
-        this.reqStartTime = 0
+        this.mapStartTime={}
 
         websocketPair.add(this)
 
@@ -31,8 +31,6 @@ class SocketPair {
             this.client.terminate()
             this.server.terminate()
             websocketPair.delete(this)
-
-            await this.report()
         })
 
         this.server.on('error', async (error) => {
@@ -41,8 +39,6 @@ class SocketPair {
             this.client.terminate()
             this.server.terminate()
             websocketPair.delete(this)
-
-            await this.report()
         })
         this.server.on('close', (error) => {
             logger.error(error)
@@ -51,9 +47,21 @@ class SocketPair {
         })
 
         this.server.on('message', async (message) => {
+            let start=0
+            let end=0
+            try{
+                let resp=JSON.parse(message)
+                if( resp.id && this.mapStartTime[resp.id]){
+                    start=this.mapStartTime[resp.id]
+                    end= (new Date()).getTime()
+                }
+                else{
+                    start=end= (new Date()).getTime()
+                }
+            }catch(e){
+            }
             this.client.send(message)
-            await this.report(message)
-
+            await this.report(message,start,end)
         })
 
         this.client.removeAllListeners('message')
@@ -65,9 +73,10 @@ class SocketPair {
             try {
                 let params = JSON.parse(this.req)
                 this.reqMethod = params.method
+                if( params.id )
+                    this.mapStartTime[params.id]=(new Date()).getTime() //start time 
             } catch (e) {
             }
-            this.reqStartTime = (new Date()).getTime()
 
             if (this.server.readyState != 1) {
                 global.message[this.id].push(message)
@@ -87,8 +96,7 @@ class SocketPair {
             logger.error('ws error ', error)
         })
     }
-    async report(message) {
-        let end = (new Date()).getTime()
+    async report(message,start,end) {
         try {
             let ip = (this.request.headers['x-forwarded-for'] ? this.request.headers['x-forwarded-for'].split(/\s*,\s/[0]) : null) || this.request.socket.remoteAddress || ''
 
@@ -103,7 +111,7 @@ class SocketPair {
                 resp: message,
                 code: message ? 200 : 404,
                 bandwidth: message.length,
-                start: this.reqStartTime,
+                start: start,
                 end: end
             })
         } catch (e) {

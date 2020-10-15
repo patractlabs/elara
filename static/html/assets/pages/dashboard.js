@@ -95,7 +95,7 @@
 
                 var $areaData = [];
                 for (var d in data.data) {
-                    $areaData.push({ x: d.substr(4), a: data.data[d].requests })
+                    $areaData.push({ x: d.substr(4).replace(/(\d\d)/,'$1-'), a: data.data[d].requests })
                 }
                 $('#morris-area-example').empty()
                 $.Dashboard.createAreaChart('morris-area-example', 0, 0, $areaData, 'x', ['a'], ['Requests ', 'Bandwitdth'], ['#f16c69', '#ccc']);

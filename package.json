@@ -1,7 +1,10 @@
 {
   "dependencies": {
+    "@polkadot/api": "^2.1.1",
+    "@polkadot/rpc-core": "^2.1.1",
     "async-redis": "^1.1.7",
     "crypto": "^1.0.1",
+    "extend": "^3.0.2",
     "ioredis": "^4.17.3",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",

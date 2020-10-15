@@ -1,8 +1,8 @@
-const { formateDate, sleep } = require('../lib/tool');
-const config = global.config = require('../../config/index')();
-const redis = require('../lib/redis');
-const { logger } = require('../lib/log')
-const KEY = require('../api/KEY')
+const { formateDate, sleep } = require('../src/lib/tool');
+const config = global.config = require('../config/index')();
+const redis = require('../src/lib/redis');
+const { logger } = require('../src/lib/log')
+const KEY = require('../src/api/KEY')
 
 async function data(date) {
     let total_requests = 0
@@ -26,9 +26,11 @@ async function data(date) {
         total_bandwidth += parseInt(bandwidth ? bandwidth : 0)
 
         let timeout = await redis.get(KEY.TIMEOUT(pid, date))
+        
         total_timeout += parseInt(timeout ? timeout : 0)
 
         let delay = await redis.get(KEY.DELAY(pid, date))
+       
         total_delay += parseInt(delay ? delay : 0)
 
         let methods = await redis.hgetall(KEY.METHOD(pid, date))
@@ -41,6 +43,7 @@ async function data(date) {
             }
         }
     }
+
     total_delay = total_delay / (projects.length ? projects.length : 1)
 
     return {
