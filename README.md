@@ -114,7 +114,7 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
                 "params":[]
             }'
         ```
-    - Method 2: wscat sends websocket request:
+    - Method 2: [wscat](https://github.com/websockets/wscat) sends websocket request:
         ```
         parachain@ubuntu:~/elara$ wscat  -c ws://localhost:8001/
         Connected (press CTRL+C to quit)

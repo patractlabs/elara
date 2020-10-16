@@ -126,7 +126,7 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
             "params":[]
         }'
     ```
-    - 方式二 :　wscat 发送Websocket请求:
+    - 方式二 :[wscat](https://github.com/websockets/wscat) 发送Websocket请求:
     ```
     parachain@ubuntu:~/elara$ wscat  -c ws://localhost:8001/
     Connected (press CTRL+C to quit)
