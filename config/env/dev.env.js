@@ -7,15 +7,15 @@ module.exports = {
     pid:'00000000000000000000000000000000',
     chain: {
         'substrate': {
-            'rpc': ['localhost:9999'],
-            'ws': ['localhost:8888']
+            'rpc': ['127.0.0.1:9933'],
+            'ws': ['127.0.0.1:9944']
         }
     },
     redis: {
-        host: '***',
-        port: '6379',
-        password: '***'
-    },
+	host: '127.0.0.1',
+    port: '6379',
+    password: '***'    
+},
     timeout: 10000,// ms
     requests: 1000//
 }

@@ -46,7 +46,7 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 ## 当前开发进度
 
 
-当前，我们已完成0.1 版本开发，可以查看线上 [demo](https://elara.patract.io/demo)
+当前，我们已完成0.1 版本开发，可以查看线上 [Elara Dashboard](https://elara.patract.io/dashboard)
 
 
 ## 如何使用代码
@@ -77,7 +77,7 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 4. 配置
 
     ```
-    # Edit elara/config/env/dev
+    # Edit elara/config/env/dev.env.js
 
     chain: {
         'substrate': {

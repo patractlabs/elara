@@ -38,7 +38,7 @@ Riot Group for disscusion: https://app.element.io/#/room/#PatractLabsDev:matrix.
 - Support 10,000 developers, each developer account can establish 20 DApp projects, and each DApp project can use 1M daily access service
 
 ## Current Development Progress
- At present, we have completed the 0.1 version development, you can view the online [demo](https://elara.patract.io/demo)
+ At present, we have completed the 0.1 version development, you can view the online [Elara Dashboard](https://elara.patract.io/dashboard)
 
 ## How To Use
 1. Environment
@@ -63,21 +63,43 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
     - Run the substrate node and open operating parameters  `--ws-port ` 　` --rpc-port `　`--rpc-cors all` ` --rpc-external`  `--ws-external`. The IP and Port of the node will be used in the following configuration phase. [See the official document how to create a substrate chain](https://substrate.dev/docs/en/tutorials/create-your-first-substrate-chain/)
 
 4. Configuration
+    you need to modify config file for elara:
 
-    ```
-        # Edit elara/config/env/dev
+   ```bash
+   vim config/env/dev.env.js
+   ```
 
-        chain: {
-            'substrate': {
-                'rpc': ['****:**'], //configure as node IP: RPC port in step 3
-                'ws': ['****:**'] //configure as node IP: WS port in step 3 
-            }
-        },
-        redis: {
-            host: '***', // configure it as the host of the redis instance in step 3
-            port: '***',//configure it as the port of redis instance in step 3
-            password: '***'//configure it as the password of redis instance in step 3
-        }
+   And you could see:
+
+   ```javascript
+   process.env.DEBUG = process.env.DEBUG || 'dev-errer:*'
+   
+   module.exports = {
+       keys: ['elara@#^*&'],
+       name: 'elara',
+       port: 8001,  // this port is elara server, receive all client request(inlude rpc and websocket) and dashbord server port
+       pid:'00000000000000000000000000000000',
+       chain: {
+           'substrate': {
+               'rpc': ['127.0.0.1:9933'], // the substrate node rpc port
+               'ws': ['127.0.0.1:9944'] // the substrate node websocket port
+           }
+       },
+       redis: { // the redis config
+           host: '127.0.0.1',
+           port: '6379',
+           password: ''
+       },
+       timeout: 10000,// ms
+       requests: 1000//
+   }
+   ```
+
+   In this config file, you should notice 3 point:
+
+   1. `port`  field: this field is used for elara server, all client request would though this port, including rpc reuqest and websocket request.
+   2. `chain/substrate` field: this field is used for connected substrate node, should match `--ws-port` and `--rpc-port` for substrate node.  if substrate node do not set this two parameters, the default value is `9944` and `9933`.
+   3. `redis` field: this field is used for connecting redis instance, notice the password should be set in production environment.
         ```
 
 5. Start the service
