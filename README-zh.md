@@ -165,4 +165,4 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
     
 8. 验证
 
-    你可以打开`http://localhost:8001/demo`　查看监控仪表盘页面．如果有接入请求，仪表盘会展示最新的请求信息．
+    你可以打开`http://localhost:8001/dashboard`　查看监控仪表盘页面．如果有接入请求，仪表盘会展示最新的请求信息．

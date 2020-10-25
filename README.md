@@ -177,5 +177,5 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
     
 8. verification
 
-    You can open `http://localhost:8001/demo`　view the monitoring dashboard page. If there is an access request, the dashboard will display the latest request information．
+    You can open `http://localhost:8001/dashboard`　view the monitoring dashboard page. If there is an access request, the dashboard will display the latest request information．
 >>>>>>> dev
