@@ -58,18 +58,18 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
 
 3. Preparation
 
-    - Elara uses [Redis](https://github.com/redis/redis) As a storage component, you need to prepare a redis running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used
+    - Elara uses [Redis](https://github.com/redis/redis) as a storage component, you need to prepare a redis running instance (you can build it yourself or use the redis service provided by a cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used
 
-    - Run the substrate node and open operating parameters  `--ws-port ` 　` --rpc-port `　`--rpc-cors all` ` --rpc-external`  `--ws-external`. The IP and Port of the node will be used in the following configuration phase. [See the official document how to create a substrate chain](https://substrate.dev/docs/en/tutorials/create-your-first-substrate-chain/)
+    - Run the Substrate node and open operating parameters  `--ws-port ` 　` --rpc-port `　`--rpc-cors all` ` --rpc-external`  `--ws-external`. The IP and Port of the node will be used in the following configuration phase. [See the official document how to create a substrate chain](https://substrate.dev/docs/en/tutorials/create-your-first-substrate-chain/)
 
 4. Configuration
-    you need to modify config file for elara:
+    you need to modify config file for Elara:
 
    ```bash
    vim config/env/dev.env.js
    ```
 
-   And you could see:
+   And you can see:
 
    ```javascript
    process.env.DEBUG = process.env.DEBUG || 'dev-errer:*'
@@ -95,25 +95,25 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
    }
    ```
 
-   In this config file, you should notice 3 point:
+   In this config file, you should pay attention to 3 fields:
 
-   1. `port`  field: this field is used for elara server, all client request would though this port, including rpc reuqest and websocket request.
-   2. `chain/substrate` field: this field is used for connected substrate node, should match `--ws-port` and `--rpc-port` for substrate node.  if substrate node do not set this two parameters, the default value is `9944` and `9933`.
-   3. `redis` field: this field is used for connecting redis instance, notice the password should be set in production environment.
+   1. `port`: this field is used for Elara server, all client request will go though this port, including RPC reuqest and websocket request.
+   2. `chain/substrate` : this field is used for connecting Substrate node, should match `--ws-port` and `--rpc-port` for Substrate node. If Substrate node do not set this two parameters, the default values are `9944` and `9933`.
+   3. `redis` : this field is used for connecting redis instance, please notice the password should be set in production environment.
         ```
 
 5. Start the service
 
-    You can start the current process
+    You can start in the current process
     ```
         node app.js
     ```
-    Or use [pm2](https://github.com/Unitech/pm2) Management process
+    Or use [pm2](https://github.com/Unitech/pm2) to management process
     ```
         pm2 start pm2.json --env dev
     ```
 
-    You can find the running log in this directory `elara/ logs/`
+    You can find the running log in this directory: `elara/ logs/`
 
 
 6. 　Start the Dashboard
@@ -125,7 +125,7 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
  7. Developer access
 
    
-    - Method 1 : curl sends HTTP request:
+    - Method 1 : use curl to send HTTP request:
         ```
         #curl http
         curl --location --request POST 'http://localhost:8001' \
@@ -137,7 +137,7 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
                 "params":[]
             }'
         ```
-    - Method 2: [wscat](https://github.com/websockets/wscat) sends websocket request:
+    - Method 2: use [wscat](https://github.com/websockets/wscat) to send websocket request:
         ```
         parachain@ubuntu:~/elara$ wscat  -c ws://localhost:8001/
         Connected (press CTRL+C to quit)
@@ -177,5 +177,5 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
     
 8. verification
 
-    You can open `http://localhost:8001/dashboard`　view the monitoring dashboard page. If there is an access request, the dashboard will display the latest request information．
+    You can open `http://localhost:8001/dashboard`　to view the monitoring dashboard page. If there is an access request, the dashboard will display the latest request information．
 >>>>>>> dev
