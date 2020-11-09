@@ -1,0 +1,28 @@
+{
+    "name": "elara-stat", //应用名
+    "script": "./app.js", //启动脚本
+    "cwd": "./", //当前工作路径
+    "watch": [ //监控变化的目录，一旦变化，自动重启
+        "config",
+        "src"
+    ],
+    "ignore_watch": [ // 从监控目录中排除
+        "node_modules",
+        "logs",
+        ".git",
+        "nohup.out"
+    ],
+    "merge_logs": true, // 合并搜索实例产生的日志
+    "log_date_format": "YYYY-MM-DD HH:mm Z", // 日志详情加上自定义的时间戳格式
+    "instances": 1, // 为 app 启动的进程数，实现均衡负载
+    "exec_mode": "cluster_mode", //以 cluster 方式启动 app
+    "autorestart": true, // 监听程序错误自动重启进程
+    "error_file": "./logs/app-err.log", // 错误日志路径
+    "out_file": "./logs/app-out.log", // 普通日志路径
+    "env": {
+        "NODE_ENV": "dev"
+    },
+    "env_beta": {
+        "NODE_ENV": "beta"
+    }
+}
