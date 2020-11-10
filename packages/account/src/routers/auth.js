@@ -24,13 +24,13 @@ let login = async (ctx, next) => {
 
 let callback = async (ctx, next) => {
     return passport.authenticate('github', { scope: ['user'] }, async (error, user, info) => {
-        if (!error) {
+        if (!error && user) {
             let sid = getID(24)
             if (user.profile && user.profile.id) {
                 let uid = user.profile.id
                 let account = await Account.info(uid)
                 if (!account.isOk()) {
-                    account = await Account.create(uid, 0)
+                    account = await Account.create(uid, 0,'github')
                     if (account.isOk()) {
                         ctx.login(uid) //设置登陆
                         ctx.session['sid'] = sid
@@ -45,6 +45,10 @@ let callback = async (ctx, next) => {
                     ctx.session['sid'] = sid
                     ctx.login(uid) //设置登陆
                 }
+            }
+            else{
+                ctx.response.redirect(config.login) //重定向到登陆页
+                return next()
             }
 
             let html = `

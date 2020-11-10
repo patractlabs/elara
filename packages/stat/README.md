@@ -6,22 +6,48 @@ Provide project management and statistics functions under Elara's developer acco
 
 Based on the Koa framework, Redis is used for storage components, and Kafka is used for message queues
 
+ 
+ 1. Install the dependencies
 ```
-    # Install the dependencies
     yarn install 
+```
 
-    # Start the service
-    node app.js  
+ 2. Start Service
+ 
+ You can start the current process
 
-    # Start message queue consumption
-    node ./kafka/consumer.js
+```
+    node app.js
+```
 
-    # Start dashboard data build
-    node ./timer/dashboard.js
+Or use [pm2](https://github.com/Unitech/pm2) Management process
+
+
+        ```
+            pm2 start pm2.json --env dev
+        ```
+
+You can find the running log in this directory `./ logs/`
+
+
+
+3. Start message queue consumer
+
+```
+node ./kafka/consumer.js
+```
+
+4. Start dashboard data build
+```
+node ./timer/dashboard.js
 ```
 
 ## Need to verify the login interface
-### 1. Request project  list GET /projects 
+### 1. Request project  list 
+
+    METHOD:GET
+    URL: /projects 
+
 
   ```
   {
@@ -58,7 +84,11 @@ args:
 
 
 
-### 2. Request project  details GET /project/PID
+### 2. Request project  details 
+
+    METHOD:GET 
+    URL:/project/<PID>
+
 
 ```{
         "id": "b78a79f98a2bb1a991a357504a5b04c1",
@@ -85,7 +115,11 @@ args:
 
 -   secret:api key
 
-### 3. New project　POST /project 
+### 3. New project　
+
+    METHOD:POST 
+    URL:/project
+
 args：
 - chain
 - name:  (Validation rules /[a-zA-Z]{4,32}/ )
@@ -102,7 +136,11 @@ args：
   - updatetime
   - bandwidth：（byte)
 
-### 5. Week statistics of the project　GET /stat/week/PID
+### 5. Week statistics of the project　
+
+    METHOD:GET 
+    URL:/stat/week/<PID>
+
 
   ```
   {"code":0,"mssage":"","data":{"20200912":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}},"20200913":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}},}}		
@@ -116,12 +154,22 @@ args:
   
 ## No need to verify the login interface
 
-### 1.　Statistics of chain requests　GET /stat/chain
+### 1.　Statistics of chain requests　
+
+    METHOD:GET 
+    URL:/stat/chain
 
   ```
   {"code":0,"mssage":"","data":{"ethereum":0,"chainx":"13"}}
   ```
-### 2. Latest request　GET /stat/requests
-### 3. Dashboard data　GET /stat/dashboard
-### 4. Limit verification     GET /limit/链名称/项目ID
-    If code==0 is returned, there is no limit
+### 2. Latest request　
+    METHOD:GET
+    URL: /stat/requests
+### 3. Dashboard data　
+    METHOD:GET
+    URL: /stat/dashboard
+### 4. Limit verification     
+    METHOD:GET
+    URL: /limit/<Chain>/<Pid>
+
+     If code==0 is returned, there is no limit

@@ -29,12 +29,13 @@ class Account {
     };
 
     //创建新账户
-    static async create(uid, vip) {
+    static async create(uid, vip,type='github') {
         const timestamp = now()
         let cratetime = timestamp;
 
         redis.hset(KEY.UID(uid), 'uid', uid);
         redis.hset(KEY.UID(uid), 'vip', vip);
+        redis.hset(KEY.UID(uid), 'type', type);
         redis.hset(KEY.UID(uid), 'cratetime', cratetime);
 
         return await Account.info(uid)

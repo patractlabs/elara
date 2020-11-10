@@ -4,15 +4,26 @@ Developer account system service
 
 Based on the Koa framework, Redis is used for storage components, and github is used for  authentication 
 
-
+ 1. Install the dependencies
 ```
-    # Install the dependencies
     yarn install 
+```
 
-    # Start the service
+ 2. Start Service
+ 
+ You can start the current process
+```
     node app.js
+```
+Or use [pm2](https://github.com/Unitech/pm2) Management process
 
 ```
+    pm2 start pm2.json --env dev
+```
+
+You can find the running log in this directory `./ logs/`
+
+
 
 ## Config github Oauth
 ```
@@ -29,7 +40,10 @@ Based on the Koa framework, Redis is used for storage components, and github is 
 ## Interface
 -  Get login status　
 
-    GET /auth/login
+    METHOD:GET
+
+    URL: /auth/login
+
 ```
         {
             "code":0,
@@ -47,7 +61,10 @@ Based on the Koa framework, Redis is used for storage components, and github is 
 
  - Login out
     
-    GET /auth/logout
+    METHOD:GET
+    
+    URL: /auth/logout
+
 ```
             {
                 "code":0,
@@ -58,8 +75,12 @@ Based on the Koa framework, Redis is used for storage components, and github is 
 
  - github Authentication 
     
-    GET /auth/github
+    METHOD:GET
+    
+    URL: /auth/github
 
 - github Authentication Callback
 
-    GET /auth/github/callback
+    METHOD:GET
+    
+    URL: /auth/github/callback

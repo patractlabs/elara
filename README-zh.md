@@ -46,7 +46,11 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 ## 当前开发进度
 
 
-当前，我们已完成0.1 版本开发，可以查看线上 [demo](https://elara.patract.io/demo)
+当前，我们已完成0.2 版本开发，Elara服务已上线．欢迎访问[elara.patract.io](https://elara.patract.io/) 免费接入Polkadot生态．
+
+可以查阅报告: 
+- 0.1 [Repositorie](https://github.com/patractlabs/elara/tree/0.1/) [ Report ](https://polkadot.polkassembly.io/post/139) 
+- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/xxx) 
 
 
 ## 如何使用代码
