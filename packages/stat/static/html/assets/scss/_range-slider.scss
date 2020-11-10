@@ -1,0 +1,10 @@
+/* ==============
+  Range slider
+===================*/
+
+.irs-from, .irs-to, .irs-single {
+  background: $primary;
+}
+.irs-from:after, .irs-to:after, .irs-single:after {
+  border-top-color: $primary;
+}

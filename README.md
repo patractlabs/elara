@@ -9,13 +9,13 @@ Elara is inspired by [Infura](infura.io)  from the Ethereum ecosystem, named aft
 Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:matrix.org
 
 ## Summary of Elara's future plan:
-### v0.1: Implement Substrate node access
+### v0.1: Implement Substrate node access  [Proposal 0.1](https://polkadot.polkassembly.io/post/103)
 
 - Create a server-side framework to develop proxy access, automatic monitoring and data statistics to the RPC service of the Substrate node
 - Support developers to use http and websocket protocols to uniformly access the network through the server framework
 - Develop a front-end dashboard to display relevant monitoring statistics of the RPC service of the Substrate node
 
-### v0.2: Implement function expansion and performance optimisation
+### v0.2: Implement function expansion and performance optimisation [Proposal 0.2](https://polkadot.polkassembly.io/post/141)
 
 - Create account space for developers, support developers to use Github as a third-party login method
 - Support multiple projects under the account space
@@ -37,7 +37,12 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 - Support 10,000 developers, each developer account can establish 20 DApp projects, and each DApp project can use 1M daily access service
 
 ## Current Development Progress
- At present, we have completed the 0.1 version development, you can view the online [demo](https://elara.patract.io/demo)
+ At present, we have completed the 0.2 version development, you can view the online service [elara.patract.io](https://elara.patract.io/) 
+
+You Can view:
+ - 0.1 [Repositorie](https://github.com/patractlabs/elara/tree/0.1/) [ Report ](https://polkadot.polkassembly.io/post/139) 
+- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/xxx) 
+
 
 ## How To Use
 1. Environment
@@ -46,112 +51,16 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
     - [Install Yarn](https://yarnpkg.com/lang/en/docs/install/)
 
 2. Installation
-    ```
-        # Clone the code from github
-        git clone https://github.com/patractlabs/elara.git
 
-        # Install the dependencies
-        cd elara
-        yarn install
-    ```
+    Elara front-end [Repositorie](https://github.com/patractlabs/elara-website)
 
-3. Preparation
+    Elara backend is divided into three services：
+    - [Developer-Account](https://github.com/patractlabs/elara/tree/master/packages/account)　The main function is to maintain the login status of the developer account
+    - [Stat](https://github.com/patractlabs/elara/tree/master/packages/stat)　The main function is developer project management and data statistics (shared login state database with Developer-Account Service)
+    - [API](https://github.com/patractlabs/elara/tree/master/packages/api)　Mainly responsible for user request proxy access (rely on Stat Service to provide a limited traffic interface)
 
-    - Elara uses [Redis](https://github.com/redis/redis) As a storage component, you need to prepare a redis running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used
+    Please refer to the README of each service to install in turn
 
-    - Run the substrate node and open operating parameters  `--ws-port ` 　` --rpc-port `　`--rpc-cors all` ` --rpc-external`  `--ws-external`. The IP and Port of the node will be used in the following configuration phase. [See the official document how to create a substrate chain](https://substrate.dev/docs/en/tutorials/create-your-first-substrate-chain/)
-
-4. Configuration
-
-    ```
-        # Edit elara/config/env/dev
-
-        chain: {
-            'substrate': {
-                'rpc': ['****:**'], //configure as node IP: RPC port in step 3
-                'ws': ['****:**'] //configure as node IP: WS port in step 3 
-            }
-        },
-        redis: {
-            host: '***', // configure it as the host of the redis instance in step 3
-            port: '***',//configure it as the port of redis instance in step 3
-            password: '***'//configure it as the password of redis instance in step 3
-        }
-        ```
-
-5. Start the service
-
-    You can start the current process
-    ```
-        node app.js
-    ```
-    Or use [pm2](https://github.com/Unitech/pm2) Management process
-    ```
-        pm2 start pm2.json --env dev
-    ```
-
-    You can find the running log in this directory `elara/ logs/`
-
-
-6. 　Start the Dashboard
-    ```
-    cd ./daemon
-    nohub node dashboard.js &
-    ```
-
- 7. Developer access
-
+3.  Developer access
+ After completing the installation and deployment of step 2, you can refer to the README access method of the API Service to send an RPC request to the chain.
    
-    - Method 1 : curl sends HTTP request:
-        ```
-        #curl http
-        curl --location --request POST 'http://localhost:8001' \
-            --header 'Content-Type: application/json' \
-            --data-raw '{
-                "id":1,
-                "jsonrpc":"2.0",
-                "method":"chain_getBlock",
-                "params":[]
-            }'
-        ```
-    - Method 2: [wscat](https://github.com/websockets/wscat) sends websocket request:
-        ```
-        parachain@ubuntu:~/elara$ wscat  -c ws://localhost:8001/
-        Connected (press CTRL+C to quit)
-        > {"id":1,"jsonrpc":"2.0","method":"chain_getBlock","params":[]}
-        < {Response data...}
-        > 
-        ```
-     - Method 3 : Using the SDK
-    
-        You can refer to [polkadot-js](https://github.com/polkadot-js), use the following similar code to access the node with HTTP or websocket：
-
-
-        ```
-        const { ApiPromise, WsProvider } = require('@polkadot/api');
-        const { HttpProvider } = require('@polkadot/rpc-provider');
-
-        (async function () {
-        // Http
-        const httpProvider = new HttpProvider('http://localhost:8001')
-        const hash = await httpProvider.send('chain_getBlockHash', [])
-        console.log('latest block Hash', hash)
-
-        // Websocket
-        const wsProvider = new WsProvider('ws://localhost:8001')
-        const api = await ApiPromise.create({ provider: wsProvider })
-        //Do something
-
-        })()
-
-        ```
-        We also provide reference examples under `elara/example/`.
-        Examples can be executed:
-
-        ```
-        node client.js
-        ```
-    
-8. verification
-
-    You can open `http://localhost:8001/demo`　view the monitoring dashboard page. If there is an access request, the dashboard will display the latest request information．

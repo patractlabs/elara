@@ -9,6 +9,7 @@
     "koa-router": "^9.4.0",
     "koa-session2": "^2.2.10",
     "koa-static": "^5.0.0",
-    "passport-github2": "^0.1.12"
+    "passport-github2": "^0.1.12",
+    "path": "^0.12.7"
   }
 }

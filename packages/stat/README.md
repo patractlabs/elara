@@ -1,18 +1,38 @@
 # elara-stat
-Elara Stat Server
+Elara Stat Service
 
-Shared account Session login status with Developer Account.
+Shared account Session login status with Elara-Developer Account.
 Provide project management and statistics functions under Elara's developer account
 
 Based on the Koa framework, Redis is used for storage components, and Kafka is used for message queues
 
- 
+## How to use 
  1. Install the dependencies
 ```
     yarn install 
 ```
+2. Prepare
 
- 2. Start Service
+- uses [Redis](https://github.com/redis/redis) As a storage component, you need to prepare a redis running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used.
+- uses [Kafka](http://kafka.apache.org/) As a Message middleware, you need to prepare a kafka running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used.
+- Add a Topic "elara-dev" in Kafak
+
+3. Configuration
+```
+    # Edit ./config/env/dev.env.js
+     redis: {
+        host: '127.0.0.1',　//configure it as the host of the redis instance in step 2
+        port: '6379', configure it as the port of the redis instance in step 2
+        password: '***'
+    },
+    kafka: {
+        'kafkaHost': '127.0.0.1:9092', configure it as the host and port of the kafka instance in step 2
+        'topic': 'elara-dev',
+        'sasl': { mechanism: 'plain', username: '***', password: '***' }
+    },
+```
+
+ 4. Start Service
  
  You can start the current process
 
@@ -31,19 +51,24 @@ You can find the running log in this directory `./ logs/`
 
 
 
-3. Start message queue consumer
+5. Start message queue consumer
 
 ```
 node ./kafka/consumer.js
 ```
 
-4. Start dashboard data build
+6. Start dashboard data build
 ```
 node ./timer/dashboard.js
 ```
+7. View Dashboard
 
-## Need to verify the login interface
-### 1. Request project  list 
+    Browser open http://127.0.0.1:7002/dashboard
+
+## Interface
+
+###  Need to verify the login status
+#### 1. Request project  list 
 
     METHOD:GET
     URL: /projects 
@@ -84,7 +109,7 @@ args:
 
 
 
-### 2. Request project  details 
+#### 2. Request project  details 
 
     METHOD:GET 
     URL:/project/<PID>
@@ -115,7 +140,7 @@ args:
 
 -   secret:api key
 
-### 3. New project　
+#### 3. New project　
 
     METHOD:POST 
     URL:/project
@@ -124,7 +149,7 @@ args：
 - chain
 - name:  (Validation rules /[a-zA-Z]{4,32}/ )
 
-### 4. Statistics on the day of the project  GET　/stat/day/PID
+#### 4. Statistics on the day of the project  GET　/stat/day/PID
 
 
   ```
@@ -136,7 +161,7 @@ args：
   - updatetime
   - bandwidth：（byte)
 
-### 5. Week statistics of the project　
+#### 5. Week statistics of the project　
 
     METHOD:GET 
     URL:/stat/week/<PID>
@@ -152,9 +177,9 @@ args:
   - bandwidth: （byte)
 
   
-## No need to verify the login interface
+### No need to verify the login status
 
-### 1.　Statistics of chain requests　
+#### 1.　Statistics of chain requests　
 
     METHOD:GET 
     URL:/stat/chain
@@ -162,13 +187,13 @@ args:
   ```
   {"code":0,"mssage":"","data":{"ethereum":0,"chainx":"13"}}
   ```
-### 2. Latest request　
+#### 2. Latest request　
     METHOD:GET
     URL: /stat/requests
-### 3. Dashboard data　
+#### 3. Dashboard data　
     METHOD:GET
     URL: /stat/dashboard
-### 4. Limit verification     
+#### 4. Limit verification     
     METHOD:GET
     URL: /limit/<Chain>/<Pid>
 

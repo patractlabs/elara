@@ -194,6 +194,7 @@ class Stat {
             let list = await redis.lrange(KEY.REQUEST_RESPONSE(), 0, size)
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
+                requests[i].pid=requests[i].pid.replace(/(.){16}$/,'******')
             }
         } catch (e) {
             logger.error('request_response Parse Error!', e)

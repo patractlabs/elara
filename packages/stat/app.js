@@ -6,6 +6,8 @@ const { logger, accessLogger } = require('./src/lib/log')
 const Result = require('./src/lib/result')
 const config = global.config = require('./config/index')()
 let passport = require('./src/lib/passport')
+const path = require('path')
+const static = require('koa-static')
 const app = new Koa()
 const RedisStore = require('./src/lib/store')
 
@@ -15,6 +17,12 @@ global.message = {}
 
 app.keys = config.keys
 app
+    .use(async (ctx, next) => {
+        if ('/dashboard' == ctx.path)
+            ctx.path = '/dashboard.html'
+        return next()
+    })
+    .use(static(path.join(__dirname, './static/html')))
     .use(session(sessionConfig))
     .use(koaBody({ multipart: true }))
     .use(accessLogger())

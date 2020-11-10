@@ -1,15 +1,37 @@
-# Developer-Account
+# Elara-Developer-Account
 
-Developer account system service
+Elara Developer account system service
 
 Based on the Koa framework, Redis is used for storage components, and github is used for  authentication 
 
+## How to use
  1. Install the dependencies
 ```
     yarn install 
 ```
+2. Prepare
 
- 2. Start Service
+- uses [Redis](https://github.com/redis/redis) As a storage component, you need to prepare a redis running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used.
+
+3. Configuration
+```
+    # Edit ./config/env/dev.env.js
+     redis: {
+            host: '***', // configure it as the host of the redis instance in step 2
+            port: '***',//configure it as the port of redis instance in step 2
+            password: '***'//configure it as the password of redis instance in step 2
+        }
+
+    # Config github Oauth
+    github: {
+        'ClientID': '******',
+        'ClientSecret': '******',
+        'CallbackURL': '******'
+    }
+
+```
+
+ 4. Start Service
  
  You can start the current process
 ```
@@ -23,18 +45,6 @@ Or use [pm2](https://github.com/Unitech/pm2) Management process
 
 You can find the running log in this directory `./ logs/`
 
-
-
-## Config github Oauth
-```
-    # vim config/env/dev.env.js
-
-    github: {
-        'ClientID': '******',
-        'ClientSecret': '******',
-        'CallbackURL': '******'
-    }
-```
 
 
 ## Interface
