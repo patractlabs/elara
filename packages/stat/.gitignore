@@ -16,3 +16,5 @@ debug.log*
 yarn.lock
 
 /package-lock.json
+
+nohup.out

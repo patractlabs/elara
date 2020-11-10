@@ -1,5 +1,5 @@
 {
-    "name": "Patract-Hub-Developer-Account", 
+    "name": "elara-account", 
     "script": "./app.js", 
     "cwd": "./", 
     "watch": [ 
