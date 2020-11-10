@@ -43,9 +43,9 @@ Based on the Koa framework, Redis is used for storage components, and Kafka is u
 Or use [pm2](https://github.com/Unitech/pm2) Management process
 
 
-        ```
-            pm2 start pm2.json --env dev
-        ```
+```
+    pm2 start pm2.json --env dev
+```
 
 You can find the running log in this directory `./ logs/`
 

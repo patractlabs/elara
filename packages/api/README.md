@@ -41,9 +41,9 @@ Based on the Koa framework, and Kafka is used for message queues
 Or use [pm2](https://github.com/Unitech/pm2) Management process
 
 
-        ```
-            pm2 start pm2.json --env dev
-        ```
+```
+    pm2 start pm2.json --env dev
+```
 
 You can find the running log in this directory `./ logs/`
 
@@ -68,7 +68,7 @@ You can find the running log in this directory `./ logs/`
 
     - Method 2: [wscat](https://github.com/websockets/wscat) sends websocket request:
         ```
-        parachain@ubuntu:~/elara$ wscat  -c ws://127.0.0.1:7003/ws/Polkadot<PID>
+        parachain@ubuntu:~/elara$ wscat  -c ws://127.0.0.1:7003/ws/Polkadot/<PID>
         Connected (press CTRL+C to quit)
         > {"id":1,"jsonrpc":"2.0","method":"chain_getBlock","params":[]}
         < {Response data...}
