@@ -1,5 +1,5 @@
 {
-    "name": "elara",
+    "name": "elara-api",
     "script": "./app.js",
     "cwd": "./",
     "watch": [
