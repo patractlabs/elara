@@ -13,6 +13,7 @@ module.exports = {
     chain: {
         'Polkadot': {}
     },
+    test:false,
     // redis配置
     redis: {
         host: '127.0.0.1',

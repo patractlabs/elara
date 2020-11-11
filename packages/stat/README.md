@@ -32,6 +32,14 @@ Based on the Koa framework, Redis is used for storage components, and Kafka is u
     },
 ```
 
+**If you are just for experience, you can turn on the switch in the configuration to skip the login state check**
+
+```
+# Edit ./config/env/dev.env.js
+
+ test:true,// skip the login state check
+
+```
  4. Start Service
  
  You can start the current process
@@ -146,7 +154,7 @@ args:
     URL:/project
 
 args：
-- chain
+- chain:(Polkadot)
 - name:  (Validation rules /[a-zA-Z]{4,32}/ )
 
 #### 4. Statistics on the day of the project  GET　/stat/day/PID

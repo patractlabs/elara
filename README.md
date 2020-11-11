@@ -59,7 +59,7 @@ To use Elara, you need Yarn, which itself requires Node.js. If you don't have th
     - [Stat](https://github.com/patractlabs/elara/tree/master/packages/stat)　The main function is developer project management and data statistics (shared login state database with Developer-Account Service)
     - [API](https://github.com/patractlabs/elara/tree/master/packages/api)　Mainly responsible for user request proxy access (rely on Stat Service to provide a limited traffic interface)
 
-    Please refer to the README of each service to install in turn
+    Please refer to the README of each service to install **in turn**
 
 3.  Developer access
  After completing the installation and deployment of step 2, you can refer to the README access method of the API Service to send an RPC request to the chain.

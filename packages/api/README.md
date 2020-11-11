@@ -17,7 +17,7 @@ Based on the Koa framework, and Kafka is used for message queues
 ```
     # Edit ./config/env/dev.env.js
      chain: {
-            'substrate': {
+            'Polkadot': {
                 'rpc': ['****:**'], //configure as node IP: RPC port in step 2
                 'ws': ['****:**'] //configure as node IP: WS port in step 2
             }
@@ -51,7 +51,7 @@ You can find the running log in this directory `./ logs/`
 
 5. Developer access
 
-    Before Access.You must have a PID(project id).you can send a post request to the Stat Service to create a new project. You can view the [Interface detail ](https://github.com/patractlabs/elara/tree/master/packages/stat)
+    **Before Access.You must have a PID(project id).you can send a post request to the Stat Service to create a new project and get a PID. You can view the [Interface detail ](https://github.com/patractlabs/elara/tree/0.2/packages/stat#3-new-project)**
    
     - Method 1 : curl sends HTTP request:
         ```

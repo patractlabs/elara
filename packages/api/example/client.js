@@ -3,12 +3,12 @@ const { HttpProvider } = require('@polkadot/rpc-provider');
 
 async function client () {
     // Http
-    const httpProvider = new HttpProvider('http://localhost:7003/Polkadot/<PID>')
+    const httpProvider = new HttpProvider('http://127.0..0.1:7003/Polkadot/<PID>')
     const hash = await httpProvider.send('chain_getBlockHash', [])
     console.log('latest block Hash', hash)
 
     // Websocket
-    const wsProvider = new WsProvider('ws://localhost:7003/ws/Polkadot/<PID>')
+    const wsProvider = new WsProvider('ws://127.0..0.1:7003/ws/Polkadot/<PID>')
     const api = await ApiPromise.create({ provider: wsProvider })
     console.log(api.genesisHash.toHex())
 
