@@ -45,7 +45,7 @@ Or use [pm2](https://github.com/Unitech/pm2) Management process
     pm2 start pm2.json --env dev
 ```
 
-You can find the running log in this directory `./ logs/`
+You can find the running log in this directory `./logs/`
 
 
 
