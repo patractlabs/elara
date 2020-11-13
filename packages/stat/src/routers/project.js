@@ -62,7 +62,7 @@ let createProeject = async (ctx, next) => {
 
 module.exports = {
     'GET /project/:pid([a-z0-9]{32})': getProject,//项目详情
-    'GET /projects': getProjects,//账户下所有项目详情
-    'POST /project': createProeject //新建项目
+    'GET /project/list': getProjects,//账户下所有项目详情
+    'POST /project/create': createProeject //新建项目
 }
 

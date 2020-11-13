@@ -68,7 +68,7 @@ You can find the running log in this directory `./logs/`
 
     - Method 2: [wscat](https://github.com/websockets/wscat) sends websocket request:
         ```
-        parachain@ubuntu:~/elara$ wscat  -c ws://127.0.0.1:7003/ws/Polkadot/<PID>
+        parachain@ubuntu:~/elara$ wscat  -c ws://127.0.0.1:7003/Polkadot/<PID>
         Connected (press CTRL+C to quit)
         > {"id":1,"jsonrpc":"2.0","method":"chain_getBlock","params":[]}
         < {Response data...}
@@ -90,7 +90,7 @@ You can find the running log in this directory `./logs/`
         console.log('latest block Hash', hash)
 
         // Websocket
-        const wsProvider = new WsProvider('ws://127.0.0.1:7003/ws/Polkadot/<PID>')
+        const wsProvider = new WsProvider('ws://127.0.0.1:7003/Polkadot/<PID>')
         const api = await ApiPromise.create({ provider: wsProvider })
         //Do something
 

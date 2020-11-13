@@ -79,7 +79,7 @@ node ./timer/dashboard.js
 #### 1. Request project  list 
 
     METHOD:GET
-    URL: /projects 
+    URL: /project/list
 
 
   ```
@@ -151,7 +151,7 @@ args:
 #### 3. New project　
 
     METHOD:POST 
-    URL:/project
+    URL:/project/create
 
 args：
 - chain:(Polkadot)
