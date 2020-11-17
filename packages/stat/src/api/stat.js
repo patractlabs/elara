@@ -23,7 +23,7 @@ class Stat {
         let bandwidth = info.bandwidth/*响应带宽*/
         let start = info.start
         let end = info.end
-        let delay=((end-start)>config.timeout)?config.timeout:(end-start)
+        let delay = ((end - start) > config.timeout) ? config.timeout : (end - start)
 
         await Stat._request_response(info)//最新1000个请求记录
         await Stat._timeout(pid, delay)//
@@ -33,6 +33,8 @@ class Stat {
         await Stat._code(pid, code)//每日调用响应码分类统计
         await Stat._header(header, pid)//请求头分析统计
         await Stat._chain(chain) //链的总请求数统计
+
+        logger.info('pid=', pid, ',protocol=', protocol, ',chain=', chain, ',method=', method, ',code=', code, ',bandwidth=', bandwidth, ',delay=', delay)
     }
 
     static async _request_response(info) {
@@ -194,7 +196,12 @@ class Stat {
             let list = await redis.lrange(KEY.REQUEST_RESPONSE(), 0, size)
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
-                requests[i].pid=requests[i].pid.replace(/(.){16}$/,'******')
+                requests[i].pid = requests[i].pid.replace(/(.){16}$/, '******')
+                if (requests[i].ip && requests.ip.length) {
+                    for (var j = 0; j < requests.ip.length; j++) {
+                        requests.ip[j] = requests.ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
+                    }
+                }
             }
         } catch (e) {
             logger.error('request_response Parse Error!', e)

@@ -2,15 +2,15 @@ const Result = require('../lib/result')
 const WebSocket = require('ws')
 const { logger } = require('../lib/log')
 const kafka = require("./kafka")
-const superagent = require('superagent')
 
 let websocketPair = new Set()
 
 class SocketPair {
     constructor(id, client, chain, pid, request) {
+        let index=Math.floor(Math.random()*config.chain[chain].ws.length)
         this.id = id
         this.client = client
-        this.server = new WebSocket('ws://' + config.chain[chain].ws[0])
+        this.server = new WebSocket(config.chain[chain].ws[index])
         this.chain = chain
         this.pid = pid
         this.request = request

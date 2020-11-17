@@ -30,7 +30,6 @@ consumer.on('offsetOutOfRange', function (topic) {
 });
 
 consumer.on('message', function (message) {
-    console.log(message)
     try {
         switch (message.key) {
             case 'request': {
@@ -43,5 +42,5 @@ consumer.on('message', function (message) {
         logger.error('consumer message error', e)
     }
 
-    logger.info(JSON.stringify(message))
+    //logger.info(JSON.stringify(message))
 });

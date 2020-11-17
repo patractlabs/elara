@@ -14,6 +14,7 @@ module.exports = {
     CODE: (pid, date) => pid + '_code_' + date,
     AGENT: (pid, date) => pid + '_agent_' + date,
     ORIGIN: (pid, date) => pid + '_origin_' + date,
-    DASHBOARD: () => 'dashboard'
-
+    DASHBOARD: () => 'dashboard',
+    BLACKUID:()=>'block_uid',
+    PROJECTINFO:(pid)=>'project_info_'+pid
 }

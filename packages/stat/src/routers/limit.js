@@ -11,7 +11,7 @@ let checkLimit = async (ctx, next) => {
     if (project.isOk()) {
         project = project.data
         //检测链是否匹配
-        if (chain != project.chain) {
+        if (chain.toLowerCase() != project.chain.toLowerCase()) {
             throw CODE.CHAIN_ERROR
         }
         //检测是否运行中

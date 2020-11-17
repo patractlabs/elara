@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "commander": "^6.2.0",
+    "extend": "^3.0.2",
     "ioredis": "^4.17.3",
     "kafka-node": "^5.0.0",
     "koa": "^2.13.0",

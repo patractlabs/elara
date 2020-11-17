@@ -18,8 +18,8 @@ Based on the Koa framework, and Kafka is used for message queues
     # Edit ./config/env/dev.env.js
      chain: {
             'Polkadot': {
-                'rpc': ['****:**'], //configure as node IP: RPC port in step 2
-                'ws': ['****:**'] //configure as node IP: WS port in step 2
+                'rpc': ['****:**'], //configure as node http://IP: RPC port in step 2
+                'ws': ['****:**'] //configure as node ws://IP: WS port in step 2
             }
         },
     kafka: {

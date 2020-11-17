@@ -3,7 +3,7 @@ const Result = require('../lib/result')
 const crypto = require("crypto");
 const { midnight, now, formateDate } = require('../lib/tool');
 const Stat = require('./stat');
-const KEY=require('./KEY')
+const KEY = require('./KEY')
 
 class Project {
     constructor(id, status, chain, name, uid, secret, createtime, lasttime, allowlist) {
@@ -17,22 +17,22 @@ class Project {
         this.lasttime = lasttime
         this.allowlist = allowlist
     }
-    
+
     isActive() {
         return 'Active' == this.status ? true : false
     }
 
     //项目详情
     static async info(pid) {
-        let reply = await redis.hgetall(pid)
+        let reply = await redis.hgetall(KEY.PROJECTINFO(pid))
         let project
-        if (reply&&reply.id) {
+        if (reply && reply.id) {
             project = new Project(reply.id, reply.status, reply.chain, reply.name, reply.uid, reply.secret, reply.cratetime, reply.lasttime, reply.allowlist)
         }
 
         return Result.WrapResult(project)
     };
- 
+
     //获取账户下所有项目详情
     static async getAllByAccount(uid) {
         let list = [];
@@ -46,6 +46,16 @@ class Project {
         }
         return Result.WrapResult(list)
     }
+    static async setStatus(pid, status = 'Active') {
+        let reply = await redis.hgetall(KEY.PROJECTINFO(pid))
+        if (reply && reply.id) {
+            if ('Active' == status) {
+                redis.hset(KEY.PROJECTINFO(pid), 'status', status);
+            } else {
+                redis.hset(KEY.PROJECTINFO(pid), 'status', 'Stop');
+            }
+        }
+    }
     //创建新项目
     static async create(uid, chain, name) {
         const timestamp = now()
@@ -56,17 +66,17 @@ class Project {
         let cratetime = timestamp;
         let lasttime = timestamp;
 
-        redis.hset(id, 'id', id);
-        redis.hset(id, 'status', status);
-        redis.hset(id, 'chain', chain);
-        redis.hset(id, 'name', name);
-        redis.hset(id, 'uid', uid);
-        redis.hset(id, 'secret', secret);
-        redis.hset(id, 'cratetime', cratetime);
-        redis.hset(id, 'lasttime', lasttime);
-        redis.hset(id, 'allowlist', false);
+        redis.hset(KEY.PROJECTINFO(id), 'id', id);
+        redis.hset(KEY.PROJECTINFO(id), 'status', status);
+        redis.hset(KEY.PROJECTINFO(id), 'chain', chain);
+        redis.hset(KEY.PROJECTINFO(id), 'name', name);
+        redis.hset(KEY.PROJECTINFO(id), 'uid', uid);
+        redis.hset(KEY.PROJECTINFO(id), 'secret', secret);
+        redis.hset(KEY.PROJECTINFO(id), 'cratetime', cratetime);
+        redis.hset(KEY.PROJECTINFO(id), 'lasttime', lasttime);
+        redis.hset(KEY.PROJECTINFO(id), 'allowlist', false);
 
-       await Stat.createProject(uid,id)
+        await Stat.createProject(uid, id)
 
         return await Project.info(id)
     }
