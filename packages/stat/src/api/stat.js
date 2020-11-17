@@ -197,9 +197,9 @@ class Stat {
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
                 requests[i].pid = requests[i].pid.replace(/(.){16}$/, '******')
-                if (requests[i].ip && requests.ip.length) {
-                    for (var j = 0; j < requests.ip.length; j++) {
-                        requests.ip[j] = requests.ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
+                if (requests[i].ip && requests[i].ip.length) {
+                    for (var j = 0; j < requests[i].ip.length; j++) {
+                        requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
                     }
                 }
             }
