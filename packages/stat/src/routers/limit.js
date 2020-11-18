@@ -18,6 +18,10 @@ let checkLimit = async (ctx, next) => {
         if (!project.isActive()) {
             throw CODE.PROJECT_NOT_ACTIVE
         }
+        let isBlack=await Limit.isBlack(project.uid)
+        if( isBlack){
+            throw CODE.BLACK_UID
+        }
         let isLimit = await Limit.isLimit(project.uid, pid)
         //检测是否限流
         if (isLimit) {

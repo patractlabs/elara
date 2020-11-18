@@ -11,48 +11,29 @@ program
     .option('--alluid', 'all black uid?')
     .option('--adduid <value>', 'black uid?')
     .option('--deluid <value>', 'remove black uid?')
-    .option('--addpid <value>', 'black pid?')
-    .option('--delpid <value>', 'remove black pid?')
     .option('--pid <value>', 'pid?')
-    .option('--status <value>', 'pid?')
-
+    .option('--status <value>', 'status?')
     .parse(process.argv);
 
-if (program.adduid) {
-    (async function () {
+(async function () {
+
+    if (program.adduid) {
         await redis.sadd(KEY.BLACKUID(), program.adduid);
         console.log('ADD Black Uid:', program.adduid);
-    })()
-}
-else if (program.deluid) {
-    (async function () {
+    }
+    else if (program.deluid) {
         await redis.srem(KEY.BLACKUID(), program.deluid);
         console.log('Remove Black Uid:', program.deluid);
-    })()
-}
-else if (program.alluid) {
-    (async function () {
+    }
+    else if (program.alluid) {
+        console.log('All Black:')
         let members = await redis.smembers(KEY.BLACKUID())
         for (var i = 0; i < members.length; i++) {
-            console.log('Black Uid:', members[i]);
+            console.log('Uid:', members[i]);
         }
-    })()
-}
-if (program.addpid) {
-    (async function () {
-
-        console.log('ADD Black Pid:', program.addpid);
-    })()
-}
-else if (program.delpid) {
-    (async function () {
-
-        console.log('Remove Black Uid:', program.delpid);
-    })()
-}
-else if (program.pid) {
-    if (program.status) {
-        (async function () {
+    }
+    else if (program.pid) {
+        if (program.status) {
             if ('Active' == program.status || 'Stop' == program.status) {
                 await Project.setStatus(program.pid, program.status)
                 console.log('Pid:', program.pid, ',Status:', program.status);
@@ -60,13 +41,12 @@ else if (program.pid) {
             else {
                 console.log('status args error!')
             }
-        })()
-
-        // {
-    }
-    else {
-        (async function () {
+        }
+        else {
             console.log('Pid:', await Project.info(program.pid));
-        })()
+        }
     }
-}
+    
+    process.exit()
+})()
+

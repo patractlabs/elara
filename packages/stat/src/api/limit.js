@@ -19,6 +19,10 @@ class Limit {
         }
         return limit
     }
+    //是否在黑名单
+    static async isBlack(uid){
+        return await redis.sismember(KEY.BLACKUID(),uid)
+    }
     static async isLimit(uid, pid) {
         let date = formateDate(new Date())
         let limit = await Limit.create(uid)
