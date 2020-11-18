@@ -29,7 +29,7 @@ let api = async (ctx, next) => {
                     pid: pid,
                     method: req.method,
                     req: req,
-                    resp: res.body,
+                    resp: '',//暂时用不上，省空间　res.body,
                     code: res.statusCode,
                     bandwidth: res.header['content-length'],
                     start: start,

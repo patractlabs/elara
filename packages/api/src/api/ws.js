@@ -115,7 +115,7 @@ class SocketPair {
                     pid: this.pid,
                     method: method,
                     req: this.req,
-                    resp: message,
+                    resp: '',//暂时用不上，省空间 message,
                     code: message ? 200 : 404,
                     bandwidth: message.length,
                     start: start,

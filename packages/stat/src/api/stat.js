@@ -21,12 +21,12 @@ class Stat {
         let resp = info.resp/*响应体 */
         let code = info.code
         let bandwidth = info.bandwidth/*响应带宽*/
-        let start = info.start
-        let end = info.end
+        let start = parseInt(info.start)
+        let end = parseInt(info.end)
         let delay = ((end - start) > config.timeout) ? config.timeout : (end - start)
 
         await Stat._request_response(info)//最新1000个请求记录
-        await Stat._timeout(pid, delay)//
+        await Stat._timeout(pid, parseInt(delay))//
         await Stat._today_request(pid)　//今日请求数统计
         await Stat._method(pid, method) //每日调用方法分类统计
         await Stat._bandwidth(pid, bandwidth)//每日带宽统计
@@ -46,9 +46,9 @@ class Stat {
 
         if (delay >= config.timeout)
             await redis.incr(KEY.TIMEOUT(pid, date))
-        let average = await redis.get(KEY.DELAY(pid, date))
+        let average = parseInt(await redis.get(KEY.DELAY(pid, date)))
         if (average) {//算平均
-            let requests = await redis.get(KEY.REQUEST(pid, date))
+            let requests = parseInt(await redis.get(KEY.REQUEST(pid, date)))
             average = ((requests * average + delay) / (requests + 1)).toFixed(2)
             await redis.set(KEY.DELAY(pid, date), average)
         }
@@ -197,7 +197,7 @@ class Stat {
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
                 requests[i].pid = requests[i].pid.replace(/(.){16}$/, '******')
-                if (requests[i].ip && requests[i].ip.length) {
+                if (requests[i].ip && 'Array' == typeof requests[i].ip &&requests[i].ip.length) {
                     for (var j = 0; j < requests[i].ip.length; j++) {
                         requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
                     }
@@ -206,6 +206,7 @@ class Stat {
         } catch (e) {
             logger.error('request_response Parse Error!', e)
         }
+        
         return requests
     }
     static async dashboard() {

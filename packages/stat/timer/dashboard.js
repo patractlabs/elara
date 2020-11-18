@@ -66,7 +66,7 @@ async function data(date) {
 (async function () {
     try {
         while (true) {
-            await sleep(10000)
+            await sleep(30000)
             let oneday = 24 * 60 * 60 * 1000
             let today = (new Date()).getTime()
 
