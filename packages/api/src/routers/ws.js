@@ -17,6 +17,7 @@ let accept = async function (id, ws, request) {
             ws.send(JSON.stringify(check.body))
             ws.terminate()
             logger.error(chain, pid, check.body)
+            return 
         }
         try {
             let pair = new SocketPair(id, ws, chain, pid, request)

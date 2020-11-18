@@ -21,7 +21,7 @@ class Limit {
     }
     static async isLimit(uid, pid) {
         let date = formateDate(new Date())
-        let limit = Limit.create(uid)
+        let limit = await Limit.create(uid)
 
         let today_request = await redis.get(KEY.REQUEST(pid,date))
         if ( today_request > limit.daily) {
