@@ -1,4 +1,3 @@
-const Result = require('../lib/result')
 const WebSocket = require('ws')
 const { logger } = require('../lib/log')
 const kafka = require("./kafka")
@@ -7,7 +6,7 @@ let websocketPair = new Set()
 
 class SocketPair {
     constructor(id, client, chain, pid, request) {
-        let index=Math.floor(Math.random()*config.chain[chain].ws.length)
+        let index = Math.floor(Math.random() * config.chain[chain].ws.length)
         this.id = id
         this.client = client
         this.server = new WebSocket(config.chain[chain].ws[index])
@@ -49,8 +48,12 @@ class SocketPair {
         this.server.on('message', async (message) => {
             let start = 0
             let end = 0
+            let method = this.reqMethod
             try {
                 let resp = JSON.parse(message)
+                if (resp.method)
+                    method = resp.method
+
                 if (resp.id && this.mapStartTime[resp.id]) {
                     start = this.mapStartTime[resp.id]
                     end = (new Date()).getTime()
@@ -62,7 +65,7 @@ class SocketPair {
             }
 
             this.client.send(message)
-            this.report(message, start, end)
+            this.report(method, message, start, end)
         })
 
         this.client.removeAllListeners('message')
@@ -74,6 +77,7 @@ class SocketPair {
             try {
                 let params = JSON.parse(this.req)
                 this.reqMethod = params.method
+
                 if (params.id)
                     this.mapStartTime[params.id] = (new Date()).getTime() //start time 
             } catch (e) {
@@ -97,7 +101,7 @@ class SocketPair {
             logger.error('client ws error ', error)
         })
     }
-    report(message, start, end) {
+    report(method, message, start, end) {
         try {
             let ip = (this.request.headers['x-forwarded-for'] ? this.request.headers['x-forwarded-for'].split(/\s*,\s/[0]) : null) || this.request.socket.remoteAddress || ''
 
@@ -109,7 +113,7 @@ class SocketPair {
                     ip: ip,
                     chain: this.chain,
                     pid: this.pid,
-                    method: this.reqMethod,
+                    method: method,
                     req: this.req,
                     resp: message,
                     code: message ? 200 : 404,
