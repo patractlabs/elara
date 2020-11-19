@@ -24,6 +24,9 @@ async function data(date) {
 
         if (!data[chain].total_project)
             data[chain].total_project = 1
+        else
+            data[chain].total_project++
+
         if (!data[chain].total_bandwidth)
             data[chain].total_bandwidth = 0
         if (!data[chain].total_timeout)

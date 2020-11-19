@@ -67,31 +67,19 @@ class Stat {
     static async _method(pid, method) {
         let date = formateDate(new Date())
         let key_method = KEY.METHOD(pid, date)
-
-        let reply = await redis.hgetall(key_method)
-        if (reply && reply[method]) {
-            await redis.hset(key_method, method, parseInt(reply[method]) + 1);
-        }
-        else
-            await redis.hset(key_method, method, 1);
+        await redis.hincrby(key_method, method, 1);
     }
     static async _chain(chain) {
         await redis.incr(KEY.TOTAL(chain))
     }
     static async _bandwidth(pid, bandwidth) {
         let date = formateDate(new Date())
-        await redis.incrby(KEY.BANDWIDTH(pid, date), bandwidth)
+        await redis.incrby(KEY.BANDWIDTH(pid, date), parseInt(bandwidth))
     }
     static async _code(pid, code) {
         let date = formateDate(new Date())
         let key_code = KEY.CODE(pid, date)
-
-        let reply = await redis.hgetall(key_code)
-        if (reply && reply[code]) {
-            await redis.hset(key_code, code, parseInt(reply[code]) + 1);
-        }
-        else
-            await redis.hset(key_code, code, 1);
+        await redis.hincrby(key_code, code,  1);
     }
     static async _header(header, pid) {
         let agent = header['user-agent'] ? header['user-agent'] : 'null'
@@ -104,24 +92,12 @@ class Stat {
     static async _agent(pid, agent) {
         let date = formateDate(new Date())
         let key_agent = KEY.AGENT(pid, date)
-
-        let reply = await redis.hgetall(key_agent)
-        if (reply && reply[agent]) {
-            await redis.hset(key_agent, agent, parseInt(reply[agent]) + 1);
-        }
-        else
-            redis.hset(key_agent, agent, 1);
+        await redis.hincrby(key_agent, agent,1)
     }
     static async _origin(pid, origin) {
         let date = formateDate(new Date())
         let key_origin = KEY.ORIGIN(pid, date)
-
-        let reply = await redis.hgetall(key_origin)
-        if (reply && reply[origin]) {
-            await redis.hset(key_origin, origin, parseInt(reply[origin]) + 1);
-        }
-        else
-            await redis.hset(key_origin, origin, 1);
+        await redis.hincrby(key_origin, origin,1)
     }
 
     //链的总请求数
@@ -197,7 +173,7 @@ class Stat {
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
                 requests[i].pid = requests[i].pid.replace(/(.){16}$/, '******')
-                if (requests[i].ip && 'Array' == typeof requests[i].ip &&requests[i].ip.length) {
+                if (requests[i].ip && Array.isArray(requests[i].ip) &&requests[i].ip.length) {
                     for (var j = 0; j < requests[i].ip.length; j++) {
                         requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
                     }
