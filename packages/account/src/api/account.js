@@ -4,8 +4,9 @@ const { now } = require('../lib/tool');
 const KEY = require('./KEY')
 
 class Account {
-    constructor(uid, vip, type, cratetime, ext) {
+    constructor(uid, username,vip, type, cratetime, ext) {
         this.uid = uid
+        this.username=username?username:this.uid
         this.vip = vip
         this.type = type
         this.cratetime = cratetime
@@ -23,18 +24,19 @@ class Account {
 
         let account = null
         if (reply && reply.uid) {
-            account = new Account(reply.uid, reply.vip, reply.type, reply.cratetime, { 'projects': projects })
+            account = new Account(reply.uid, reply.username,reply.vip, reply.type, reply.cratetime, { 'projects': projects })
         }
 
         return Result.WrapResult(account)
     };
 
     //创建新账户
-    static async create(uid, vip, type = 'github') {
+    static async create(uid, username,vip=0, type = 'github') {
         const timestamp = now()
         let cratetime = timestamp;
 
         redis.hset(KEY.UID(uid), 'uid', uid);
+        redis.hset(KEY.UID(uid), 'username', username);
         redis.hset(KEY.UID(uid), 'vip', vip);
         redis.hset(KEY.UID(uid), 'type', type);
         redis.hset(KEY.UID(uid), 'cratetime', cratetime);
