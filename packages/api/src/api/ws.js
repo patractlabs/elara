@@ -49,10 +49,13 @@ class SocketPair {
             let start = 0
             let end = 0
             let method = this.reqMethod
+            let req = this.req
             try {
                 let resp = JSON.parse(message)
-                if (resp.method)
+                if (resp.method) {
                     method = resp.method
+                    req = ''
+                }
 
                 if (resp.id && this.mapStartTime[resp.id]) {
                     start = this.mapStartTime[resp.id]
@@ -65,7 +68,7 @@ class SocketPair {
             }
 
             this.client.send(message)
-            this.report(method, message, start, end)
+            this.report(req, method, message, start, end)
         })
 
         this.client.removeAllListeners('message')
@@ -101,7 +104,7 @@ class SocketPair {
             logger.error('client ws error ', error)
         })
     }
-    report(method, message, start, end) {
+    report(req, method, message, start, end) {
         try {
             let ip = (this.request.headers['x-forwarded-for'] ? this.request.headers['x-forwarded-for'].split(/\s*,\s/[0]) : null) || this.request.socket.remoteAddress || ''
 
@@ -114,7 +117,7 @@ class SocketPair {
                     chain: this.chain,
                     pid: this.pid,
                     method: method,
-                    req: this.req,
+                    req: req,
                     resp: '',//暂时用不上，省空间 message,
                     code: message ? 200 : 404,
                     bandwidth: message.length,
