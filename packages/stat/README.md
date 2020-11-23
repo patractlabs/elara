@@ -126,9 +126,9 @@ args:
 ```{
         "id": "b78a79f98a2bb1a991a357504a5b04c1",
         "status": "Active",
-        "chain": "chainx",
+        "chain": "Polkadot",
         "name": "thedao",
-        "mail": "toxotguo@gmail.com",
+        "mail": "***@gmail.com",
         "secret": "b94e4f1e9c7386c92007ad40af1c882d",
         "createtime": "1600398327",
         "lasttime": "1600398327",
@@ -193,7 +193,7 @@ args:
     URL:/stat/chain
 
   ```
-  {"code":0,"mssage":"","data":{"ethereum":0,"chainx":"13"}}
+  {"code":0,"mssage":"","data":{"Kusama":0,"Polkadot":"13"}}
   ```
 #### 2. Latest request　
     METHOD:GET
