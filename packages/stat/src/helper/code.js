@@ -9,5 +9,6 @@ module.exports = {
     PROJECT_NOT_ACTIVE: (() => new Result(-6, "NotActive!"))(),
     RPC_ERROR: (() => new Result(-7, "RPC Error!"))(),
     PROJECT_ERROR: (() => new Result(-8, "Project  Error!"))(),
-    NO_ACCESS_ALLOWED: (() => new Result(-1, "No Access Allowed!"))()
+    NO_ACCESS_ALLOWED: (() => new Result(-9, "No Access Allowed!"))(),
+    BLACK_UID:(() => new Result(-10, "Black Uid!"))()
 }

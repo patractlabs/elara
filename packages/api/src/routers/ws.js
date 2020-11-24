@@ -5,7 +5,7 @@ const { logger } = require('../lib/log')
 const superagent = require('superagent')
 
 let accept = async function (id, ws, request) {
-    let reg = /\/ws\/([a-zA-Z]{0,20})\/([a-z0-9]{32})/
+    let reg = /^\/([a-zA-Z]{0,20})\/([a-z0-9]{32})$/
     let path = url.parse(request.url).path
     if (reg.test(path)) {
         let chain_pid = reg.exec(path)
@@ -17,6 +17,7 @@ let accept = async function (id, ws, request) {
             ws.send(JSON.stringify(check.body))
             ws.terminate()
             logger.error(chain, pid, check.body)
+            return 
         }
         try {
             let pair = new SocketPair(id, ws, chain, pid, request)

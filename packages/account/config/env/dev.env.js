@@ -19,5 +19,6 @@ module.exports = {
         'ClientSecret': 'e66f0a5a074a33aa71a60b16cf846ee8fa170165',
         'CallbackURL': 'http://127.0.0.1:7001/auth/github/callback'
     },
-    login: 'https://patract.io/login'
+    login: 'https://elara.patract.io/login',
+    defaultLevel:0
 }

@@ -22,6 +22,9 @@
     "env": {
         "NODE_ENV": "dev"
     },
+    "env_test": {
+        "NODE_ENV": "test"
+    },
     "env_production": {
         "NODE_ENV": "production"
     }

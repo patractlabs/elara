@@ -32,6 +32,14 @@ Based on the Koa framework, Redis is used for storage components, and Kafka is u
     },
 ```
 
+**If you are just for experience, you can turn on the switch in the configuration to skip the login state check**
+
+```
+# Edit ./config/env/dev.env.js
+
+ test:true,// skip the login state check
+
+```
  4. Start Service
  
  You can start the current process
@@ -47,7 +55,7 @@ Or use [pm2](https://github.com/Unitech/pm2) Management process
     pm2 start pm2.json --env dev
 ```
 
-You can find the running log in this directory `./ logs/`
+You can find the running log in this directory `./logs/`
 
 
 
@@ -71,7 +79,7 @@ node ./timer/dashboard.js
 #### 1. Request project  list 
 
     METHOD:GET
-    URL: /projects 
+    URL: /project/list
 
 
   ```
@@ -118,9 +126,9 @@ args:
 ```{
         "id": "b78a79f98a2bb1a991a357504a5b04c1",
         "status": "Active",
-        "chain": "chainx",
+        "chain": "Polkadot",
         "name": "thedao",
-        "mail": "toxotguo@gmail.com",
+        "mail": "***@gmail.com",
         "secret": "b94e4f1e9c7386c92007ad40af1c882d",
         "createtime": "1600398327",
         "lasttime": "1600398327",
@@ -143,10 +151,10 @@ args:
 #### 3. New project　
 
     METHOD:POST 
-    URL:/project
+    URL:/project/create
 
 args：
-- chain
+- chain:(Polkadot)
 - name:  (Validation rules /[a-zA-Z]{4,32}/ )
 
 #### 4. Statistics on the day of the project  GET　/stat/day/PID
@@ -185,7 +193,7 @@ args:
     URL:/stat/chain
 
   ```
-  {"code":0,"mssage":"","data":{"ethereum":0,"chainx":"13"}}
+  {"code":0,"mssage":"","data":{"Kusama":0,"Polkadot":"13"}}
   ```
 #### 2. Latest request　
     METHOD:GET

@@ -3,7 +3,10 @@ const Result = require('../lib/result');
 const CODE = require('./code')
 
 function checkAuthenticated(ctx) {
-
+    if (global.config.test) {
+        ctx.state.user = 'Only  For Test'
+        return true
+    }
     if (!ctx.isAuthenticated()) {
         ctx.response.body = (CODE.CHECK_AUTHENTIUCATED_FAIL).toString()
         return false

@@ -24,6 +24,9 @@ async function data(date) {
 
         if (!data[chain].total_project)
             data[chain].total_project = 1
+        else
+            data[chain].total_project++
+
         if (!data[chain].total_bandwidth)
             data[chain].total_bandwidth = 0
         if (!data[chain].total_timeout)
@@ -66,7 +69,7 @@ async function data(date) {
 (async function () {
     try {
         while (true) {
-            await sleep(10000)
+            await sleep(30000)
             let oneday = 24 * 60 * 60 * 1000
             let today = (new Date()).getTime()
 

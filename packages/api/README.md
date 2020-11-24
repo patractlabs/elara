@@ -17,9 +17,9 @@ Based on the Koa framework, and Kafka is used for message queues
 ```
     # Edit ./config/env/dev.env.js
      chain: {
-            'substrate': {
-                'rpc': ['****:**'], //configure as node IP: RPC port in step 2
-                'ws': ['****:**'] //configure as node IP: WS port in step 2
+            'Polkadot': {
+                'rpc': ['****:**'], //configure as node http://IP: RPC port in step 2
+                'ws': ['****:**'] //configure as node ws://IP: WS port in step 2
             }
         },
     kafka: {
@@ -45,13 +45,13 @@ Or use [pm2](https://github.com/Unitech/pm2) Management process
     pm2 start pm2.json --env dev
 ```
 
-You can find the running log in this directory `./ logs/`
+You can find the running log in this directory `./logs/`
 
 
 
 5. Developer access
 
-    Before Access.You must have a PID(project id).you can send a post request to the Stat Service to create a new project. You can view the [Interface detail ](https://github.com/patractlabs/elara/tree/master/packages/stat)
+    **Before Access.You must have a PID(project id).you can send a post request to the Stat Service to create a new project and get a PID. You can view the [Interface detail ](https://github.com/patractlabs/elara/tree/0.2/packages/stat#3-new-project)**
    
     - Method 1 : curl sends HTTP request:
         ```
@@ -68,7 +68,7 @@ You can find the running log in this directory `./ logs/`
 
     - Method 2: [wscat](https://github.com/websockets/wscat) sends websocket request:
         ```
-        parachain@ubuntu:~/elara$ wscat  -c ws://127.0.0.1:7003/ws/Polkadot/<PID>
+        parachain@ubuntu:~/elara$ wscat  -c ws://127.0.0.1:7003/Polkadot/<PID>
         Connected (press CTRL+C to quit)
         > {"id":1,"jsonrpc":"2.0","method":"chain_getBlock","params":[]}
         < {Response data...}
@@ -90,7 +90,7 @@ You can find the running log in this directory `./ logs/`
         console.log('latest block Hash', hash)
 
         // Websocket
-        const wsProvider = new WsProvider('ws://127.0.0.1:7003/ws/Polkadot/<PID>')
+        const wsProvider = new WsProvider('ws://127.0.0.1:7003/Polkadot/<PID>')
         const api = await ApiPromise.create({ provider: wsProvider })
         //Do something
 

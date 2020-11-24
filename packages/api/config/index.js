@@ -3,7 +3,7 @@ const extend = require('extend')
 
 module.exports = function config() {
     const env = process.env.NODE_ENV || 'dev'
-    console.log('Current NODE_ENV'　,env)
+    console.log('Current NODE_ENV', env)
     const config = {}
 
     const envPath = path.resolve(__dirname + `/env/${env}.env.js`)
@@ -19,5 +19,11 @@ module.exports = function config() {
         throw JSON.stringify({ test: `Load Extend Config Error：./config/extend.json` })
     }
 
-    return config
+    if (config.chain) {
+        for (chain in config.chain) {
+            config.chain[chain.toLowerCase()] = config.chain[chain]
+        }
+    }
+  
+        return config
 }

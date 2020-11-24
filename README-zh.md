@@ -68,7 +68,7 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
     - [Stat](https://github.com/patractlabs/elara/tree/master/packages/stat)　主要功能是开发者项目管理和数据统计(与Developer-Account Service共享登陆态数据库)
     - [API](https://github.com/patractlabs/elara/tree/master/packages/api)　主要负责用户请求代理接入(依赖Stat Service)
 
-    请参考每个服务的README依次安装
+    请参考每个服务的README**依次安装**
 
 3.  Developer access
     完成步骤２的安装和部署后，即可参考API服务的README的接入方式发送向链发送RPC请求．

@@ -11,12 +11,16 @@ let checkLimit = async (ctx, next) => {
     if (project.isOk()) {
         project = project.data
         //检测链是否匹配
-        if (chain != project.chain) {
+        if (chain.toLowerCase() != project.chain.toLowerCase()) {
             throw CODE.CHAIN_ERROR
         }
         //检测是否运行中
         if (!project.isActive()) {
             throw CODE.PROJECT_NOT_ACTIVE
+        }
+        let isBlack=await Limit.isBlack(project.uid)
+        if( isBlack){
+            throw CODE.BLACK_UID
         }
         let isLimit = await Limit.isLimit(project.uid, pid)
         //检测是否限流

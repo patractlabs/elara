@@ -21,18 +21,20 @@ class Stat {
         let resp = info.resp/*响应体 */
         let code = info.code
         let bandwidth = info.bandwidth/*响应带宽*/
-        let start = info.start
-        let end = info.end
-        let delay=((end-start)>config.timeout)?config.timeout:(end-start)
+        let start = parseInt(info.start)
+        let end = parseInt(info.end)
+        let delay = ((end - start) > config.timeout) ? config.timeout : (end - start)
 
         await Stat._request_response(info)//最新1000个请求记录
-        await Stat._timeout(pid, delay)//
+        await Stat._timeout(pid, parseInt(delay))//
         await Stat._today_request(pid)　//今日请求数统计
         await Stat._method(pid, method) //每日调用方法分类统计
         await Stat._bandwidth(pid, bandwidth)//每日带宽统计
         await Stat._code(pid, code)//每日调用响应码分类统计
         await Stat._header(header, pid)//请求头分析统计
         await Stat._chain(chain) //链的总请求数统计
+
+        logger.info('pid=', pid, ',protocol=', protocol, ',chain=', chain, ',method=', method, ',code=', code, ',bandwidth=', bandwidth, ',delay=', delay)
     }
 
     static async _request_response(info) {
@@ -44,9 +46,9 @@ class Stat {
 
         if (delay >= config.timeout)
             await redis.incr(KEY.TIMEOUT(pid, date))
-        let average = await redis.get(KEY.DELAY(pid, date))
+        let average = parseInt(await redis.get(KEY.DELAY(pid, date)))
         if (average) {//算平均
-            let requests = await redis.get(KEY.REQUEST(pid, date))
+            let requests = parseInt(await redis.get(KEY.REQUEST(pid, date)))
             average = ((requests * average + delay) / (requests + 1)).toFixed(2)
             await redis.set(KEY.DELAY(pid, date), average)
         }
@@ -65,31 +67,19 @@ class Stat {
     static async _method(pid, method) {
         let date = formateDate(new Date())
         let key_method = KEY.METHOD(pid, date)
-
-        let reply = await redis.hgetall(key_method)
-        if (reply && reply[method]) {
-            await redis.hset(key_method, method, parseInt(reply[method]) + 1);
-        }
-        else
-            await redis.hset(key_method, method, 1);
+        await redis.hincrby(key_method, method, 1);
     }
     static async _chain(chain) {
         await redis.incr(KEY.TOTAL(chain))
     }
     static async _bandwidth(pid, bandwidth) {
         let date = formateDate(new Date())
-        await redis.incrby(KEY.BANDWIDTH(pid, date), bandwidth)
+        await redis.incrby(KEY.BANDWIDTH(pid, date), parseInt(bandwidth))
     }
     static async _code(pid, code) {
         let date = formateDate(new Date())
         let key_code = KEY.CODE(pid, date)
-
-        let reply = await redis.hgetall(key_code)
-        if (reply && reply[code]) {
-            await redis.hset(key_code, code, parseInt(reply[code]) + 1);
-        }
-        else
-            await redis.hset(key_code, code, 1);
+        await redis.hincrby(key_code, code,  1);
     }
     static async _header(header, pid) {
         let agent = header['user-agent'] ? header['user-agent'] : 'null'
@@ -102,24 +92,12 @@ class Stat {
     static async _agent(pid, agent) {
         let date = formateDate(new Date())
         let key_agent = KEY.AGENT(pid, date)
-
-        let reply = await redis.hgetall(key_agent)
-        if (reply && reply[agent]) {
-            await redis.hset(key_agent, agent, parseInt(reply[agent]) + 1);
-        }
-        else
-            redis.hset(key_agent, agent, 1);
+        await redis.hincrby(key_agent, agent,1)
     }
     static async _origin(pid, origin) {
         let date = formateDate(new Date())
         let key_origin = KEY.ORIGIN(pid, date)
-
-        let reply = await redis.hgetall(key_origin)
-        if (reply && reply[origin]) {
-            await redis.hset(key_origin, origin, parseInt(reply[origin]) + 1);
-        }
-        else
-            await redis.hset(key_origin, origin, 1);
+        await redis.hincrby(key_origin, origin,1)
     }
 
     //链的总请求数
@@ -194,11 +172,17 @@ class Stat {
             let list = await redis.lrange(KEY.REQUEST_RESPONSE(), 0, size)
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
-                requests[i].pid=requests[i].pid.replace(/(.){16}$/,'******')
+                requests[i].pid = requests[i].pid.replace(/(.){16}$/, '******')
+                if (requests[i].ip && Array.isArray(requests[i].ip) &&requests[i].ip.length) {
+                    for (var j = 0; j < requests[i].ip.length; j++) {
+                        requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
+                    }
+                }
             }
         } catch (e) {
             logger.error('request_response Parse Error!', e)
         }
+        
         return requests
     }
     static async dashboard() {
