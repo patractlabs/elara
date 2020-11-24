@@ -51,7 +51,7 @@ You can find the running log in this directory `./logs/`
 
 5. Developer access
 
-    **Before Access.You must have a PID(project id).you can send a post request to the Stat Service to create a new project and get a PID. You can view the [Interface detail ](https://github.com/patractlabs/elara/tree/0.2/packages/stat#3-new-project)**
+    **Before Access.You must have a PID(project id).you can send a post request to the Stat Service to create a new project and get a PID. You can view the [Interface detail ](https://github.com/patractlabs/elara/tree/master/packages/stat#3-new-project)**
    
     - Method 1 : curl sends HTTP request:
         ```
