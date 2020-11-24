@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <title>Elara Dashboard</title>
+    <meta content="Dashboard" name="description" />
+    <link rel="icon" href="https://elara.patract.io/favicon.ico">
+    <link rel="stylesheet" href="../plugins/morris/morris.css">
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+    <!-- Navigation Bar-->
+    <header id="topnav">
+
+        <!-- end topbar-main -->
+
+        <!-- MENU Start -->
+        <div class="navbar-custom">
+            <div class="container-fluid">
+                <div id="navigation">
+                    <!-- Navigation Menu-->
+                    <ul class="navigation-menu">
+                        <!--
+                        <li class="has-submenu">
+                            <a href="#Substrate"><i class="mdi mdi-home"></i>Substrate</a>
+                        </li>-->
+
+                        <li class="has-submenu">
+                            <a href="#Polkadot"><i class="mdi mdi-buffer"></i>Polkadot</a>
+
+                        </li>
+                        <!--
+                        <li class="has-submenu">
+                            <a href="#Kusama"><i class="mdi mdi-black-mesa"></i>Kusama</a>
+
+                        </li>-->
+                    </ul>
+                    <!-- End navigation menu -->
+                </div> <!-- end #navigation -->
+            </div> <!-- end container -->
+        </div> <!-- end navbar-custom -->
+    </header>
+    <!-- End Navigation Bar-->
+
+    <!-- page wrapper start -->
+    <div class="wrapper" style="padding-top: 30px;">
+        <div class="page-title-box">
+            <div class="container-fluid">
+            </div>
+            <!-- end container-fluid -->
+
+        </div>
+        <!-- page-title-box -->
+
+        <div class="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-primary mini-stat position-relative">
+                            <div class="card-body">
+                                <div class="mini-stat-desc">
+                                    <h6 class="text-uppercase verti-label text-white-50">Request</h6>
+                                    <div class="text-white">
+                                        <h6 class="text-uppercase mt-0 text-white-50">Request</h6>
+                                        <h3 class="mb-3 mt-0" id="request"></h3>
+                                        <div class="">
+
+                                        </div>
+                                    </div>
+                                    <div class="mini-stat-icon">
+                                        <i class="mdi mdi-cube-outline display-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-primary mini-stat position-relative">
+                            <div class="card-body">
+                                <div class="mini-stat-desc">
+                                    <h6 class="text-uppercase verti-label text-white-50">Bandwidth</h6>
+                                    <div class="text-white">
+                                        <h6 class="text-uppercase mt-0 text-white-50">Bandwidth</h6>
+                                        <h3 class="mb-3 mt-0" id="bandwidth"></h3>
+                                        <div class="">
+
+                                        </div>
+                                    </div>
+                                    <div class="mini-stat-icon">
+                                        <i class="mdi mdi-buffer display-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-primary mini-stat position-relative">
+                            <div class="card-body">
+                                <div class="mini-stat-desc">
+                                    <h6 class="text-uppercase verti-label text-white-50">Average Delay</h6>
+                                    <div class="text-white">
+                                        <h6 class="text-uppercase mt-0 text-white-50">Average Delay</h6>
+                                        <h3 class="mb-3 mt-0" id="delay"> </h3>
+                                        <div class="">
+
+                                        </div>
+                                    </div>
+                                    <div class="mini-stat-icon">
+                                        <i class="mdi mdi-tag-text-outline display-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-primary mini-stat position-relative">
+                            <div class="card-body">
+                                <div class="mini-stat-desc">
+                                    <h6 class="text-uppercase verti-label text-white-50">Timeout</h6>
+                                    <div class="text-white">
+                                        <h6 class="text-uppercase mt-0 text-white-50">Timeout</h6>
+                                        <h3 class="mb-3 mt-0" id="timeout"></h3>
+                                        <div class="">
+
+                                        </div>
+                                    </div>
+                                    <div class="mini-stat-icon">
+                                        <i class="mdi mdi-briefcase-check display-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-12 border-right">
+                                        <h4 class="mt-0 header-title mb-4">Last 7 Days Requests</h4>
+                                        <div id="morris-area-example" class="dashboard-charts morris-charts"></div>
+                                    </div>
+
+                                </div>
+                                <!-- end row -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end col -->
+
+                    <div class="col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title mb-4">Today Top Method Call</h4>
+                                <div id="morris-donut-example" class="dashboard-charts morris-charts"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+
+
+
+                <div class="row">
+                    <div class="col-xl-6" style="flex: 0 0 100%;max-width: 100%;">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title mb-4">Latest Requests</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">PID</th>
+                                                <th scope="col">Time</th>
+                                                <th scope="col">Protocol</th>
+                                                <th scope="col">From</th>
+                                                <th scope="col">Origin</th>
+                                                <th scope="col">Agent</th>
+                                                <th scope="col">Method</th>
+                                                <th scope="col">Bandwidth</th>
+                                                <th scope="col" colspan="2">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-requests">
+
+
+
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container-fluid -->
+        </div>
+        <!-- end page content-->
+
+    </div>
+    <!-- page wrapper end -->
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    2020 <span class="d-none d-sm-inline-block"> - Create By <a href="https://elara.patract.io" title="">Patract Labs</a></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer -->
+
+    <script id="requests" type="text/template">
+        {{ each }}
+            <tr>
+                <th scope="row">{{$value.pid}}</th>
+                <td> {{$value.start}}</td>
+                <td>
+                    <div>
+                        {{$value.protocol}}
+                    </div>
+                </td>
+                <td> {{$value.ip}}</td>
+                <td> {{$value.origin}} </td>
+                <td><span > {{$value.agent}}</span></td>
+                <td>
+                    <div>
+                        <a href="#" class="btn btn-primary btn-sm">{{$value.method}}</a>
+                    </div>
+                </td>
+               
+                <td>{{$value.bandwidth}} </td>
+                <td><span class="badge badge-success">{{$value.code}}</span></td>
+              </tr>
+              {{/each}}
+        </script>
+
+    <!-- jQuery  -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/jquery.slimscroll.js"></script>
+    <script src="assets/js/waves.min.js"></script>
+    <script src="assets/js/template-web.js"></script>
+
+    <script src="../plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+
+    <!-- Peity JS -->
+    <script src="../plugins/peity/jquery.peity.min.js"></script>
+
+    <script src="../plugins/morris/morris.min.js"></script>
+    <script src="../plugins/raphael/raphael-min.js"></script>
+
+    <script src="assets/pages/dashboard.js"></script>
+
+    <!-- App js -->
+    <script src="assets/js/app.js"></script>
+
+</body>
+
+</html>

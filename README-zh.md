@@ -14,14 +14,14 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 
 本项目分为四大里程碑实现，我们将分版本交付如下解决方案和服务：
 
-- v0.1：实现Substrate 节点接入
+- v0.1：实现Substrate 节点接入 [Proposal 0.1](https://polkadot.polkassembly.io/post/103)
 
   - 创建一个服务端框架，实现对Substrate节点Rpc服务的代理接入、自动化监控和数据统计
 
   - 支持开发者以Http和websocket协议通过该服务端框架统一接入网络
   - 开发一个前端仪表盘，展示Substrate节点rpc服务的相关监控统计数据
   
-- v0.2：实现功能扩展和性能优化
+- v0.2：实现功能扩展和性能优化 [Proposal 0.2](https://polkadot.polkassembly.io/post/141)
 
   - 实现账户空间功能，支持开发者github第三方登录系统，为开发者建立账户空间
   - 支持账户空间下建立多个项目
@@ -46,7 +46,11 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 ## 当前开发进度
 
 
-当前，我们已完成0.1 版本开发，可以查看线上 [Elara Dashboard](https://elara.patract.io/dashboard)
+当前，我们已完成0.2 版本开发，你可以访问在线服务[elara.patract.io](https://elara.patract.io/) ．
+
+可以查阅: 
+- 0.1 [Repositorie](https://github.com/patractlabs/elara/tree/0.1/) [ Report ](https://polkadot.polkassembly.io/post/139) 
+- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/xxx) 
 
 
 ## 如何使用代码
@@ -59,110 +63,12 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 
    
 2. 安装
-    ```
-        # Clone the code from github
-        git clone https://github.com/patractlabs/elara.git
+     Elara后端分为三个服务：
+    - [Developer-Account](https://github.com/patractlabs/elara/tree/master/packages/account)　主要功能是开发者账户登陆状态维护
+    - [Stat](https://github.com/patractlabs/elara/tree/master/packages/stat)　主要功能是开发者项目管理和数据统计(与Developer-Account Service共享登陆态数据库)
+    - [API](https://github.com/patractlabs/elara/tree/master/packages/api)　主要负责用户请求代理接入(依赖Stat Service)
 
-        # Install the dependencies
-        cd elara
-        yarn install
-    ```
+    请参考每个服务的README**依次安装**
 
-3. 准备
-
-    - Elara使用[Redis](https://github.com/redis/redis)作为存储组件，你需要准备好一个Redis运行实例（可以自建也可以使用云服务提供的Redis服务），在下面的配置环境将会使用到实例的Host/Port/password．
-    - 运行Substrate节点，并开启运行参数　`--ws-port ` 　` --rpc-port `　`--rpc-cors all` ` --rpc-external`  `--ws-external`.在下面的配置环节将会用到节点的IP和Port.  [查看官方文档如何创建Substrate链](https://substrate.dev/docs/en/tutorials/create-your-first-substrate-chain/)
-
-   
-4. 配置
-
-    ```
-    # Edit elara/config/env/dev.env.js
-
-    chain: {
-        'substrate': {
-            'rpc': ['****:**'], //配置为步骤３中的节点IP:RPC端口
-            'ws': ['****:**'] //配置为步骤３中的节点IP:WS端口
-        }
-    },
-    redis: {
-        host: '***', //配置为步骤３中的Redis实例的Host
-        port: '***',//配置为步骤３中的Redis实例的Port
-        password: '***'//配置为步骤３中的Redis实例的Password
-    }
-    ```
-    
-5. 启动服务
-
-    你可以当前进程启动
-    ```
-    node app.js
-    ```
-    或者使用[pm2](https://github.com/Unitech/pm2)管理进程
-    ```
-    pm2 start pm2.json --env dev
-    ```
-
-    日志路径：`elara/logs/`
-
-6. 启动仪表盘
-    ```
-    cd ./daemon
-    nohub node dashboard.js &
-    ```
-
-7. 开发者接入
-
-   
-    - 方式一 :　curl 发送http请求:
-    ```
-    #curl http
-    curl --location --request POST 'http://localhost:8001' \
-        --header 'Content-Type: application/json' \
-        --data-raw '{
-            "id":1,
-            "jsonrpc":"2.0",
-            "method":"chain_getBlock",
-            "params":[]
-        }'
-    ```
-    - 方式二 :[wscat](https://github.com/websockets/wscat) 发送Websocket请求:
-    ```
-    parachain@ubuntu:~/elara$ wscat  -c ws://localhost:8001/
-    Connected (press CTRL+C to quit)
-    > {"id":1,"jsonrpc":"2.0","method":"chain_getBlock","params":[]}
-    < {响应...}
-    > 
-    ```
-     - 方式三 : 使用SDK
-
-        可以引用[polkadot-js](https://github.com/polkadot-js)，使用以下类似代码以Http或Websocket接入节点．
-
-
-        ```
-        const { ApiPromise, WsProvider } = require('@polkadot/api');
-        const { HttpProvider } = require('@polkadot/rpc-provider');
-
-        (async function () {
-        // Http
-        const httpProvider = new HttpProvider('http://localhost:8001')
-        const hash = await httpProvider.send('chain_getBlockHash', [])
-        console.log('latest block Hash', hash)
-
-        // Websocket
-        const wsProvider = new WsProvider('ws://localhost:8001')
-        const api = await ApiPromise.create({ provider: wsProvider })
-        //Do something
-
-        })()
-        ```
-
-        我们也在`elara/example/`下提供了参考示例.
-        可以执行示例:
-        ```
-        node client.js
-        ```
-    
-8. 验证
-
-    你可以打开`http://localhost:8001/dashboard`　查看监控仪表盘页面．如果有接入请求，仪表盘会展示最新的请求信息．
+3.  Developer access
+    完成步骤２的安装和部署后，即可参考API服务的README的接入方式发送向链发送RPC请求．
