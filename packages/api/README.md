@@ -120,6 +120,6 @@ You can find the running log in this directory `./logs/`
 
 -  WebSocket Access
 
-    URL: /ws/＜chain＞/＜PID＞
+    URL: /＜chain＞/＜PID＞
 
     *PIDd=[a-z0-9]{32}*
