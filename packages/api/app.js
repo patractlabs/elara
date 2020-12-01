@@ -23,15 +23,17 @@ app
     .use(async (ctx, next) => {
         return next().catch((error) => {
             let code = 500
-            let msg = 'unknown error'
+            let message = 'unknown error'
+            let data=''
             logger.error(error)
             if (error instanceof Result) {
                 code = error.code
-                msg = error.message
+                message = error.message
             }
             ctx.body = {
                 code,
-                msg
+                message,
+                data
             }
         })
     })
