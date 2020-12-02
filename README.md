@@ -42,7 +42,7 @@ Riot Group for disscusion: https://app.element.io/#/room/#PatractLabsDev:matrix.
 
 You Can view:
  - 0.1 [Repositorie](https://github.com/patractlabs/elara/tree/0.1/) [ Report ](https://polkadot.polkassembly.io/post/139) 
-- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/xxx) 
+- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/192) 
 
 
 ## How To Use
