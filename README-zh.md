@@ -50,7 +50,7 @@ Riot Group for disscusion: https://app.element.io/#/room/!RZjiuwwssNFJZxaTjg:mat
 
 可以查阅: 
 - 0.1 [Repositorie](https://github.com/patractlabs/elara/tree/0.1/) [ Report ](https://polkadot.polkassembly.io/post/139) 
-- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/xxx) 
+- 0.2 [Repositorie](https://github.com/patractlabs/elara/tree/0.2/) [ Report ](https://polkadot.polkassembly.io/post/192) 
 
 
 ## 如何使用代码
