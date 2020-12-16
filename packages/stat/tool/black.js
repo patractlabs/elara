@@ -13,6 +13,7 @@ program
     .option('--deluid <value>', 'remove black uid?')
     .option('--pid <value>', 'pid?')
     .option('--status <value>', 'status?')
+    .option('--delpid <value>', 'remove pid?')
     .parse(process.argv);
 
 (async function () {
@@ -46,7 +47,22 @@ program
             console.log('Pid:', await Project.info(program.pid));
         }
     }
-    
+    else if (program.delpid) {
+        //删除项目
+        let pid = program.delpid;
+        let info = await Project.info(pid);
+        if (info.uid) {
+            //从用户的项目列表中删除
+            await redis.srem(KEY.PROJECT(info.uid), pid);
+        }
+        //从总列表中删除
+        await redis.srem(KEY.PROJECTS(), pid);
+        //删除详情
+        await redis.del(KEY.PROJECTINFO(pid));
+    }
+    else {
+        console.log('Args Error!');
+    }
     process.exit()
 })()
 

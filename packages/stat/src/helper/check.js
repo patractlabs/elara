@@ -4,7 +4,7 @@ const CODE = require('./code')
 
 function checkAuthenticated(ctx) {
     if (global.config.test) {
-        ctx.state.user = 'Only  For Test'
+        ctx.state.user = 'Only For Test'
         return true
     }
     if (!ctx.isAuthenticated()) {

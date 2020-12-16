@@ -8,6 +8,7 @@ const app = new Koa()
 const WebSocketServer = require('ws').Server;
 const { accept } = require('./src/routers/ws')
 const crypto = require("crypto");
+const kafka = require("./src/api/kafka");
 
 global.message = {}
 
@@ -24,7 +25,7 @@ app
         return next().catch((error) => {
             let code = 500
             let message = 'unknown error'
-            let data=''
+            let data = ''
             logger.error(error)
             if (error instanceof Result) {
                 code = error.code
@@ -51,17 +52,26 @@ app
 app.on('error', error => {
     logger.error(error)
 })
+
 let server = app.listen(config.port)
 let wss = new WebSocketServer({ server: server, clientTracking: true });
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
+    kafka.stat({
+        'key': 'connections',
+        'message': {
+            protocol: 'websocket',
+            pid: process.pid,//考虑多进程
+            connections: wss.clients.size
+        }
+    });
     let id = crypto.randomBytes(16).toString('hex');
     global.message[id] = []
     ws.on('message', function (m) {
-        global.message[id].push(m) 
+        global.message[id].push(m)
     })
 
-    accept(id,ws, request)
+    accept(id, ws, request)
 })
 
 wss.on('error', (error) => {

@@ -178,6 +178,9 @@ class Stat {
                         requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
                     }
                 }
+                else if(requests[i].ip){
+                    requests[i].ip= requests[i].ip.replace(/^(\d*)\.(\d*)/, '***.***')
+                }
             }
         } catch (e) {
             logger.error('request_response Parse Error!', e)

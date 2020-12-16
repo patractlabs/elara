@@ -34,6 +34,9 @@ consumer.on('message', function (message) {
         switch (message.key) {
             case 'request': {
                 stat.request(JSON.parse(message.value))
+            } 
+            case 'connections':{
+                //统计当前连接数
             }
             default:
                 break;

@@ -16,5 +16,6 @@ module.exports = {
     ORIGIN: (pid, date) => pid + '_origin_' + date,
     DASHBOARD: () => 'dashboard',
     BLACKUID:()=>'block_uid',
-    PROJECTINFO:(pid)=>'project_info_'+pid
+    PROJECTINFO:(pid)=>'project_info_'+pid,
+    TOTAL_USER:()=>'user_total'
 }

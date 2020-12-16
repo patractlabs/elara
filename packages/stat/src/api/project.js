@@ -33,14 +33,33 @@ class Project {
         return Result.WrapResult(project)
     };
 
-    //获取账户下所有项目详情
-    static async getAllByAccount(uid) {
-        let list = [];
+    //获取账户下按链统计的项目计数
+    static async getAllCountByAccount(uid) {
+        let list = {};
         let projects = [];
         let members = await redis.smembers(KEY.PROJECT(uid))
         for (var i = 0; i < members.length && i < config.projects; i++) {
             projects[i] = await Project.info(members[i])
             if (projects[i].isOk()) {
+                if (list[projects[i].data.chain]) {
+                    list[projects[i].data.chain]++
+                }
+                else {
+                    list[projects[i].data.chain] = 1
+                }
+            }
+        }
+        return Result.WrapResult(list)
+    }
+
+    //获取账户下所有项目详情
+    static async getAllByAccount(uid, chain) {
+        let list = [];
+        let projects = [];
+        let members = await redis.smembers(KEY.PROJECT(uid))
+        for (var i = 0; i < members.length && i < config.projects; i++) {
+            projects[i] = await Project.info(members[i])
+            if ((projects[i].isOk()) && (!chain || projects[i].data.chain == chain)) {
                 list.push(projects[i].data)
             }
         }
@@ -55,6 +74,19 @@ class Project {
                 redis.hset(KEY.PROJECTINFO(pid), 'status', 'Stop');
             }
         }
+    }
+    //判断是否存在同名
+    static async isExist(uid, chain, name) {
+        let list = [];
+        let projects = [];
+        let members = await redis.smembers(KEY.PROJECT(uid))
+        for (var i = 0; i < members.length && i < config.projects; i++) {
+            projects[i] = await Project.info(members[i])
+            if (projects[i].isOk() && (chain == projects[i].data.chain && name == projects[i].data.name)) {
+                return true
+            }
+        }
+        return false
     }
     //创建新项目
     static async create(uid, chain, name) {
