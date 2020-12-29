@@ -5,8 +5,8 @@ module.exports = {
     port: 7003,
     chain: {
         'Polkadot': {
-            'rpc': ['http://127.0.0.1:9933'],
-            'ws': ['ws://127.0.0.1:9944']
+            'rpc': ['https://polkadot.elara.patract.io'],
+            'ws': ['wss://polkadot.elara.patract.io']
         }
     },
     kafka:{

@@ -16,7 +16,8 @@ module.exports = function config() {
     try {
         extend(true, config, require(path.resolve(__dirname + '/extend.json')))
     } catch (err) {
-        throw JSON.stringify({ test: `Load Extend Config Error：./config/extend.json` })
+        console.log(err)
+        throw JSON.stringify({ test: 'Load Extend Config Error：'+__dirname+'/extend.json' })
     }
 
     if (config.chain) {
@@ -24,6 +25,7 @@ module.exports = function config() {
             config.chain[chain.toLowerCase()] = config.chain[chain]
         }
     }
-  
-        return config
+
+    console.log(config)
+    return config
 }

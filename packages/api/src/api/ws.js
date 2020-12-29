@@ -1,6 +1,8 @@
 const WebSocket = require('ws')
-const { logger } = require('../lib/log')
-const kafka = require("./kafka")
+const { logger } = require('../../../lib/log')
+const kafka = require("../../../lib/kafka")
+const { isUnsafe } = require('../../../lib/helper/check')
+const CODE = require('../../../lib/helper/code')
 
 let websocketPair = new Set()
 
@@ -80,6 +82,15 @@ class SocketPair {
             try {
                 let params = JSON.parse(this.req)
                 this.reqMethod = params.method
+                if (isUnsafe(params)) {
+
+                    this.client.send(JSON.stringify({
+                        "jsonrpc": params.jsonrpc,
+                        "error": CODE.UNSAFE_METHOD,
+                        "id": params.id
+                    }))
+                    return
+                }
 
                 if (params.id)
                     this.mapStartTime[params.id] = (new Date()).getTime() //start time 

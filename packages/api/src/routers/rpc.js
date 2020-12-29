@@ -1,8 +1,9 @@
-const Result = require('../lib/result')
 const rpc = require("../api/rpc")
-const kafka = require("../api/kafka")
-const { logger } = require('../lib/log')
+const kafka = require("../../../lib/kafka")
+const { logger } = require('../../../lib/log')
 const superagent = require('superagent')
+const {isUnsafe}=require('../../../lib/helper/check')
+const CODE = require('../../../lib/helper/code')
 
 let api = async (ctx, next) => {
     let chain = ctx.request.params.chain
@@ -11,15 +12,20 @@ let api = async (ctx, next) => {
 
     let check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})
     if (0 == check.body.code) {
-        try {
             let start = (new Date()).getTime()
             let res = await rpc.http(chain, req)
             let end = (new Date()).getTime()
             ctx.response.body = res.body
 
             let ip = (ctx.request.header['x-forwarded-for'] ? ctx.request.header['x-forwarded-for'].split(/\s*,\s/[0]) : null) || ''
-
-            kafka.stat({
+            if( isUnsafe(req)){
+                ctx.response.body=JSON.stringify({
+                    "jsonrpc": req.jsonrpc,
+                    "error": CODE.UNSAFE_METHOD,
+                    "id": req.id
+                })
+            }
+             kafka.stat({
                 'key': 'request', 
                 'message': {
                     protocol: ctx.request.protocol,
@@ -36,20 +42,13 @@ let api = async (ctx, next) => {
                     end: end
                 }
             })
-
-            return next()
-
-        } catch (e) {
-            logger.error('Stat Error', e)
-            ctx.response.body = JSON.stringify(new Result(-7, "RPC Error!"))
-        }
     }
     else {
         logger.error(chain, pid, check.body)
         ctx.response.body = check.body
     }
-    return next()
 
+    return next()
 }
 
 module.exports = {

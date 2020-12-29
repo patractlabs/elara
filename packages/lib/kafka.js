@@ -1,4 +1,4 @@
-const { logger } = require('../lib/log')
+const { logger } = require('./log')
 
 var kafka = require('kafka-node'),
     Producer = kafka.Producer,

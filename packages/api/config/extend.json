@@ -1,1 +1,79 @@
-{}
+{
+    "methods": {
+        "variable": {
+            "non-history": [
+                "author_hasSessionKeys",
+                "author_hasKey",
+                "state_call",
+                "state_getKeys",
+                "state_getStorageSize",
+                "state_getMetadata",
+                "state_getRuntimeVersion",
+                "state_getPairs",
+                "state_getKeysPaged",
+                "state_getReadProof",
+                "childstate_getKeys",
+                "childstate_getStorage",
+                "childstate_getStorageHash",
+                "childstate_getStorageSize",
+                "offchain_localStorageGet",
+                "chain_getBlock", 
+                "state_getStorageHash" 
+            ],
+            "history": [
+                "chain_getHeader", 
+                "chain_getBlockHash", 
+                "state_getStorage",
+                "state_queryStorage", 
+                "state_queryStorageAt" 
+            ]
+        },
+        "subscription": {
+            "non-key": [
+                "author_submitAndWatchExtrinsic",
+                "chain_subscribeAllHeads"
+            ],
+            "key": [
+                "chain_subscribeNewHead",
+                "chain_subscribeFinalizedHeads",
+                "state_subscribeRuntimeVersion",
+                "state_subscribeStorage"
+            ]
+        },
+        "fixed": {
+            "constant": [
+                "system_name",
+                "system_version",
+                "system_chain",
+                "system_chainType",
+                "system_properties",
+                "system_networkState"
+            ],
+            "non-constant": [
+                "author_pendingExtrinsics",
+                "chain_getHeader", 
+                "chain_getBlock", 
+                "chain_getBlockHash", 
+                "chain_getFinalizedHead",
+                "state_getMetadata", 
+                "state_getRuntimeVersion", 
+                "system_peers",
+                "system_syncState",
+                "system_health"
+            ]
+        },
+        "unsafe": [
+            "author_insertKey",
+            "author_rotateKeys",
+            "author_removeExtrinsic",
+            "system_addReservedPeer",
+            "system_removeReservedPeer",
+            "system_addLogFilter",
+            "system_resetLogFilter",
+            "offchain_localStorageSet",
+            "system_localPeerId",
+            "system_localListenAddresses",
+            "system_nodeRoles"
+        ]
+    }
+}

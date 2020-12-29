@@ -1,7 +1,7 @@
 
 const SocketPair = require("../api/ws")
 const url = require('url')
-const { logger } = require('../lib/log')
+const { logger } = require('../../../lib/log')
 const superagent = require('superagent')
 
 let accept = async function (id, ws, request) {

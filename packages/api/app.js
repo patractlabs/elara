@@ -1,14 +1,14 @@
 const Koa = require('koa')
 const koaBody = require('koa-body')
 const router = require('./router')
-const { logger, accessLogger } = require('./src/lib/log')
-const Result = require('./src/lib/result')
+const { logger, accessLogger } = require('../lib/log')
+const Result = require('../lib/result')
 const config = global.config = require('./config/index')()
 const app = new Koa()
 const WebSocketServer = require('ws').Server;
 const { accept } = require('./src/routers/ws')
 const crypto = require("crypto");
-const kafka = require("./src/api/kafka");
+const kafka = require("../lib/kafka");
 
 global.message = {}
 
