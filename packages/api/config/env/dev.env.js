@@ -3,11 +3,9 @@ process.env.DEBUG = process.env.DEBUG || 'dev-errer:*'
 module.exports = {
     name: 'elara',
     port: 7003,
-    chain: {
-        'Polkadot': {
-            'rpc': ['https://polkadot.elara.patract.io'],
-            'ws': ['wss://polkadot.elara.patract.io']
-        }
+    messengers: {
+            'polkadot': ['ws://127.0.0.1:7004'],
+            'kusama': ['ws://127.0.0.1:7004']
     },
     kafka:{
         'kafkaHost':'127.0.0.1:9092',

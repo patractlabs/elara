@@ -1,5 +1,5 @@
 
-const SocketPair = require("../api/ws")
+
 const url = require('url')
 const { logger } = require('../../../lib/log')
 const superagent = require('superagent')
@@ -20,7 +20,7 @@ let accept = async function (id, ws, request) {
             return 
         }
         try {
-            let pair = new SocketPair(id, ws, chain, pid, request)
+            messengers.wsClient(id, ws, chain, pid, request)
         } catch (e) {
             ws.terminate()
             logger.error("Socket Error", e)

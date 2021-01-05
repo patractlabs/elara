@@ -1,12 +1,4 @@
 {
-    "un-subscription":{
-        "author_extrinsicUpdate":"author_unwatchExtrinsic",
-        "chain_allHead":"chain_unsubscribeAllHeads",
-        "chain_newHead":"chain_unsubscribeNewHeads",
-        "chain_finalizedHead":"chain_unsubscribeFinalizedHeads",
-        "state_runtimeVersion":"state_unsubscribeRuntimeVersion",
-        "state_storage":"state_unsubscribeStorage"
-    },
     "methods": {
         "variable": {
             "non-history": [

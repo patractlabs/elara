@@ -1,18 +1,14 @@
 const Koa = require('koa')
 const koaBody = require('koa-body')
-const router = require('./router')
 const { logger, accessLogger } = require('../lib/log')
 const Result = require('../lib/result')
-const config = global.config = require('./config/index')()
+global.config = require('./config/index')()
 const app = new Koa()
 const WebSocketServer = require('ws').Server;
-const { accept } = require('./src/routers/ws')
 const crypto = require("crypto");
-const kafka = require("../lib/kafka");
-const Messengers=require("./src/api/messenger")
-global.message = {}
+const Router=require('./src/router');
 
-app.keys = config.keys
+
 app
     .use(koaBody({ multipart: true }))
     .use(accessLogger())
@@ -38,42 +34,19 @@ app
             }
         })
     })
-    .use((ctx, next) => {
-        ctx.set('Access-Control-Allow-Origin', '*')
-        ctx.set('Content-Type', 'application/json')
-        ctx.set('Access-Control-Expose-Headers', 'Access-Control-Allow-Origin')
-        ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
-        ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH, OPTIONS')
-        ctx.set('Access-Control-Allow-Credentials', true)
-        return next()
-    })
-    .use(router())
 
 app.on('error', error => {
     logger.error(error)
 })
 
-global.messengers=new Messengers()
-
+let router=new Router();
 let server = app.listen(config.port)
 let wss = new WebSocketServer({ server: server, clientTracking: true });
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
-    kafka.stat({
-        'key': 'connections',
-        'message': {
-            protocol: 'websocket',
-            pid: process.pid,//考虑多进程
-            connections: wss.clients.size
-        }
-    });
+    
     let id = crypto.randomBytes(16).toString('hex');
-    global.message[id] = []
-    ws.on('message', function (m) {
-        global.message[id].push(m)
-    })
-
-    accept(id, ws, request)
+    router.accept(id,ws)
 })
 
 wss.on('error', (error) => {
