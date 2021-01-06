@@ -7,7 +7,7 @@ let accept = async function (id, ws, request) {
     let path = url.parse(request.url).path
     if (reg.test(path)) {
         let chain_pid = reg.exec(path)
-        let chain = chain_pid[1]
+        let chain = chain_pid[1].toLowerCase()
         let pid = chain_pid[2]
 
         let check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})

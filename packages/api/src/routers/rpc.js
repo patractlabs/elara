@@ -11,7 +11,7 @@ const crypto = require("crypto");
 const { toJSON } = require("../../../lib/helper/assist")
 
 let api = async (ctx, next) => {
-    let chain = ctx.request.params.chain
+    let chain = ctx.request.params.chain.toLowerCase()
     let pid = ctx.request.params.pid
     let req = ctx.request.body
 
@@ -33,7 +33,6 @@ let api = async (ctx, next) => {
             return new Promise((resolve, reject) => {
                 messengers.httpClient(id, chain, pid, req, async (resp) => {
                     end = (new Date()).getTime()
-                    console.log(start, end)
                     resolve(resp)
                 })
             })
