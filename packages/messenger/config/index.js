@@ -14,10 +14,9 @@ module.exports = function config() {
     }
 
     if (config.chain) {
+        extend(true, config, require(path.resolve(__dirname + '/extend.json')))
         for (chain in config.chain) {
-         
             try {
-                extend(true, config.chain[chain], require(path.resolve(__dirname + '/substrate.json')))
                 extend(true, config.chain[chain], require(path.resolve(__dirname + '/'+chain+'.json')))
             } catch (err) {
                 console.log('Load Extend Config Error：'+__dirname+'/'+chain+'.json')// ,err)

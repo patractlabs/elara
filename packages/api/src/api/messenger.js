@@ -1,4 +1,3 @@
-const WebSocket = require('ws')
 const { logger } = require('../../../lib/log')
 const kafka = require("../../../lib/kafka")
 const CODE = require('../../../lib/helper/code')
@@ -8,21 +7,26 @@ const Pool = require("./pool")
 class Messengers {
     constructor() {
         this.ws = {}
+        this.http = {}
         this.messengers = {}
         //加载所有消息通道
         for (let chain in config.messengers) {
-            this.messengers[chain] = new Pool(chain, config.messengers[chain][0], async (message)=>{
+            this.messengers[chain] = new Pool(chain, config.messengers[chain][0], async (message) => {
                 message = fromJSON(message)
-                if (this.ws[message.id]) {
+                if (this.http[message.id]) {
+                    this.http[message.id].callback(message.response)
+                    delete this.http[message.id]
+                }
+                else if (this.ws[message.id]) {
                     if (this.ws[message.id].client) {
                         try {
-                            console.log(message)
-
+                            //console.log(message)
                             this.ws[message.id].client.send(toJSON(message.response))
+                            this.report(message.id, message.response)//上报
                         } catch (e) {
                             //这里如果出错，就要去messenger取消订阅
-                            console.log(e)
-                            this.unSubscription(message)
+                            //console.log(e)
+                            this.sendUnSubscription(message)
                         }
                     }
                     else {
@@ -31,17 +35,17 @@ class Messengers {
                     //上报
                 }
                 else {
-                    this.unSubscription(message)
+                    this.sendUnSubscription(message)
                 }
             })
         }
     }
-    unSubscription(message) {
+    sendUnSubscription(message) {
         if (message.response.params && message.response.params.subscription) {
             if (unSubscription(message.response.method)) {
                 this.messengers[message.chain].send({
                     "id": message.id,
-                    "chain": chain,
+                    "chain": message.chain,
                     "request": {
                         "jsonrpc": message.jsonrpc,
                         "method": unSubscription(message.response.method),
@@ -53,8 +57,6 @@ class Messengers {
         }
     }
 
-
-
     wsClient(id, client, chain, pid, request) {
         this.ws[id] = { id, client, chain, pid, request }
         this.ws[id].client.removeAllListeners('message')
@@ -62,7 +64,7 @@ class Messengers {
             if (!(message.trim()))
                 return
             try {
-                let params = JSON.parse(message)
+                let params = fromJSON(message)
                 if (isUnsafe(params)) {
                     this.ws[id].client.send(JSON.stringify({
                         "jsonrpc": params.jsonrpc,
@@ -102,6 +104,44 @@ class Messengers {
             logger.error('client ws error ', error)
         })
 
+    }
+    httpClient(id, chain, pid, request, callback) {
+        this.http[id] = { id, chain, pid, request, callback }
+        this.messengers[chain].send({
+            "id": id,
+            "chain": chain,
+            "request": request
+        })
+    }
+
+    report(id, response) {
+        try {
+            if (this.ws[id] && this.ws[id].request) {
+                let request = this.ws[id].request
+                let ip = (request.headers['x-forwarded-for'] ? request.headers['x-forwarded-for'].split(/\s*,\s/[0]) : null) || request.socket.remoteAddress || ''
+
+                kafka.stat({
+                    'key': 'request',
+                    'message': {
+                        protocol: 'websocket',
+                        header: request.headers,
+                        ip: ip,
+                        chain: this.ws[id].chain,
+                        pid: this.ws[id].pid,
+                        method: response.method,
+                        req: '',
+                        resp: '',//暂时用不上，省空间 message,
+                        code: 200,
+                        bandwidth: toJSON(response).length,
+                        start: 0,
+                        end: 0
+                    }
+                })
+            }
+
+        } catch (e) {
+            logger.error('Stat Error', e)
+        }
     }
 }
 

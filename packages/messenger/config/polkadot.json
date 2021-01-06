@@ -23,15 +23,5 @@
         ],
         "subscription": [],
         "archive": []
-    },
-    "methods":{
-        "subscription":[
-                "author_submitAndWatchExtrinsic",
-                "chain_subscribeAllHeads",
-                "chain_subscribeNewHead",
-                "chain_subscribeFinalizedHeads",
-                "state_subscribeRuntimeVersion",
-                "state_subscribeStorage"
-        ]
     }
 }

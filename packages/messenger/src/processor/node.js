@@ -1,15 +1,16 @@
-const WebSocket = require('ws')
 const crypto = require("crypto");
 const { toJSON, fromJSON } = require("../../../lib/helper/assist")
-const { isSubscription } = require("../../../lib/helper/check")
-const Pool=require("../lib/pool")
+const { isSubscription, isUnSubscription } = require("../../../lib/helper/check")
+const Pool = require("../lib/pool")
+const { logger } = require('../../../lib/log')
+
 class Node {
     constructor(router, chain) {
         this.replacement_msg = {}
         this.subscription_msg = {}
         this.router = router
-        this.pool=new Pool(chain,async (message) => {
-            console.log('back',chain,message)
+        this.pool = new Pool(chain, async (message) => {
+            //console.log('back',chain,message)
             message = fromJSON(message)
             if (message.params && message.params.subscription) {//订阅消息
                 let subscription_id = message.params.subscription
@@ -33,25 +34,31 @@ class Node {
                 }
                 delete this.replacement_msg[replacement_id]
             }
-    
+
         })
-}
-name() {
-    return 'node'
-}
-//是否能处理该消息
-contain(req) {
-    return false
-}
-process(msg) {
-    let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
-    this.replacement_msg[replacement] = msg
+    }
+    name() {
+        return 'node'
+    }
+    //是否能处理该消息
+    contain(req) {
+        return false
+    }
+    process(msg) {
+        let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
+        this.replacement_msg[replacement] = msg
 
-    let req = fromJSON(toJSON(msg.request))
-    req.id = replacement
-    this.pool.send(req)
+        let req = fromJSON(toJSON(msg.request))
+        req.id = replacement
+        this.pool.send(msg.id, req)
+        //这里处理下取消订阅时更新 this.subscription_msg
+        if (isUnSubscription(req.method) && (req.params)) {
+            for (var i = 0; i < req.params.length; i++) {
+                delete this.subscription_msg[req.params[i]]
+            }
+        }
 
-    return true
-}
+        return true
+    }
 }
 module.exports = Node

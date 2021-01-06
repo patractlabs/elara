@@ -1,32 +1,51 @@
 const { toJSON, fromJSON } = require('../../../lib/helper/assist')
-const redis = require('../../../lib/redis')
 const superagent = require('superagent')
+const crypto = require("crypto");
+const { logger } = require('../../../lib/log')
+
 class Cache {
     constructor(router, chain) {
         this.router = router
-        this .chain=chain
-        
+        this.chain = chain
+        this.cache = {}
+
         this.methods = config.chain[chain].processor.cache
-        //加载对应配置
-        this.writeCache()
-        setInterval(async function(){
-           await  this.writeCache()
-        },5000);
+        this.rpcs = []
+        this.buildRpc()
+
+        setInterval(async () => {
+            await this.writeCache()
+        }, 5000);
     }
-    key(method){
-        return this.name()+'_'+this.chain+'_'+method
+    buildRpc() {
+        for (var i = 0; i < this.methods.length; i++) {
+            let request = {
+                "id": 1, "jsonrpc": "2.0", "method": this.methods[i], "params": []
+            }
+            this.rpcs.push(request)
+        }
+        //特殊
+        this.rpcs.push({ "id": 1, "jsonrpc": "2.0", "method": "chain_getBlockHash", "params": [0] })
     }
-    async writeCache(){
-        for (let m in this.methods ){
+    key(method, params) {
+        return this.hash(method + '_' + toJSON(params))
+    }
+    hash(m) {
+        const hash = crypto.createHash('md5');
+        hash.update(m)
+        return hash.digest('hex');
+    }
+
+    async writeCache() {
+        for (let i in this.rpcs) {
             try {
-                let rpc=config.chain[this.chain].rpc[0]
-                let res = await superagent.post(rpc).set('Content-Type', 'application/json').send(toJSON({
-                    "id":5,"jsonrpc":"2.0","method":this.methods[m],"params":[]
-                }))
-                if( 200 == res.statusCode ){
-                    await redis.set(this.key(this.methods[m]),toJSON(res.body))
+                let rpc = config.chain[this.chain].rpc[0]
+                let res = await superagent.post(rpc).set('Content-Type', 'application/json').send(toJSON(this.rpcs[i]))
+                if (200 == res.statusCode) {
+                    this.cache[this.key(this.rpcs[i].method, this.rpcs[i].params)] = res.body
+                    //console.log('set cache',this.rpcs[i].method,this.key(this.rpcs[i].method, this.rpcs[i].params))
                 }
-               
+
             } catch (e) {
                 logger.error('cache Rpc Error', e)
             }
@@ -37,19 +56,23 @@ class Cache {
     }
     //是否能处理该消息
     contain(request) {
-        if ((this.methods.indexOf(request.method) > -1) && (request.params.length < 1)) {
+        if ((this.methods.indexOf(request.method) > -1) /*&& (request.params.length < 1)*/) {
             return true
         }
         return false
     }
     process(message) {
-        redis.get(this.key(message.request.method),async  (error,data)=>{
-            data=fromJSON( data)
-            data.id=message.request.id
+        //console.log('find cache',message.request.method,this.key(message.request.method, message.request.params))
+        let resp = this.cache[this.key(message.request.method, message.request.params)]
+        if (resp) {
+            //console.log('get cache',message.request.method,this.key(message.request.method, message.request.params))
+            let data = fromJSON(toJSON(resp))
+            data.id = message.request.id
             this.router.callback(message.id, this.chain, data)
-        })
-        
-        return true
+            return true
+        }
+
+        return false
     }
 }
 module.exports = Cache

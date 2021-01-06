@@ -17,15 +17,15 @@
                 "childstate_getStorageHash",
                 "childstate_getStorageSize",
                 "offchain_localStorageGet",
-                "chain_getBlock", 
-                "state_getStorageHash" 
+                "chain_getBlock",
+                "state_getStorageHash"
             ],
             "history": [
-                "chain_getHeader", 
-                "chain_getBlockHash", 
+                "chain_getHeader",
+                "chain_getBlockHash",
                 "state_getStorage",
-                "state_queryStorage", 
-                "state_queryStorageAt" 
+                "state_queryStorage",
+                "state_queryStorageAt"
             ]
         },
         "subscription": {
@@ -51,12 +51,12 @@
             ],
             "non-constant": [
                 "author_pendingExtrinsics",
-                "chain_getHeader", 
-                "chain_getBlock", 
-                "chain_getBlockHash", 
+                "chain_getHeader",
+                "chain_getBlock",
+                "chain_getBlockHash",
                 "chain_getFinalizedHead",
-                "state_getMetadata", 
-                "state_getRuntimeVersion", 
+                "state_getMetadata",
+                "state_getRuntimeVersion",
                 "system_peers",
                 "system_syncState",
                 "system_health"

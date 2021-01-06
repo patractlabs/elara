@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
 const { logger } = require('../../lib/log')
-const kafka = require("../../lib/kafka")
+
 const CODE = require('../../lib/helper/code')
 const { toJSON } = require("../../lib/helper/assist")
 
@@ -52,7 +52,7 @@ class Router {
             message.processor = 'node'
             this.router(message)//重新路由
         }
-        console.log('router',message)
+        //console.log('router',message)
     }
     accept(client_id, ws) {
         this.clients[client_id] = ws

@@ -12,5 +12,6 @@ module.exports = {
         'topic':'elara-dev',
         'sasl': { mechanism: 'plain', username: '***', password: '***' }
     },
-    statServer:'127.0.0.1:7002'
+    statServer:'127.0.0.1:7002',
+    pool:10
 }

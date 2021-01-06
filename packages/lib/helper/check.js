@@ -1,5 +1,5 @@
 function isUnsafe(req) {
-    if( -1 == config.methods.unsafe.indexOf(req.method)  ){
+    if( -1 == config['unsafe'].indexOf(req.method)  ){
         return false
     }
 
@@ -8,9 +8,17 @@ function isUnsafe(req) {
 function unSubscription(method){
     return config['un-subscription'][method]
 }
+function isUnSubscription(method){
+    for( let i in config['un-subscription'] ){
+        if( method == config['un-subscription'][i]){
+            return true
+        }
+    }
+    return false
+}
 
 function isSubscription(chain,request){
-    if( -1 == config.chain[chain].methods.subscription.indexOf(request.method)  ){
+    if( -1 == config['subscription'].indexOf(request.method)  ){
         return false
     }
 
@@ -19,5 +27,6 @@ function isSubscription(chain,request){
 module.exports = {
     isUnsafe,
     isSubscription,
-    unSubscription
+    unSubscription,
+    isUnSubscription
 }

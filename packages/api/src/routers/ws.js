@@ -1,5 +1,3 @@
-
-
 const url = require('url')
 const { logger } = require('../../../lib/log')
 const superagent = require('superagent')
@@ -17,7 +15,7 @@ let accept = async function (id, ws, request) {
             ws.send(JSON.stringify(check.body))
             ws.terminate()
             logger.error(chain, pid, check.body)
-            return 
+            return
         }
         try {
             messengers.wsClient(id, ws, chain, pid, request)
