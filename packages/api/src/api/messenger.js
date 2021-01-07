@@ -133,8 +133,8 @@ class Messengers {
                         resp: '',//暂时用不上，省空间 message,
                         code: 200,
                         bandwidth: toJSON(response).length,
-                        start: 0,
-                        end: 0
+                        start: (new Date()).getTime(),
+                        end: (new Date()).getTime()
                     }
                 })
             }

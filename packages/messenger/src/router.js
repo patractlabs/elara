@@ -69,20 +69,18 @@ class Router {
             } catch (e) {
                 logger.error('message parse error ', message, e)
             }
-
-
         })
-     
-            this.clients[client_id].on('close',  (code, reason) => {
-                this.clients[client_id] = null
-            })
-            this.clients[client_id].on('error',    (error)=> {
-                this.clients[client_id].terminate()
-                this.clients[client_id] = null
-                logger.error('client ws error ', error)
-            })
-    
-        
+
+        this.clients[client_id].on('close', (code, reason) => {
+            this.clients[client_id] = null
+        })
+        this.clients[client_id].on('error', (error) => {
+            this.clients[client_id].terminate()
+            this.clients[client_id] = null
+            logger.error('client ws error ', error)
+        })
+
+
 
     }
 }

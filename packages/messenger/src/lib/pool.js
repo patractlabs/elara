@@ -17,7 +17,7 @@ class Pool {
         let handle_error = async (error) => {
             logger.error('server ws error ', error)
             server.terminate()
-            this.servers[i] = this.connect(index, chain, path)
+            this.servers[index] = this.connect(index, chain, path)
             console.log('reconnect ', index, chain, path)
         }
         server.on('unexpected-response', handle_error)
