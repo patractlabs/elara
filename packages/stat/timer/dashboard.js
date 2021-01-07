@@ -1,4 +1,4 @@
-const { formateDate, sleep } = require('../../lib/help/assist');
+const { formateDate, sleep } = require('../../lib/helper/assist');
 const config = global.config = require('../config/index')();
 const redis = require('../../lib/redis')
 const { logger } = require('../../lib/log')
