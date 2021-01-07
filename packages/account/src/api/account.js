@@ -1,6 +1,6 @@
-const redis = require('../lib/redis')
-const Result = require('../lib/result')
-const { now } = require('../lib/tool');
+const redis = require('../../../lib/redis')
+const Result = require('../../../lib/result')
+const { now } = require('../../../lib/helper/assist');
 const KEY = require('./KEY')
 
 class Account {

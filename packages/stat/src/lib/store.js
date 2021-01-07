@@ -1,4 +1,4 @@
-const redis = require("./redis");
+const redis = require("../../../lib/redis");
 const { Store } = require("koa-session2");
 
 class RedisStore extends Store {

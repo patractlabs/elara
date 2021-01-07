@@ -1,4 +1,4 @@
-const Result = require('../lib/result')
+const Result = require('../../../lib/result')
 module.exports = {
     SUCCESS: (() => new Result(0, '', null))(),
     CHECK_AUTHENTIUCATED_FAIL: (() => new Result(-1, 'CheckAuthenticated Fail', null))(),

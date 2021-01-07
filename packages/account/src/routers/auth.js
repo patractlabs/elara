@@ -1,7 +1,7 @@
 const passport = require('../lib/passport')
 const Account = require('../api/account')
-const { getID } = require('../lib/tool')
-const Result = require('../lib/result')
+const { getID } = require('../../../lib/helper/assist')
+const Result = require('../../../lib/result')
 
 let github = async (ctx, next) => {
     return passport.authenticate('github')(ctx)

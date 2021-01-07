@@ -1,5 +1,5 @@
 {
-    "name": "messenger",
+    "name": "elara-messenger",
     "script": "./app.js",
     "cwd": "./",
     "watch": [

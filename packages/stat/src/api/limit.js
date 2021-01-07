@@ -1,6 +1,6 @@
 const Account = require('./account')
-const { midnight ,formateDate} = require('../lib/tool');
-const redis = require('../lib/redis')
+const { formateDate } = require('../../../lib/helper/assist');
+const redis = require('../../../lib/redis')
 const KEY = require('./KEY')
 class Limit {
     constructor() {
@@ -20,15 +20,15 @@ class Limit {
         return limit
     }
     //是否在黑名单
-    static async isBlack(uid){
-        return await redis.sismember(KEY.BLACKUID(),uid)
+    static async isBlack(uid) {
+        return await redis.sismember(KEY.BLACKUID(), uid)
     }
     static async isLimit(uid, pid) {
         let date = formateDate(new Date())
         let limit = await Limit.create(uid)
 
-        let today_request = await redis.get(KEY.REQUEST(pid,date))
-        if ( today_request > limit.daily) {
+        let today_request = await redis.get(KEY.REQUEST(pid, date))
+        if (today_request > limit.daily) {
             return true
         }
         return false

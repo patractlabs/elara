@@ -1,7 +1,7 @@
-const redis = require('../lib/redis')
-const Result = require('../lib/result')
+const redis = require('../../../lib/redis')
+const Result = require('../../../lib/result')
 const crypto = require("crypto");
-const { midnight, now, formateDate } = require('../lib/tool');
+const { now } = require('../../../lib/helper/assist');
 const Stat = require('./stat');
 const KEY = require('./KEY')
 

@@ -1,5 +1,4 @@
 const Project = require('../api/project')
-const Result = require('../lib/result');
 const CODE = require('./code')
 
 function checkAuthenticated(ctx) {

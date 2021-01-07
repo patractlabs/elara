@@ -1,5 +1,5 @@
 const Project = require('../api/project')
-const Result = require('../lib/result');
+const Result = require('../../../lib/result');
 const Stat = require('../api/stat');
 const Limit = require('../api/limit')
 const { checkAuthenticated, checkProject } = require('../helper/check')

@@ -1,9 +1,9 @@
-const redis = require('../lib/redis')
-const Result = require('../lib/result');
+const redis = require('../../../lib/redis')
+const Result = require('../../../lib/result');
 const Stat = require('../api/stat');
 const { records } = require('../api/stat');
 const { checkAuthenticated, checkProject } = require('../helper/check')
-const { formateDate } = require('../lib/tool');
+const { formateDate } = require('../../../lib/helper/assist');
 
 let chain = async (ctx, next) => {
     ctx.response.body = (new Result(0, '', await Stat.getChain())).toString()

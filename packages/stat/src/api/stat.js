@@ -1,6 +1,6 @@
-const { logger } = require('../lib/log');
-const redis = require('../lib/redis')
-const { midnight, now, formateDate } = require('../lib/tool');
+const { logger } = require('../../../lib/log');
+const redis = require('../../../lib/redis')
+const { now, formateDate } = require('../../../lib/helper/assist');
 const KEY = require('./KEY')
 /**
  *  统计
@@ -79,7 +79,7 @@ class Stat {
     static async _code(pid, code) {
         let date = formateDate(new Date())
         let key_code = KEY.CODE(pid, date)
-        await redis.hincrby(key_code, code,  1);
+        await redis.hincrby(key_code, code, 1);
     }
     static async _header(header, pid) {
         let agent = header['user-agent'] ? header['user-agent'] : 'null'
@@ -92,12 +92,12 @@ class Stat {
     static async _agent(pid, agent) {
         let date = formateDate(new Date())
         let key_agent = KEY.AGENT(pid, date)
-        await redis.hincrby(key_agent, agent,1)
+        await redis.hincrby(key_agent, agent, 1)
     }
     static async _origin(pid, origin) {
         let date = formateDate(new Date())
         let key_origin = KEY.ORIGIN(pid, date)
-        await redis.hincrby(key_origin, origin,1)
+        await redis.hincrby(key_origin, origin, 1)
     }
 
     //链的总请求数
@@ -173,19 +173,19 @@ class Stat {
             for (var i = 0; i < list.length; i++) {
                 requests[i] = JSON.parse(list[i])
                 requests[i].pid = requests[i].pid.replace(/(.){16}$/, '******')
-                if (requests[i].ip && Array.isArray(requests[i].ip) &&requests[i].ip.length) {
+                if (requests[i].ip && Array.isArray(requests[i].ip) && requests[i].ip.length) {
                     for (var j = 0; j < requests[i].ip.length; j++) {
                         requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
                     }
                 }
-                else if(requests[i].ip){
-                    requests[i].ip= requests[i].ip.replace(/^(\d*)\.(\d*)/, '***.***')
+                else if (requests[i].ip) {
+                    requests[i].ip = requests[i].ip.replace(/^(\d*)\.(\d*)/, '***.***')
                 }
             }
         } catch (e) {
             logger.error('request_response Parse Error!', e)
         }
-        
+
         return requests
     }
     static async dashboard() {

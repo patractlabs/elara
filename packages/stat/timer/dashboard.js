@@ -1,7 +1,7 @@
-const { formateDate, sleep } = require('../src/lib/tool');
+const { formateDate, sleep } = require('../../lib/help/assist');
 const config = global.config = require('../config/index')();
-const redis = require('../src/lib/redis');
-const { logger } = require('../src/lib/log')
+const redis = require('../../lib/redis')
+const { logger } = require('../../lib/log')
 const KEY = require('../src/api/KEY')
 const Project = require('../src/api/project')
 
