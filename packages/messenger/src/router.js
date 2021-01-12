@@ -45,10 +45,9 @@ class Router {
         }
     }
     //分发消息
-    router(message) {
-
+    async router(message) {
         let processor = this.choose(message);
-        if (false == processor.process(message)) {
+        if (false == await processor.process(message)) {
             message.processor = 'node'
             this.router(message)//重新路由
         }

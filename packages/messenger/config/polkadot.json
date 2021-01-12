@@ -22,6 +22,10 @@
                 "rpc_methods"
         ],
         "subscription": [],
-        "archive": []
+        "history": [
+            "chain_getBlockHash",
+            "state_getStorage",
+            "state_queryStorageAt"
+        ]
     }
 }

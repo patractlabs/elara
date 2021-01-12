@@ -11,6 +11,7 @@ class Cache {
 
         this.methods = config.chain[chain].processor.cache
         this.rpcs = []
+        this.methods_key = []
         this.buildRpc()
 
         setInterval(async () => {
@@ -23,9 +24,11 @@ class Cache {
                 "id": 1, "jsonrpc": "2.0", "method": this.methods[i], "params": []
             }
             this.rpcs.push(request)
+            this.methods_key.push(this.key(this.methods[i], []))
         }
         //特殊
         this.rpcs.push({ "id": 1, "jsonrpc": "2.0", "method": "chain_getBlockHash", "params": [0] })
+        this.methods_key.push(this.key('chain_getBlockHash', [0]))
     }
     key(method, params) {
         return this.hash(method + '_' + toJSON(params))
@@ -56,12 +59,12 @@ class Cache {
     }
     //是否能处理该消息
     contain(request) {
-        if ((this.methods.indexOf(request.method) > -1) /*&& (request.params.length < 1)*/) {
+        if ((this.methods_key.indexOf(this.key(request.method, request.params)) > -1)) {
             return true
         }
         return false
     }
-    process(message) {
+    async process(message) {
         //console.log('find cache',message.request.method,this.key(message.request.method, message.request.params))
         let resp = this.cache[this.key(message.request.method, message.request.params)]
         if (resp) {

@@ -44,7 +44,7 @@ class Node {
     contain(req) {
         return false
     }
-    process(msg) {
+    async process(msg) {
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
         this.replacement_msg[replacement] = msg
 
