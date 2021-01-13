@@ -6,7 +6,7 @@ module.exports = {
     session: {
         key: 'sid',
         signed: false,
-        maxAge: 86400000,
+        maxAge: 2592000000,
         httpOnly:false
     },
     redis: {
