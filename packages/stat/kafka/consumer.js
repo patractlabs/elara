@@ -1,5 +1,5 @@
 const config = global.config = require('../config/index')();
-const { logger } = require('../src/lib/log')
+const { logger } = require('../../src/lib/log')
 const stat = require('../src/api/stat')
 const kafka = require('kafka-node');
 const Offset = kafka.Offset;
