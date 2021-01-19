@@ -35,7 +35,7 @@ module.exports = {
             'processors': ['node', 'cache']
         },
         'edgeware': {
-            'rpc': ['https://edgeware.elara..patract.io'],
+            'rpc': ['https://edgeware.elara.patract.io'],
             'ws': ['wss://edgeware.elara..patract.io'],
             'processors': ['node', 'cache']
         },
