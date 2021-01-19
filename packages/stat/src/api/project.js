@@ -59,7 +59,7 @@ class Project {
         let members = await redis.smembers(KEY.PROJECT(uid))
         for (var i = 0; i < members.length && i < config.projects; i++) {
             projects[i] = await Project.info(members[i])
-            if ((projects[i].isOk()) && (!chain || projects[i].data.chain == chain)) {
+            if ((projects[i].isOk()) && (!chain || projects[i].data.chain.toLowerCase() == chain.toLowerCase())) {
                 list.push(projects[i].data)
             }
         }

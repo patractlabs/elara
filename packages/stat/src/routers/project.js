@@ -57,7 +57,7 @@ let createProeject = async (ctx, next) => {
         throw CODE.PROJECT_NAME_ERROR
     }
     //必须在链列表中
-    if (!config.chain[chain]) {
+    if (!config.chain[chain.toLowerCase()]) {
         throw CODE.CHAIN_ERROR
     }
     let count = await Stat.countByAccount(uid)
