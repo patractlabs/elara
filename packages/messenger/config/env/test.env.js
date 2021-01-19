@@ -36,7 +36,7 @@ module.exports = {
         },
         'edgeware': {
             'rpc': ['https://edgeware.elara.patract.io'],
-            'ws': ['wss://edgeware.elara..patract.io'],
+            'ws': ['wss://edgeware.elara.patract.io'],
             'processors': ['node', 'cache']
         },
         'kulupu': {
