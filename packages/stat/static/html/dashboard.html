@@ -182,6 +182,7 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">PID</th>
+                                                <th scope="col">Chain</th>
                                                 <th scope="col">Time</th>
                                                 <th scope="col">Protocol</th>
                                                 <th scope="col">From</th>
@@ -219,7 +220,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    2020 <span class="d-none d-sm-inline-block"> - Create By <a href="https://elara.patract.io" title="">Patract Labs</a></span>
+                    2021 <span class="d-none d-sm-inline-block"> - Create By <a href="https://elara.patract.io" title="">Patract Labs</a></span>
                 </div>
             </div>
         </div>
@@ -230,6 +231,7 @@
         {{ each }}
             <tr>
                 <th scope="row">{{$value.pid}}</th>
+                <td> {{$value.chain}}</td>
                 <td> {{$value.start}}</td>
                 <td>
                     <div>
