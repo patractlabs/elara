@@ -5,15 +5,15 @@ const kafka = require('kafka-node');
 const Offset = kafka.Offset;
 const client = new kafka.KafkaClient({ kafkaHost: config.kafka.kafkaHost });
 const offset = new Offset(client);
-const consumer = new kafka.Consumer(
-    client,
-    [
-        { topic: config.kafka.topic, partition: 0 }
-    ],
-    {
-        autoCommit: true
-    }
-);
+
+let option = {
+    kafkaHost: config.kafka.kafkaHost,
+    groupId: config.kafka.consumerGroup,
+    sessionTimeout: 15000,
+    protocol: ['roundrobin'],
+    fromOffset: 'latest',
+};
+const consumer = new kafka.ConsumerGroup(option, config.kafka.topic)
 
 console.log('consumer start');
 
@@ -34,8 +34,8 @@ consumer.on('message', function (message) {
         switch (message.key) {
             case 'request': {
                 stat.request(JSON.parse(message.value))
-            } 
-            case 'connections':{
+            }
+            case 'connections': {
                 //统计当前连接数
             }
             default:
@@ -45,5 +45,5 @@ consumer.on('message', function (message) {
         logger.error('consumer message error', e)
     }
 
-    //logger.info(JSON.stringify(message))
+    logger.info(JSON.stringify(message))
 });
