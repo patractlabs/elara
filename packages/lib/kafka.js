@@ -20,7 +20,7 @@ module.exports = {
     stat: (info) => {
         let km = new KeyedMessage(info.key, JSON.stringify(info.message))
         payloads = [
-            { topic: config.kafka.topic, messages: [km], partition: 0 }
+            { topic: config.kafka.topic, messages: [km]}
         ];
 
         producer.send(payloads, function (err, data) {
