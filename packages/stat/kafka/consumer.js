@@ -12,6 +12,8 @@ let option = {
     sessionTimeout: 15000,
     protocol: ['roundrobin'],
     fromOffset: 'latest',
+    autoCommit: true,
+    autoCommitIntervalMs:1000
 };
 const consumer = new kafka.ConsumerGroup(option, config.kafka.topic)
 
