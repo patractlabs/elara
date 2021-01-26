@@ -105,7 +105,7 @@ class Stat {
         let total = {}
         for (let chain in config.chain) {
             let count = await redis.get(KEY.TOTAL(chain))
-            total[chain] = count ? count : 0
+            total[chain] = count ? count : "0"
         }
         return total
     }
