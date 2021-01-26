@@ -63,7 +63,7 @@ let callback = async (ctx, next) => {
     <title>patract.io 授权</title>
 </head>
 <body>
-    授权成功
+Authorization Succeeded
     <script>
         window.onload = function () {
         window.opener.postMessage("${sid}","https://elara.patract.io");
