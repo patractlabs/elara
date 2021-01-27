@@ -1,5 +1,5 @@
 const WebSocket = require('ws')
-const { toJSON } = require("../../../lib/helper/assist");
+const { toJSON,sleep } = require("../../../lib/helper/assist");
 const { logger } = require('../../../lib/log')
 
 class Pool {
@@ -17,6 +17,8 @@ class Pool {
         let handle_error = async (error) => {
             logger.error('server ws error ', error)
             server.terminate()
+            //定时，不要即时
+            await sleep(5000)
             this.servers[index] = this.connect(index, chain, path)
             console.log('reconnect ', index, chain, path)
         }

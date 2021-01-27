@@ -2,7 +2,7 @@ const WebSocket = require('ws')
 const { logger } = require('../../../lib/log')
 const kafka = require("../../../lib/kafka")
 const CODE = require('../../../lib/helper/code')
-const { toJSON, fromJSON } = require("../../../lib/helper/assist")
+const { toJSON, sleep } = require("../../../lib/helper/assist")
 
 class Pool {
     constructor(chain, path, callback) {
@@ -17,6 +17,7 @@ class Pool {
         let handle_error = async (error) => {
             logger.error('server ws error ', error)
             mess.terminate()
+            await sleep(5000)
             this.messengers[index] = this.initConnect(index, chain, path)//重连
             console.log('reconnect ', index, chain, path)
         }
