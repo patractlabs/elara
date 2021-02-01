@@ -74,7 +74,7 @@ async function data(date) {
             let today = (new Date()).getTime()
 
             let week = {}
-            for (var i = 0; i < 7; i++) {
+            for (var i = 0; i < 30; i++) {
                 let date = formateDate(new Date(today - i * oneday))
                 week[date] = await data(date)
             }

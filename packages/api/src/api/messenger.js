@@ -128,7 +128,7 @@ class Messengers {
                         ip: ip,
                         chain: this.ws[id].chain,
                         pid: this.ws[id].pid,
-                        method: response.method?response.method:'',
+                        method: response.method?response.method:'system_health',
                         req: '',
                         resp: '',//暂时用不上，省空间 message,
                         code: 200,
