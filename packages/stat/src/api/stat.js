@@ -153,17 +153,17 @@ class Stat {
         return today
     }
     //项目的周统计信息
-    static async week(pid) {
+    static async days(pid,days) {
         let oneday = 24 * 60 * 60 * 1000
         let today = (new Date()).getTime()
 
-        let week = {}
-        for (var i = 0; i < 7; i++) {
+        let data = {}
+        for (var i = 0; i < parseInt(days); i++) {
             let date = formateDate(new Date(today - i * oneday))
-            week[date] = await Stat.day(pid, date)
+            data[date] = await Stat.day(pid, date)
         }
 
-        return week
+        return data
     }
     static async requests(size) {
         let requests = []

@@ -34,9 +34,22 @@ let week = async (ctx, next) => {
 
     await checkProject(pid, uid)
 
-    ctx.response.body = (new Result(0, '', await Stat.week(pid))).toString()
+    ctx.response.body = (new Result(0, '', await Stat.days(pid,7))).toString()
     return next()
 }
+let month = async (ctx, next) => {
+    if( !checkAuthenticated(ctx)){
+        return next()
+    }
+    let uid = ctx.state.user
+    let pid = ctx.request.params.pid
+
+    await checkProject(pid, uid)
+
+    ctx.response.body = (new Result(0, '', await Stat.days(pid,30))).toString()
+    return next()
+}
+
 let requests = async (ctx, next) => {
     ctx.response.body = (new Result(0, '', await Stat.requests(20))).toString()
     return next()
@@ -51,6 +64,7 @@ module.exports = {
     'GET /stat/chain': chain, //链总请求数
     'GET /stat/day/:pid([a-z0-9]{32})': day, //项目的今天统计信息
     'GET /stat/week/:pid([a-z0-9]{32})': week, //项目的周统计信息
+    'GET /stat/month/:pid([a-z0-9]{32})': month, //项目的今天统计信息
     'GET /stat/requests': requests, // last request
     'GET /stat/dashboard': dashboard
 }
