@@ -80,10 +80,16 @@
             if (0 == data.code) {
                 var today = new Date()
                 var date = toDate(today)
+                let total_requests=0
+                let total_bandwidth=0
                 
+                for( let c in data.data[date]){
+                    total_requests+=parseInt(data.data[date][chain].total_requests)
+                    total_bandwidth+=parseInt(data.data[date][chain].total_bandwidth)
+                }
                 if (data.data[date]) {
-                    $('#request').html(data.data[date][chain].total_requests)
-                    $('#bandwidth').html(bytesToSize(data.data[date][chain].total_bandwidth))
+                    $('#request').html(total_requests)
+                    $('#bandwidth').html(bytesToSize(total_bandwidth))
                     $('#delay').html(data.data[date][chain].total_delay + ' ms')
                     $('#timeout').html(data.data[date][chain].total_timeout)
 
