@@ -84,8 +84,8 @@
                 let total_bandwidth=0
                 
                 for( let c in data.data[date]){
-                    total_requests+=parseInt(data.data[date][chain].total_requests)
-                    total_bandwidth+=parseInt(data.data[date][chain].total_bandwidth)
+                    total_requests+=parseInt(data.data[date][c].total_requests)
+                    total_bandwidth+=parseInt(data.data[date][c].total_bandwidth)
                 }
                 if (data.data[date]) {
                     $('#request').html(total_requests)

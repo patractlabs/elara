@@ -21,7 +21,10 @@
 
                 "rpc_methods"
         ],
-        "subscription": [],
+        "subscription": [
+            "state_subscribeStorage",
+            "state_unsubscribeStorage"
+        ],
         "history": [
             "chain_getBlockHash",
             "state_getStorage",

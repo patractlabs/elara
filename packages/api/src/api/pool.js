@@ -14,20 +14,20 @@ class Pool {
     }
     initConnect(index, chain, path) {
         let mess = new WebSocket(path)
-        let handle_error = async (error) => {
+        mess.on('error', async (error) => {
+            logger.error('server ws error ', error, index, chain, path)
+        })
+        mess.on('close', async (error) => {
             logger.error('server ws error ', error)
             mess.terminate()
             await sleep(5000)
             this.messengers[index] = this.initConnect(index, chain, path)//重连
             console.log('reconnect ', index, chain, path)
-        }
-        mess.on('unexpected-response', handle_error)
-        mess.on('error', handle_error)
-        mess.on('close', handle_error)
-        mess.on('open', function (m) {
-            console.log(chain + " messenger open")
         })
-        mess.on('message', this.callback)
+        mess.on('open', async () => {
+            console.log(chain + " messenger open")
+            mess.on('message', this.callback)
+        })
 
         return mess
     }
