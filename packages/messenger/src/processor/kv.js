@@ -59,7 +59,7 @@ class KV {
         return false
     }
     async process(msg) {
-        console.log(toJSON( msg) )
+        //console.log(toJSON( msg) )
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
         this.replacement_msg[replacement] = msg
 
