@@ -7,16 +7,16 @@ module.exports = {
         'polkadot': {
             'rpc': ['https://polkadot.elara.patract.io'],
             'ws': ['wss://polkadot.elara.patract.io'],
-            'processors': ['node', 'cache']//处理器列表
+            'processors': ['node', 'cache','kv']//处理器列表
         },
         'kusama': {
             'rpc': ['https://kusama.elara.patract.io'],
             'ws': ['wss://kusama.elara.patract.io'],
-            'processors': ['node', 'cache']
+            'processors': ['node', 'cache','kv']
         },
         'jupiter': {
-            'rpc': ['https://jupiter.elara.patract.io'],
-            'ws': ['wss://jupiter.elara.patract.io'],
+            'rpc': ['https://jupiter-poa.elara.patract.io'],
+            'ws': ['wss://jupiter-poa.elara.patract.io'],
             'processors': ['node', 'cache']
         },
         'rococo': {
@@ -66,6 +66,14 @@ module.exports = {
         }
     },
     history: {
+    },
+    kv:{
+        'polkadot':{
+            'ws':['ws://127.0.0.1:9002']
+        },
+        'kusama':{
+            'ws':['ws://127.0.0.1:9002']
+        }
     },
     pool: 10
 }
