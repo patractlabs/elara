@@ -3,7 +3,10 @@
         "author_submitAndWatchExtrinsic",
         "chain_subscribeAllHeads",
         "chain_subscribeNewHeads",
+        "chain_subscribeNewHead",
+        "subscribe_newHead",
         "chain_subscribeFinalizedHeads",
+        "chain_subscribeFinalisedHeads",
         "state_subscribeRuntimeVersion",
         "state_subscribeStorage"
     ],
