@@ -25,7 +25,6 @@
             "state_subscribeStorage",
             "state_unsubscribeStorage",
             "chain_subscribeNewHeads",
-            "chain_subscribeNewHead",
             "chain_unsubscribeNewHeads",
             "chain_subscribeAllHeads",
             "chain_unsubscribeAllHeads",
