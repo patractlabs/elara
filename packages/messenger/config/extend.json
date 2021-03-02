@@ -8,6 +8,7 @@
         "chain_subscribeFinalizedHeads",
         "chain_subscribeFinalisedHeads",
         "state_subscribeRuntimeVersion",
+        "chain_subscribeRuntimeVersion",
         "state_subscribeStorage"
     ],
     "un-subscription": {
