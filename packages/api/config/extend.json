@@ -2,7 +2,7 @@
     "subscription": [
         "author_submitAndWatchExtrinsic",
         "chain_subscribeAllHeads",
-        "chain_subscribeNewHead",
+        "chain_subscribeNewHeads",
         "chain_subscribeFinalizedHeads",
         "state_subscribeRuntimeVersion",
         "state_subscribeStorage"

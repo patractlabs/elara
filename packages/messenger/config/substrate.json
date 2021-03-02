@@ -34,7 +34,7 @@
                 "chain_subscribeAllHeads"
             ],
             "key": [
-                "chain_subscribeNewHead",
+                "chain_subscribeNewHeads",
                 "chain_subscribeFinalizedHeads",
                 "state_subscribeRuntimeVersion",
                 "state_subscribeStorage"

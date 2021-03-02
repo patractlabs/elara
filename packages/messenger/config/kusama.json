@@ -21,7 +21,16 @@
 
                 "rpc_methods"
         ],
-        "subscription": [],
+        "subscription": [
+            "state_subscribeStorage",
+            "state_unsubscribeStorage",
+            "chain_subscribeNewHeads",
+            "chain_unsubscribeNewHeads",
+            "chain_subscribeAllHeads",
+            "chain_unsubscribeAllHeads",
+            "chain_subscribeFinalizedHeads",
+            "chain_unsubscribeFinalizedHeads"
+        ],
         "history": [
         ]
     }
