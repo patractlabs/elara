@@ -5,6 +5,10 @@ const CODE = require('../helper/code')
 let checkLimit = async (ctx, next) => {
     let chain = ctx.request.params.chain
     let pid = ctx.request.params.pid
+    if ('00000000000000000000000000000000' == pid) {//不需要check
+        ctx.response.body = JSON.stringify(CODE.SUCCESS)
+        return next()
+    }
 
     //检测项目id是否存在
     let project = await Project.info(pid)
@@ -18,8 +22,8 @@ let checkLimit = async (ctx, next) => {
         if (!project.isActive()) {
             throw CODE.PROJECT_NOT_ACTIVE
         }
-        let isBlack=await Limit.isBlack(project.uid)
-        if( isBlack){
+        let isBlack = await Limit.isBlack(project.uid)
+        if (isBlack) {
             throw CODE.BLACK_UID
         }
         let isLimit = await Limit.isLimit(project.uid, pid)
@@ -27,7 +31,7 @@ let checkLimit = async (ctx, next) => {
         if (isLimit) {
             throw CODE.OUT_OF_LIMIT
         }
-   
+
     } else
         throw CODE.PROJECT_ERROR
 
@@ -37,6 +41,6 @@ let checkLimit = async (ctx, next) => {
 }
 
 module.exports = {
-    'GET /limit/:chain/:pid([a-z0-9]{32})':checkLimit
+    'GET /limit/:chain/:pid([a-z0-9]{32})': checkLimit
 }
 
