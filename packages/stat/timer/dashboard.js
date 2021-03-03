@@ -9,7 +9,6 @@ async function data(date) {
     let data = {}
 
     let projects = await redis.smembers(KEY.PROJECTS())
-    projects.push('00000000000000000000000000000000')
 
     for (var i = 0; i < projects.length; i++) {
         let pid = projects[i]
