@@ -180,7 +180,13 @@ class History {
                             let v = null
                             for (let j = 0; j < data.length; j++) {
                                 if (k == '0x' + Buffer.from(data[j].key).toString('hex')) {
-                                    v = '0x' + Buffer.from(data[j].storage).toString('hex')
+                                    if ( null != data[j].storage){
+                                        v = '0x' + Buffer.from(data[j].storage).toString('hex')
+                                    }
+                                    else {
+                                        v = ''
+                                    }
+                                   
                                     break;
                                 }
                             }
