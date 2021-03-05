@@ -15,7 +15,7 @@ class Node {
             if (message.params && message.params.subscription) {//订阅消息
                 let subscription_id = message.params.subscription
                 if (this.subscription_msg[subscription_id]) {
-                    message.id = this.subscription_msg[subscription_id].request.id
+                    //message.id = this.subscription_msg[subscription_id].request.id
                     let id = this.subscription_msg[subscription_id].id
                     let chain = this.subscription_msg[subscription_id].chain
                     this.router.callback(id, chain, message)

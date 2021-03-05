@@ -33,7 +33,6 @@ class KV {
             }
             else if (message.data) {//推送的数据
                 message = fromJSON(message.data)
-               
                 let subscription_id = message.params.subscription
                 if (this.subscription_msg[subscription_id]) {
                     //message.id = this.subscription_msg[subscription_id].request.id
