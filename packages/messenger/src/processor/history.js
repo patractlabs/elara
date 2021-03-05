@@ -265,9 +265,13 @@ class History {
                 }
             }).then((data) => {
                 if (data && this.replacement_msg[replacement_id]) {
+                    let result = ''
+                    if (null != data.storage) {
+                        result = '0x' + Buffer.from(data.storage).toString('hex')
+                    }
                     let message = {
                         "jsonrpc": "2.0",
-                        "result": '0x' + Buffer.from(data.storage).toString('hex')
+                        "result": result
                     }
                     message.id = this.replacement_msg[replacement_id].request.id
                     let id = this.replacement_msg[replacement_id].id
