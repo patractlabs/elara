@@ -14,7 +14,7 @@ class Result {
             return new Result(-1, 'Data is Null', '')
     }
     toString() {
-        return JSON.stringify({ 'code': this.code, 'mssage': this.message, 'data': this.data })
+        return JSON.stringify({ 'code': this.code, 'message': this.message, 'data': this.data })
     }
     isOk() {
         return 0 == this.code ? true : false
