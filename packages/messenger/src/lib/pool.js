@@ -30,7 +30,7 @@ class Pool {
             console.log('reconnect ', index, name, chain, path)
         })
 
-        server.on('open', async()=> {
+        server.on('open', async () => {
             console.log('open ', index, name, chain)
             server.on('message', this.callback)
         })
@@ -43,11 +43,16 @@ class Pool {
     }
     sendKV(index, msg) {//Just for 订阅管理器
         index = (Buffer.from(index).readUIntLE(0, 4)) % this.servers.length
+        if (WebSocket.OPEN != this.servers[index].readyState) {
+            return false
+        }
         this.servers[index].send(toJSON({
             id: this.ids[index],
             chain: this.chain,
             request: toJSON(msg)
         }))
+
+        return true
     }
 }
 module.exports = Pool

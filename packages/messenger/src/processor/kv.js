@@ -64,9 +64,7 @@ class KV {
 
         let req = fromJSON(toJSON(msg.request))
         req.id = replacement
-        this.pool.sendKV(msg.id, req)
-
-        return true
+        return this.pool.sendKV(msg.id, req)
     }
 }
 module.exports = KV
