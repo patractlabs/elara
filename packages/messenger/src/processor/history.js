@@ -54,21 +54,25 @@ class History {
     async process(message) {
         let replacement_id = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
         this.replacement_msg[replacement_id] = message
+        try {
+            switch (message.request.method) {
+                case 'chain_getBlockHash':
+                    return await this._chainGetBlockHash(message.request, replacement_id);
 
-        switch (message.request.method) {
-            case 'chain_getBlockHash':
-                return await this._chainGetBlockHash(message.request, replacement_id);
+                case 'state_getStorage':
+                    return await this._stateGetStorage(message.request, replacement_id);
 
-            case 'state_getStorage':
-                return await this._stateGetStorage(message.request, replacement_id);
-                return true
-            case 'state_queryStorageAt':
-                return await this._stateQueryStorageAt(message.request, replacement_id)
+                case 'state_queryStorageAt':
+                    return await this._stateQueryStorageAt(message.request, replacement_id)
 
-
-            default:
-                break;
+                default:
+                    break;
+            }
+        } catch (e) {
+            logger.error('history process Error', e)
+            return false
         }
+
 
         return false
     }
@@ -180,13 +184,13 @@ class History {
                             let v = null
                             for (let j = 0; j < data.length; j++) {
                                 if (k == '0x' + Buffer.from(data[j].key).toString('hex')) {
-                                    if ( null != data[j].storage){
+                                    if (null != data[j].storage) {
                                         v = '0x' + Buffer.from(data[j].storage).toString('hex')
                                     }
                                     else {
                                         v = ''
                                     }
-                                   
+
                                     break;
                                 }
                             }
