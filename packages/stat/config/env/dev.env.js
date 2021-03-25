@@ -8,12 +8,12 @@ module.exports = {
         key: 'sid',
         signed: false,
         maxAge: 2592000000,
-        httpOnly:false
+        httpOnly: false
     },
     chain: {
-        'Polkadot': {}
+        'polkadot': {}
     },
-    test:false,
+    test: false,
     // redis配置
     redis: {
         host: '127.0.0.1',
@@ -23,6 +23,7 @@ module.exports = {
     kafka: {
         'kafkaHost': '127.0.0.1:9092',
         'topic': 'elara-dev',
+        'consumerGroup': 'elara-stat',
         'sasl': { mechanism: 'plain', username: '***', password: '***' }
     },
     limit: {
