@@ -92,6 +92,11 @@ class Messengers {
                     })
                 }
             } catch (e) {
+                this.ws[id].client.send(JSON.stringify({
+                    "jsonrpc": "2.0",
+                    "error": {"code":-32700,"message":"Parse error"},
+                    "id": null
+                }))
                 logger.error('send message error ', chain, message, e)
             }
         })
