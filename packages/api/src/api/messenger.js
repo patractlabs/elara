@@ -61,9 +61,9 @@ class Messengers {
         this.ws[id] = { id, client, chain, pid, request }
         this.ws[id].client.removeAllListeners('message')
         this.ws[id].client.on('message', (message) => {
-            if (!(message.trim()))
-                return
             try {
+                if (!(message.trim()))
+                return
                 let params = fromJSON(message)
                 if (isUnsafe(params)) {
                     this.ws[id].client.send(JSON.stringify({
