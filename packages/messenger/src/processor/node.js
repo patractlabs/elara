@@ -22,7 +22,7 @@ class Node {
                 }
             }
             else if (message.id) {//常规消息
-                let replacement_id = message.id
+                let replacement_id = message.id.toString()
                 if (this.replacement_msg[replacement_id]) {
                     message.id = this.replacement_msg[replacement_id].request.id
                     let id = this.replacement_msg[replacement_id].id
@@ -47,7 +47,7 @@ class Node {
     async process(msg) {
         //console.log('Node',toJSON(msg))
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
-        this.replacement_msg[replacement] = msg
+        this.replacement_msg[replacement.toString()] = msg
 
         let req = fromJSON(toJSON(msg.request))
         req.id = replacement
