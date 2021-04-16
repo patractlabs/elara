@@ -17,13 +17,23 @@ module.exports = function config() {
         extend(true, config, require(path.resolve(__dirname + '/extend.json')))
         for (chain in config.chain) {
             try {
-                extend(true, config.chain[chain], require(path.resolve(__dirname + '/'+chain+'.json')))
+                extend(
+                    true,
+                    config.chain[chain],
+                    require(path.resolve(__dirname + '/' + chain + '.json'))
+                )
             } catch (err) {
-                console.log('Load Extend Config Error：'+__dirname+'/'+chain+'.json')// ,err)
+                console.log(
+                    'Load Extend Config Error：' +
+                        __dirname +
+                        '/' +
+                        chain +
+                        '.json'
+                ) // ,err)
             }
         }
     }
 
-    console.log(config)
+    // console.log(config)
     return config
 }

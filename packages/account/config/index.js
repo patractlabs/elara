@@ -10,12 +10,12 @@ module.exports = function config() {
     // 默认开发环境
     const env = process.env.NODE_ENV || 'dev'
 
-    console.log('Current NODE_ENV'　,env)
+    console.log('Current NODE_ENV', env)
 
     const config = {}
 
     //当前环境配置
-    const envPath = path.resolve(__dirname+`/env/${env}.env.js`)
+    const envPath = path.resolve(__dirname + `/env/${env}.env.js`)
     try {
         extend(config, require(envPath))
     } catch (err) {
@@ -24,11 +24,10 @@ module.exports = function config() {
 
     //外部配置
     try {
-        extend(true, config, require(path.resolve(__dirname+'/extend.json')))
+        extend(true, config, require(path.resolve(__dirname + '/extend.json')))
     } catch (err) {
         throw JSON.stringify({ test: `Load Extend Config Error：./config/extend.json` })
     }
-
 
     return config
 }

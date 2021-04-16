@@ -1,6 +1,5 @@
-
 module.exports = {
-    UID:(uid)=>'USER_'+uid,
+    UID: (uid) => 'USER_' + uid,
     PROJECT: (uid) => 'project_' + uid,
     PROJECTS: () => 'projects',
     REQUEST_RESPONSE: () => 'request_response',
@@ -15,7 +14,7 @@ module.exports = {
     AGENT: (pid, date) => pid + '_agent_' + date,
     ORIGIN: (pid, date) => pid + '_origin_' + date,
     DASHBOARD: () => 'dashboard',
-    BLACKUID:()=>'block_uid',
-    PROJECTINFO:(pid)=>'project_info_'+pid,
-    TOTAL_USER:()=>'user_total'
+    BLACKUID: () => 'black_uid', // Q&A: replace with black_uid ?
+    PROJECTINFO: (pid) => 'project_info_' + pid,
+    TOTAL_USER: () => 'user_total',
 }

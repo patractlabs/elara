@@ -1,10 +1,9 @@
 const Account = require('./account')
-const { formateDate } = require('../../../lib/helper/assist');
+const { formateDate } = require('../../../lib/helper/assist')
 const redis = require('../../../lib/redis')
 const KEY = require('./KEY')
 class Limit {
-    constructor() {
-    }
+    constructor() {}
 
     //账户的每日限额
     static async create(uid) {
@@ -13,6 +12,7 @@ class Limit {
         limit.daily = global.config.limit.daily[0]
         limit.project = global.config.limit.project[0]
 
+        // There is still no any vip user
         if (account.isOk()) {
             limit.daily = global.config.limit.daily[account.data.vip]
             limit.project = global.config.limit.project[account.data.vip]
@@ -33,7 +33,6 @@ class Limit {
         }
         return false
     }
-
 }
 
 module.exports = Limit

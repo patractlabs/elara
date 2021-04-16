@@ -1,6 +1,6 @@
 const Project = require('../api/project')
-const Result = require('../../../lib/result');
-const Stat = require('../api/stat');
+const Result = require('../../../lib/result')
+const Stat = require('../api/stat')
 const Limit = require('../api/limit')
 const { checkAuthenticated, checkProject } = require('../helper/check')
 const CODE = require('../helper/code')
@@ -53,7 +53,7 @@ let createProeject = async (ctx, next) => {
     if (!name) {
         throw CODE.PROJECT_NAME_EMPTY
     }
-    if (! /[a-zA-Z]{4,32}/.test(name)) {
+    if (!/[a-zA-Z]{4,32}/.test(name)) {
         throw CODE.PROJECT_NAME_ERROR
     }
     //必须在链列表中
@@ -78,9 +78,8 @@ let createProeject = async (ctx, next) => {
 }
 
 module.exports = {
-    'GET /project/:pid([a-z0-9]{32})': getProject,//项目详情
-    'GET /project/list': getProjects,//账户下所有项目详情 chain参数指定特定链下面的项目列表
+    'GET /project/:pid([a-z0-9]{32})': getProject, //项目详情
+    'GET /project/list': getProjects, //账户下所有项目详情 chain参数指定特定链下面的项目列表
     'POST /project/create': createProeject, //新建项目
-    'GET /project/count': getProjectCount//分链的项目计数
+    'GET /project/count': getProjectCount, //分链的项目计数
 }
-

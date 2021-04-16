@@ -3,23 +3,32 @@ const koaBody = require('koa-body')
 const router = require('./router')
 const { logger, accessLogger } = require('../lib/log')
 const Result = require('../lib/result')
-const config = global.config = require('./config/index')()
+const config = (global.config = require('./config/index')())
 const app = new Koa()
-const WebSocketServer = require('ws').Server;
+const WebSocketServer = require('ws').Server
 const { accept } = require('./src/routers/ws')
-const crypto = require("crypto");
-const kafka = require("../lib/kafka");
-const Messengers=require("./src/api/messenger")
+const crypto = require('crypto')
+const kafka = require('../lib/kafka')
+const Messengers = require('./src/api/messenger')
 global.message = {}
-
 app.keys = config.keys
-app
-    .use(koaBody({ multipart: true }))
+app.use(koaBody({ multipart: true }))
     .use(accessLogger())
     .use(async (ctx, next) => {
-        const start = ctx[Symbol.for('request-received.startTime')] ? ctx[Symbol.for('request-received.startTime')].getTime() : Date.now()
+        const start = ctx[Symbol.for('request-received.startTime')]
+            ? ctx[Symbol.for('request-received.startTime')].getTime()
+            : Date.now()
         await next()
-        logger.info(ctx.method, ctx.originalUrl, ctx.request.body, ctx.response.status || 404, ctx.response.length, 'byte', (Date.now() - start), 'ms')
+        logger.info(
+            ctx.method,
+            ctx.originalUrl,
+            ctx.request.body,
+            ctx.response.status || 404,
+            ctx.response.length,
+            'byte',
+            Date.now() - start,
+            'ms'
+        )
     })
     .use(async (ctx, next) => {
         return next().catch((error) => {
@@ -34,7 +43,7 @@ app
             ctx.body = {
                 code,
                 message,
-                data
+                data,
             }
         })
     })
@@ -42,32 +51,40 @@ app
         ctx.set('Access-Control-Allow-Origin', '*')
         ctx.set('Content-Type', 'application/json')
         ctx.set('Access-Control-Expose-Headers', 'Access-Control-Allow-Origin')
-        ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
-        ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH, OPTIONS')
+        ctx.set(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        )
+        ctx.set(
+            'Access-Control-Allow-Methods',
+            'PUT, POST, GET, DELETE, PATCH, OPTIONS'
+        )
         ctx.set('Access-Control-Allow-Credentials', true)
         return next()
     })
     .use(router())
 
-app.on('error', error => {
+app.on('error', (error) => {
     logger.error(error)
 })
 
-global.messengers=new Messengers()
+global.messengers = new Messengers()
 
 let server = app.listen(config.port)
-let wss = new WebSocketServer({ server: server, clientTracking: true });
+
+// 对接api推送
+let wss = new WebSocketServer({ server: server, clientTracking: true })
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
     kafka.stat({
-        'key': 'connections',
-        'message': {
+        key: 'connections',
+        message: {
             protocol: 'websocket',
-            pid: process.pid,//考虑多进程
-            connections: wss.clients.size
-        }
-    });
-    let id = crypto.randomBytes(16).toString('hex');
+            pid: process.pid, //考虑多进程
+            connections: wss.clients.size,
+        },
+    })
+    let id = crypto.randomBytes(16).toString('hex')
     global.message[id] = []
     ws.on('message', function (m) {
         global.message[id].push(m)
@@ -85,11 +102,9 @@ wss.on('close', () => {
 })
 
 process.on('unhandledRejection', (reason, p) => {
-    logger.error('Unhandled Rejection at:', p, 'reason:', reason);
-});
+    logger.error('Unhandled Rejection at:', p, 'reason:', reason)
+})
 process.on('uncaughtException', function (e) {
     logger.error('uncaughtException', e)
 })
 logger.info(config.name, ' started listen on ', config.port)
-
-

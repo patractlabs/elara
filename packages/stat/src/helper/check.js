@@ -6,8 +6,9 @@ function checkAuthenticated(ctx) {
         ctx.state.user = 'Only For Test'
         return true
     }
+
     if (!ctx.isAuthenticated()) {
-        ctx.response.body = (CODE.CHECK_AUTHENTIUCATED_FAIL).toString()
+        ctx.response.body = CODE.CHECK_AUTHENTIUCATED_FAIL.toString()
         return false
     }
     return true
@@ -15,12 +16,13 @@ function checkAuthenticated(ctx) {
 
 /**
  * 检查是否有权限查看项目
- * @param {*} ctx 
- * @param {*} pid 
- * @param {*} uid 
+ * @param {*} ctx
+ * @param {*} pid
+ * @param {*} uid
  */
 async function checkProject(pid, uid) {
     let project = await Project.info(pid)
+    console.log(project)
     if (!project.isOk()) {
         throw CODE.PROJECT_ERROR
     }
@@ -34,5 +36,5 @@ async function checkProject(pid, uid) {
 
 module.exports = {
     checkAuthenticated,
-    checkProject
+    checkProject,
 }

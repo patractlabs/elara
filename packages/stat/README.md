@@ -1,4 +1,5 @@
 # elara-stat
+
 Elara Stat Service
 
 Shared account Session login status with Elara-Developer Account.
@@ -6,18 +7,22 @@ Provide project management and statistics functions under Elara's developer acco
 
 Based on the Koa framework, Redis is used for storage components, and Kafka is used for message queues
 
-## How to use 
- 1. Install the dependencies
+## How to use
+
+1.  Install the dependencies
+
 ```
-    yarn install 
+    yarn install
 ```
+
 2. Prepare
 
 - uses [Redis](https://github.com/redis/redis) As a storage component, you need to prepare a redis running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used.
 - uses [Kafka](http://kafka.apache.org/) As a Message middleware, you need to prepare a kafka running instance (you can build it yourself or use the redis service provided by cloud service). In the following configuration phase, the Host/Port/Password of the instance will be used.
-- Add a Topic "elara-dev" in Kafak
+- Add a Topic "elara-dev" in Kafka
 
 3. Configuration
+
 ```
     # Edit ./config/env/dev.env.js
      redis: {
@@ -40,9 +45,10 @@ Based on the Koa framework, Redis is used for storage components, and Kafka is u
  test:true,// skip the login state check
 
 ```
- 4. Start Service
- 
- You can start the current process
+
+4.  Start Service
+
+You can start the current process
 
 ```
     node app.js
@@ -50,14 +56,11 @@ Based on the Koa framework, Redis is used for storage components, and Kafka is u
 
 Or use [pm2](https://github.com/Unitech/pm2) Management process
 
-
 ```
     pm2 start pm2.json --env dev
 ```
 
 You can find the running log in this directory `./logs/`
-
-
 
 5. Start message queue consumer
 
@@ -66,46 +69,48 @@ node ./kafka/consumer.js
 ```
 
 6. Start dashboard data build
+
 ```
 node ./timer/dashboard.js
 ```
+
 7. View Dashboard
 
-    Browser open http://127.0.0.1:7002/dashboard
+   Browser open http://127.0.0.1:7002/dashboard
 
 ## Interface
 
-###  Need to verify the login status
-#### 1. Request project  list 
+### Need to verify the login status
+
+#### 1. Request project list
 
     METHOD:GET
     URL: /project/list
 
-
-  ```
-  {
-      "code": 0,
-      "message": "",
-      "data": [
-          {
-              "id": "b78a79f98a2bb1a991a357504a5b04c1",
-              "status": "Active",
-              "chain": "substrate",
-              "name": "thedao",
-              "uid": "...",
-              "secret": "b94e4f1e9c7386c92007ad40af1c882d",
-              "createtime": "1600398327",
-              "lasttime": "1600398327",
-              "allowlist": "false"
-          },
-         ...
-      ]
-  }
-  ```
+```
+{
+    "code": 0,
+    "message": "",
+    "data": [
+        {
+            "id": "b78a79f98a2bb1a991a357504a5b04c1",
+            "status": "Active",
+            "chain": "substrate",
+            "name": "thedao",
+            "uid": "...",
+            "secret": "b94e4f1e9c7386c92007ad40af1c882d",
+            "createtime": "1600398327",
+            "lasttime": "1600398327",
+            "allowlist": "false"
+        },
+       ...
+    ]
+}
+```
 
 args:
 
--  id：Project ID
+- id：Project ID
 
 - status:（Active | Other)
 
@@ -115,13 +120,10 @@ args:
 
 - createtime
 
+#### 2. Request project details
 
-
-#### 2. Request project  details 
-
-    METHOD:GET 
+    METHOD:GET
     URL:/project/<PID>
-
 
 ```{
         "id": "b78a79f98a2bb1a991a357504a5b04c1",
@@ -135,73 +137,81 @@ args:
         "allowlist": "false"
     }
 ```
+
 args:
+
 - id：Project ID
 
 - status:（Active | Other)
 
 - chain
 
--  name
+- name
 
 - createtime
 
--   secret:api key
+- secret:api key
 
-#### 3. New project　
+#### 3. New project 　
 
-    METHOD:POST 
+    METHOD:POST
     URL:/project/create
 
 args：
+
 - chain:(Polkadot)
-- name:  (Validation rules /[a-zA-Z]{4,32}/ )
+- name: (Validation rules /[a-zA-Z]{4,32}/ )
 
-#### 4. Statistics on the day of the project  GET　/stat/day/PID
+#### 4. Statistics on the day of the project GET 　/stat/day/PID
 
+```
+{"code":0,"mssage":"","data":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}}}
+```
 
-  ```
-  {"code":0,"mssage":"","data":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}}}
-  ```
 args：
 
-  - request
-  - updatetime
-  - bandwidth：（byte)
+- request
+- updatetime
+- bandwidth：（byte)
 
-#### 5. Week statistics of the project　
+#### 5. Week statistics of the project 　
 
-    METHOD:GET 
+    METHOD:GET
     URL:/stat/week/<PID>
 
-
-  ```
-  {"code":0,"mssage":"","data":{"20200912":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}},"20200913":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}},}}		
-  ```
+```
+{"code":0,"mssage":"","data":{"20200912":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}},"20200913":{"request":"3","updatetime":"1600223548","method":{},"bandwidth":0,"code":{},"agent":{},"origin":{}},}}
+```
 
 args:
-  - request
-  - method
-  - bandwidth: （byte)
 
-  
+- request
+- method
+- bandwidth: （byte)
+
 ### No need to verify the login status
 
-#### 1.　Statistics of chain requests　
+#### 1.　 Statistics of chain requests 　
 
-    METHOD:GET 
+    METHOD:GET
     URL:/stat/chain
 
-  ```
-  {"code":0,"mssage":"","data":{"Kusama":0,"Polkadot":"13"}}
-  ```
-#### 2. Latest request　
+```
+{"code":0,"mssage":"","data":{"Kusama":0,"Polkadot":"13"}}
+```
+
+#### 2. Latest request 　
+
     METHOD:GET
     URL: /stat/requests
-#### 3. Dashboard data　
+
+#### 3. Dashboard data 　
+
     METHOD:GET
     URL: /stat/dashboard
-#### 4. Limit verification     
+
+#### 4. Limit verification
+
     METHOD:GET
     URL: /limit/<Chain>/<Pid>
 

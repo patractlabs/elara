@@ -4,18 +4,27 @@ const { logger, accessLogger } = require('../lib/log')
 const Result = require('../lib/result')
 global.config = require('./config/index')()
 const app = new Koa()
-const WebSocketServer = require('ws').Server;
-const crypto = require("crypto");
-const Router=require('./src/router');
+const WebSocketServer = require('ws').Server
+const crypto = require('crypto')
+const Router = require('./src/router')
 
-
-app
-    .use(koaBody({ multipart: true }))
+app.use(koaBody({ multipart: true }))
     .use(accessLogger())
     .use(async (ctx, next) => {
-        const start = ctx[Symbol.for('request-received.startTime')] ? ctx[Symbol.for('request-received.startTime')].getTime() : Date.now()
+        const start = ctx[Symbol.for('request-received.startTime')]
+            ? ctx[Symbol.for('request-received.startTime')].getTime()
+            : Date.now()
         await next()
-        logger.info(ctx.method, ctx.originalUrl, ctx.request.body, ctx.response.status || 404, ctx.response.length, 'byte', (Date.now() - start), 'ms')
+        logger.info(
+            ctx.method,
+            ctx.originalUrl,
+            ctx.request.body,
+            ctx.response.status || 404,
+            ctx.response.length,
+            'byte',
+            Date.now() - start,
+            'ms'
+        )
     })
     .use(async (ctx, next) => {
         return next().catch((error) => {
@@ -30,23 +39,24 @@ app
             ctx.body = {
                 code,
                 message,
-                data
+                data,
             }
         })
     })
 
-app.on('error', error => {
+app.on('error', (error) => {
     logger.error(error)
 })
 
-let router=new Router();
+let router = new Router()
 let server = app.listen(config.port)
-let wss = new WebSocketServer({ server: server, clientTracking: true });
+
+let wss = new WebSocketServer({ server: server, clientTracking: true })
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
-    
-    let id = crypto.randomBytes(16).toString('hex');
-    router.accept(id,ws)
+
+    let id = crypto.randomBytes(16).toString('hex')
+    router.accept(id, ws)
 })
 
 wss.on('error', (error) => {
@@ -58,11 +68,9 @@ wss.on('close', () => {
 })
 
 process.on('unhandledRejection', (reason, p) => {
-    logger.error('Unhandled Rejection at:', p, 'reason:', reason);
-});
+    logger.error('Unhandled Rejection at:', p, 'reason:', reason)
+})
 process.on('uncaughtException', function (e) {
     logger.error('uncaughtException', e)
 })
 logger.info(config.name, ' started listen on ', config.port)
-
-

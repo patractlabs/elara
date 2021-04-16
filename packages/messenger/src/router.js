@@ -2,7 +2,7 @@ const WebSocket = require('ws')
 const { logger } = require('../../lib/log')
 
 const CODE = require('../../lib/helper/code')
-const { toJSON } = require("../../lib/helper/assist")
+const { toJSON } = require('../../lib/helper/assist')
 
 class Router {
     constructor() {
@@ -13,17 +13,18 @@ class Router {
             let processors = config.chain[chain].processors
             this.processors[chain] = {}
             for (var i = 0; i < processors.length; i++) {
-                let P = require('./processor/' + processors[i] + '.js');
+                let P = require('./processor/' + processors[i] + '.js')
                 let p = new P(this, chain)
                 this.processors[chain][p.name()] = p
             }
         }
-        console.log(this.processors)
     }
-    //匹配处理器
+
+    //匹配处理器 cache node
     choose(message) {
         let processors = this.processors[message.chain]
-        if (message.processor) {//指定特定处理器,譬如在处理失败的时候，指定node处理器做兜底
+        if (message.processor) {
+            //指定特定处理器,譬如在处理失败的时候，指定node处理器做兜底
             return processors[message.processor]
         }
 
@@ -34,31 +35,34 @@ class Router {
         }
         return processors['node'] //node处理器做兜底
     }
+
     callback(id, chain, response) {
         let ids = id.split('-')
         if (this.clients[ids[1]]) {
-            this.clients[ids[1]].send(toJSON({
-                "id": ids[0],
-                "chain": chain,
-                "response": response
-            }))
+            this.clients[ids[1]].send(
+                toJSON({
+                    id: ids[0],
+                    chain: chain,
+                    response: response, // send rpc result to api service
+                })
+            )
         }
     }
     //分发消息
     async router(message) {
-        let processor = this.choose(message);
-        if (false == await processor.process(message)) {
+        let processor = this.choose(message)
+        if (false == (await processor.process(message))) {
             message.processor = 'node'
-            this.router(message)//重新路由
+            this.router(message) //重新路由
         }
-        //console.log('router',message)
     }
+
+    // called in app.js
     accept(client_id, ws) {
         this.clients[client_id] = ws
         this.clients[client_id].removeAllListeners('message')
         this.clients[client_id].on('message', (message) => {
-            if (!(message.trim()))
-                return
+            if (!message.trim()) return
 
             try {
                 //{"id":uid,"chain":''polkadot,"request":{content....}}
@@ -78,9 +82,6 @@ class Router {
             this.clients[client_id] = null
             logger.error('client ws error ', error)
         })
-
-
-
     }
 }
 

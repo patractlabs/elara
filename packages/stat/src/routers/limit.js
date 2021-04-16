@@ -5,7 +5,8 @@ const CODE = require('../helper/code')
 let checkLimit = async (ctx, next) => {
     let chain = ctx.request.params.chain
     let pid = ctx.request.params.pid
-    if ('00000000000000000000000000000000' == pid) {//不需要check
+    if ('00000000000000000000000000000000' == pid) {
+        //不需要check
         ctx.response.body = JSON.stringify(CODE.SUCCESS)
         return next()
     }
@@ -31,9 +32,7 @@ let checkLimit = async (ctx, next) => {
         if (isLimit) {
             throw CODE.OUT_OF_LIMIT
         }
-
-    } else
-        throw CODE.PROJECT_ERROR
+    } else throw CODE.PROJECT_ERROR
 
     ctx.response.body = JSON.stringify(CODE.SUCCESS)
 
@@ -41,6 +40,5 @@ let checkLimit = async (ctx, next) => {
 }
 
 module.exports = {
-    'GET /limit/:chain/:pid([a-z0-9]{32})': checkLimit
+    'GET /limit/:chain/:pid([a-z0-9]{32})': checkLimit,
 }
-

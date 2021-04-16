@@ -10,7 +10,9 @@ let accept = async function (id, ws, request) {
         let chain = chain_pid[1].toLowerCase()
         let pid = chain_pid[2]
 
-        let check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})
+        let check = await superagent
+            .get(config.statServer + '/limit/' + chain + '/' + pid)
+            .query({})
         if (0 != check.body.code) {
             ws.send(JSON.stringify(check.body))
             ws.terminate()
@@ -21,14 +23,13 @@ let accept = async function (id, ws, request) {
             messengers.wsClient(id, ws, chain, pid, request)
         } catch (e) {
             ws.terminate()
-            logger.error("Socket Error", e)
+            logger.error('Socket Error', e)
         }
-    }
-    else {
+    } else {
         ws.terminate()
-        logger.error("Path Error", path)
+        logger.error('Path Error', path)
     }
 }
 module.exports = {
-    accept
-} 
+    accept,
+}
