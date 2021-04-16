@@ -20,7 +20,7 @@ log4js.configure({
     categories: {
         default: { appenders: ['out'], level: 'info' },
         access: { appenders: ['access'], level: 'info' },
-        application: { appenders: ['application'], level: 'info' },
+        application: { appenders: ['application'], level: 'error' },
     },
     pm2: process.env.NODE_ENV !== 'dev' ? true : false
 })

@@ -80,8 +80,8 @@ class Messengers {
         this.ws[id] = { id, client, chain, pid, request }
         this.ws[id].client.removeAllListeners('message')
         this.ws[id].client.on('message', (message) => {
-            if (!message.trim()) return
             try {
+                if (!message.trim()) return
                 let params = fromJSON(message)
                 // illegal call
                 if (isUnsafe(params)) {
@@ -113,6 +113,13 @@ class Messengers {
                     })
                 }
             } catch (e) {
+                this.ws[id].client.send(
+                    JSON.stringify({
+                        jsonrpc: '2.0',
+                        error: { code: -32700, message: 'Parse error' },
+                        id: null,
+                    })
+                )
                 logger.error('send message error ', chain, message, e)
             }
         })
