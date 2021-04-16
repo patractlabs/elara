@@ -20,5 +20,6 @@ module.exports = {
         CallbackURL: 'http://127.0.0.1:7001/auth/github/callback',
     },
     login: 'https://elara.patract.io/login',
+    homepage: 'https://elara.patract.io',
     defaultLevel: 0,
 }

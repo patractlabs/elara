@@ -75,7 +75,7 @@ let callback = async (ctx, next) => {
 Authorization Succeeded
     <script>
         window.onload = function () {
-        window.opener.postMessage("elara-sid:${sid}"," https://test-elara-website.vercel.app");
+        window.opener.postMessage("elara-sid:${sid}", ${config.homepage});
         window.close();
     }
     </script>
