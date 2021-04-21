@@ -18,7 +18,13 @@ class Messengers {
                     delete this.http[message.id]
                 }
                 else if (this.ws[message.id]) {
-                    if (this.ws[message.id].client) {
+                    if( message.id && message.response.cmd == 'close' && this.ws[message.id].client ){
+                         //特定的关闭客户端命令 关闭连接
+                         this.ws[message.id].client.close()
+                         delete this.ws[message.id]
+                         logger.info('Close Client',message.id)
+                    }
+                    else if (this.ws[message.id].client) {
                         try {
                             //console.log(message)
                             this.ws[message.id].client.send(toJSON(message.response))
@@ -101,11 +107,11 @@ class Messengers {
             }
         })
         this.ws[id].client.on('close', (code, reason) => {
-            this.ws[id].client = null
+            delete this.ws[id].client
         })
         this.ws[id].client.on('error', function (error) {
             this.ws[id].client.terminate()
-            this.ws[id].client = null
+            delete this.ws[id].client
             logger.error('client ws error ', error)
         })
 

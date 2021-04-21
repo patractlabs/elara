@@ -59,7 +59,7 @@ class Router {
         this.clients[client_id].on('message', (message) => {
             if (!(message.trim()))
                 return
-
+            
             try {
                 //{"id":uid,"chain":''polkadot,"request":{content....}}
                 let msg = JSON.parse(message)

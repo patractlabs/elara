@@ -9,7 +9,7 @@ class Node {
         this.replacement_msg = {}
         this.subscription_msg = {}
         this.router = router
-        this.pool = new Pool('chain',chain, async (message) => {
+        this.pool = new Pool('chain', chain, async (message) => {
             //console.log('back',chain,message)
             message = fromJSON(message)
             if (message.params && message.params.subscription) {//订阅消息
@@ -34,6 +34,19 @@ class Node {
                 }
                 delete this.replacement_msg[replacement_id]
             }
+
+        }, async (closeClientIDs) => {
+            if (!closeClientIDs)
+                return
+
+            //节点的链路断了,通知客户端关闭重连
+            closeClientIDs.forEach((id) => {
+                //特定命令协议 
+                this.router.callback(id, chain, {
+                    "cmd": "close"
+                })
+                logger.info('Close Client', chain, id)
+            })
 
         })
     }
