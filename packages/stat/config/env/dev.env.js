@@ -11,7 +11,8 @@ module.exports = {
         httpOnly: false
     },
     chain: {
-        'polkadot': {}
+        'polkadot': {},
+        'westend': {}
     },
     test: false,
     // redis配置

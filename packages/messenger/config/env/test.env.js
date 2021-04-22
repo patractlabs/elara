@@ -63,7 +63,12 @@ module.exports = {
             'rpc': ['https://mandala.elara.patract.io'],
             'ws': ['wss://mandala.elara.patract.io'],
             'processors': ['node', 'cache']
-        }
+        },
+        'westend': {
+            'rpc': ['https://westend.elara.patract.io'],
+            'ws': ['wss://westend.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
     },
     history: {
     },
