@@ -24,8 +24,10 @@ program.parse(process.argv);
             if(options.vip) {
                 if(['0','1'].includes(options.vip))
                 await redis.hset(KEY.UID(options.uid), 'vip', options.vip);
+            } else {
+                console.log('请输入要修改的参数');
             }
-            console.log('请输入要修改的参数');
+            
         }
     } else {
         console.log('请输入uid');
