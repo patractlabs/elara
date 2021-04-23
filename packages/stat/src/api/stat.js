@@ -124,16 +124,16 @@ class Stat {
         let today = {}
 
         let pid_request = await redis.get(KEY.REQUEST(pid, date))
-        today.request = pid_request ? pid_request : 0
+        today.request = pid_request ? pid_request : '0'
 
         let request_updatetime = await redis.get(KEY.REQUEST_UPDATETIME(pid, date))
-        today.updatetime = request_updatetime ? request_updatetime : 0
+        today.updatetime = request_updatetime ? request_updatetime : '0'
 
         let method = await redis.hgetall(KEY.METHOD(pid, date))
         today.method = method ? method : {}
 
         let bandwidth = await redis.get(KEY.BANDWIDTH(pid, date))
-        today.bandwidth = bandwidth ? bandwidth : 0
+        today.bandwidth = bandwidth ? bandwidth : '0'
 
         let code = await redis.hgetall(KEY.CODE(pid, date))
         today.code = code ? code : {}
@@ -148,12 +148,12 @@ class Stat {
         today.timeout = timeout ? timeout : 0
 
         let delay = await redis.get(KEY.DELAY(pid, date))
-        today.delay = delay ? delay : 0
+        today.delay = delay ? delay : '0'
 
         return today
     }
     //项目的周统计信息
-    static async days(pid,days) {
+    static async days(pid, days) {
         let oneday = 24 * 60 * 60 * 1000
         let today = (new Date()).getTime()
 
