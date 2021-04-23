@@ -22,7 +22,8 @@ module.exports = {
         'nodle': {},
         'plasm': {},
         'stafi': {},
-        'mandala': {}
+        'mandala': {},
+        'westend': {}
     },
     test:false,
     // redis配置

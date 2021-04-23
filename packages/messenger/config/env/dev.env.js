@@ -13,7 +13,12 @@ module.exports = {
             'rpc': ['https://kusama.elara.patract.io'],
             'ws': ['wss://kusama.elara.patract.io'],
             'processors':['node']
-        }
+        },
+        'westend': {
+            'rpc': ['https://westend.elara.patract.io'],
+            'ws': ['wss://westend.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
     },
     history:{
         'polkadot':'postgres://postgres:123@localhost/polkadot_db'
