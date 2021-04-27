@@ -77,6 +77,11 @@ class KV {
 
         let req = fromJSON(toJSON(msg.request))
         req.id = replacement
+        if (isUnSubscription(req.method) && req.params) {
+          for (var i = 0; i < req.params.length; i++) {
+            delete this.subscription_msg[req.params[i]];
+          }
+        }
         return this.pool.sendKV(msg.id, req)
     }
 }
