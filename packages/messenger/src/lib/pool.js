@@ -1,6 +1,11 @@
 const WebSocket = require('ws')
-const { toJSON, sleep } = require("../../../lib/helper/assist");
-const { logger } = require('../../../lib/log')
+const {
+    toJSON,
+    sleep
+} = require("../../../lib/helper/assist");
+const {
+    logger
+} = require('../../../lib/log')
 const crypto = require("crypto");
 
 class Pool {
@@ -26,16 +31,20 @@ class Pool {
         })
         server.on('close', async (error) => {
             logger.error('server ws close ', error)
-            this.servers[index].ws.close()
-            this.closeCallback(this.servers[index].channel_clientID) //回调通知
+            let {
+                ws,
+                channel_clientID
+            } = this.servers[index]
+            ws.terminate()
+            this.closeCallback(channel_clientID) //回调通知
             //定时，不要即时
             await sleep(5000)
-            this.servers[index].channel_clientID.clear()
+            channel_clientID.clear()
             this.servers[index].ws = this.connect(index, name, chain, path)
             console.log('reconnect ', index, name, chain, path)
         })
 
-        server.on('open', async () => {  
+        server.on('open', async () => {
             console.log('open ', index, name, chain)
             server.on('message', this.msgCallback)
         })
@@ -43,13 +52,25 @@ class Pool {
     }
     send(id, req) {
         let index = (Buffer.from(id).readUIntLE(0, 4)) % this.servers.length
-        const { ws, channel_clientID } =  this.servers[index]
+        const {
+            ws,
+            channel_clientID
+        } = this.servers[index]
+        if (WebSocket.OPEN != ws.readyState) {
+            return false
+        }
         channel_clientID.add(id) //更新集合
         ws.send(toJSON(req))
+
+        return true
     }
-    sendKV(id, req) {//Just for 订阅管理器
+    sendKV(id, req) { //Just for 订阅管理器
         let index = (Buffer.from(id).readUIntLE(0, 4)) % this.servers.length
-        const { ws, id: serverId, channel_clientID } = this.servers[index]
+        const {
+            ws,
+            id: serverId,
+            channel_clientID
+        } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
             return false
         }

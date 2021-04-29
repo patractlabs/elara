@@ -1,8 +1,16 @@
 const crypto = require("crypto");
-const { toJSON, fromJSON } = require("../../../lib/helper/assist")
-const { isSubscription, isUnSubscription } = require("../../../lib/helper/check")
+const {
+    toJSON,
+    fromJSON
+} = require("../../../lib/helper/assist")
+const {
+    isSubscription,
+    isUnSubscription
+} = require("../../../lib/helper/check")
 const Pool = require("../lib/pool")
-const { logger } = require('../../../lib/log')
+const {
+    logger
+} = require('../../../lib/log')
 
 class Node {
     constructor(router, chain) {
@@ -12,35 +20,43 @@ class Node {
         this.pool = new Pool(
             'chain',
             chain,
-            async (message) => {
-            //console.log('back',chain,message)
-            message = fromJSON(message)
-            if (message.params && message.params.subscription) {//订阅消息
-                let subscription_id = message.params.subscription
-                if (this.subscription_msg[subscription_id]) {
-                    const { id, chain } = this.subscription_msg[subscription_id]
-                    this.router.callback(id, chain, message)
-                }
-            }
-            else if (message.id) {//常规消息
-                let replacement_id = message.id.toString()
-                if (this.replacement_msg[replacement_id]) {
-                    let { id, chain, request} = this.replacement_msg[replacement_id]
-                    message.id = request.id
-                    this.router.callback(id, chain, message)
-                    if (message.result && isSubscription(chain, request)) {
-                        this.subscription_msg[message.result] = this.replacement_msg[replacement_id]
+            (message) => {
+                //console.log('back',chain,message)
+                message = fromJSON(message)
+                if (message.params && message.params.subscription) { //订阅消息
+                    let subscription_id = message.params.subscription
+                    if (this.subscription_msg[subscription_id]) {
+                        const {
+                            id,
+                            chain
+                        } = this.subscription_msg[subscription_id]
+                        this.router.callback(id, chain, message)
                     }
+                } else if (message.id) { //常规消息
+                    let replacement_id = message.id.toString()
+                    if (this.replacement_msg[replacement_id]) {
+                        let {
+                            id,
+                            chain,
+                            request
+                        } = this.replacement_msg[replacement_id]
+                        message.id = request.id
+                        this.router.callback(id, chain, message)
+                        if (message.result && isSubscription(chain, request)) {
+                            this.subscription_msg[message.result] = this.replacement_msg[replacement_id]
+                        }
+                    }
+                    delete this.replacement_msg[replacement_id]
                 }
-                delete this.replacement_msg[replacement_id]
-            }
 
-            }, 
-            async (closeClientIDs) => {
+            },
+            (closeClientIDs) => {
                 if (!closeClientIDs) return
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
-                    this.router.callback(id, chain, { "cmd": "close" })
+                    this.router.callback(id, chain, {
+                        'cmd': 'close'
+                    })
                     logger.info('Close Client', chain, id)
                 })
             })
@@ -59,7 +75,6 @@ class Node {
 
         let req = fromJSON(toJSON(msg.request))
         req.id = replacement
-        this.pool.send(msg.id, req)
         //这里处理下取消订阅时更新 this.subscription_msg
         if (isUnSubscription(req.method) && (req.params)) {
             for (var i = 0; i < req.params.length; i++) {
@@ -67,7 +82,7 @@ class Node {
             }
         }
 
-        return true
+        return this.pool.send(msg.id, req)
     }
 }
 module.exports = Node

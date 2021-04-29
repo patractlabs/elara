@@ -1,8 +1,12 @@
 const WebSocket = require('ws')
-const { logger } = require('../../lib/log')
+const {
+    logger
+} = require('../../lib/log')
 
 const CODE = require('../../lib/helper/code')
-const { toJSON } = require("../../lib/helper/assist")
+const {
+    toJSON
+} = require("../../lib/helper/assist")
 
 class Router {
     constructor() {
@@ -23,7 +27,7 @@ class Router {
     //匹配处理器
     choose(message) {
         let processors = this.processors[message.chain]
-        if (message.processor) {//指定特定处理器,譬如在处理失败的时候，指定node处理器做兜底
+        if (message.processor) { //指定特定处理器,譬如在处理失败的时候，指定node处理器做兜底
             return processors[message.processor]
         }
 
@@ -38,8 +42,17 @@ class Router {
     async router(message) {
         let processor = this.choose(message);
         if (false == await processor.process(message)) {
-            message.processor = 'node'
-            this.router(message)//重新路由
+            if (message.processor !== 'node') {
+                message.processor = 'node'
+                this.router(message) //重新路由
+            } else {
+                // notify app break ws connect
+                const [id, chain] = message
+                this.callback(id, chain, {
+                    'cmd': 'close'
+                })
+            }
+
         }
     }
     accept(client_id, ws) {
@@ -48,7 +61,7 @@ class Router {
         this.clients[client_id].on('message', (message) => {
             if (!(message.trim()))
                 return
-            
+
             try {
                 //{"id":uid,"chain":''polkadot,"request":{content....}}
                 let msg = JSON.parse(message)
@@ -60,7 +73,7 @@ class Router {
         })
 
         this.clients[client_id].on('close', (code, reason) => {
-            // messenger 服务断开，通知api close和kv
+            // todo messenger 服务断开，通知api close和kv
             // this.clients[client_id].send(toJSON({
             //     "id": client_id
             // }))

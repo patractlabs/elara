@@ -1,15 +1,24 @@
 const WebSocket = require('ws')
-const { logger } = require('../../../lib/log')
+const {
+    logger
+} = require('../../../lib/log')
 const kafka = require("../../../lib/kafka")
 const CODE = require('../../../lib/helper/code')
-const { toJSON, sleep } = require("../../../lib/helper/assist")
+const {
+    toJSON,
+    sleep
+} = require("../../../lib/helper/assist")
 
 class Pool {
-    constructor(chain, path, callback) {
+    constructor(chain, path, callback, oncloseCallback) {
         this.messengers = [];
         this.callback = callback
+        this.oncloseCallback = oncloseCallback
         for (var i = 0; i < config.pool; i++) {
-            this.messengers.push(this.initConnect(i, chain, path))
+            this.messengers.push({
+                ws: this.initConnect(i, chain, path),
+                channel_clientID: new Set()
+            })
         }
     }
     initConnect(index, chain, path) {
@@ -19,9 +28,15 @@ class Pool {
         })
         mess.on('close', async (error) => {
             logger.error('server ws error ', error)
-            mess.terminate()
+            const {
+                channel_clientID,
+                ws
+            } = this.messengers[index]
+            this.oncloseCallback(channel_clientID)
+            ws.terminate()
             await sleep(5000)
-            this.messengers[index] = this.initConnect(index, chain, path)//重连
+            channel_clientID.clear()
+            this.messengers[index].ws = this.initConnect(index, chain, path) //重连
             console.log('reconnect ', index, chain, path)
         })
         mess.on('open', async () => {
@@ -33,7 +48,18 @@ class Pool {
     }
     send(msg) {
         let index = (Buffer.from(msg.id).readUIntLE(0, 4)) % this.messengers.length
-        this.messengers[index].send(toJSON(msg))
+        const {
+            channel_clientID,
+            ws
+        } = this.messengers[index]
+        channel_clientID.add(msg.id)
+        if (ws.readyState !== WebSocket.OPEN) {
+            global.conWs[msg.id].ws.terminate()
+            delete global.conWs[msg.id]
+            logger.error('api ws error', 'check the messenger ws server')
+            return
+        }
+        ws.send(toJSON(msg))
     }
 }
 module.exports = Pool

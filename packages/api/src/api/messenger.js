@@ -1,8 +1,16 @@
-const { logger } = require('../../../lib/log')
+const {
+    logger
+} = require('../../../lib/log')
 const kafka = require("../../../lib/kafka")
 const CODE = require('../../../lib/helper/code')
-const { isUnsafe, unSubscription } = require('../../../lib/helper/check')
-const { toJSON, fromJSON } = require("../../../lib/helper/assist")
+const {
+    isUnsafe,
+    unSubscription
+} = require('../../../lib/helper/check')
+const {
+    toJSON,
+    fromJSON
+} = require("../../../lib/helper/assist")
 const Pool = require("./pool")
 class Messengers {
     constructor() {
@@ -14,54 +22,51 @@ class Messengers {
             this.messengers[chain] = new Pool(
                 chain,
                 config.messengers[chain][0],
-                async (message) => {
+                (message) => {
                     message = fromJSON(message)
                     if (this.http[message.id]) {
                         this.http[message.id].callback(message.response)
                         delete this.http[message.id]
-                    }
-                    else if (global.conWs[message.id]) {
-                        if( message.id && message.response.cmd == 'close' && global.conWs[message.id].ws ){
+                    } else if (global.conWs[message.id]) {
+                        if (message.id && message.response.cmd == 'close' && global.conWs[message.id].ws) {
                             //特定的关闭客户端命令 关闭连接
                             this.wsClose(message.id, message.chain)
-                            logger.info('Close Client',message.id)
-                        }
-                        else if (global.conWs[message.id].ws) {
+                            logger.info('Close Client', message.id)
+                        } else if (global.conWs[message.id].ws) {
                             try {
                                 global.conWs[message.id].ws.send(toJSON(message.response))
-                                this.report(message.id, message.response)//上报
+                                this.report(message.id, message.response) //上报
                                 // 订阅映射，用于app主动断开时，取消messenger内存空间
-                                if(message.response.params && message.response.params.subscription) {
-                                    if(!this.unsubscription_msg[message.id]) {
+                                if (message.response.params && message.response.params.subscription) {
+                                    if (!this.unsubscription_msg[message.id]) {
                                         this.unsubscription_msg[message.id] = {}
                                     }
-                                    if(!this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]]) {
+                                    if (!this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]]) {
                                         this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]] = new Set()
                                     }
-                                    this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]].add(message.response.params.subscription)  
+                                    this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]].add(message.response.params.subscription)
                                 }
                             } catch (e) {
                                 //这里如果出错，就要去messenger取消订阅
                                 //console.log(e)
                                 this.sendUnSubscription(message)
                             }
-                        }
-                        else {
+                        } else {
                             delete global.conWs[message.id]
                         }
                         //上报
-                    }
-                    else {
+                    } else {
                         this.sendUnSubscription(message)
                     }
                 },
-                async (closeClientIDs) => {
-                    if( !closeClientIDs) return
+                (closeClientIDs) => {
+                    if (!closeClientIDs) return
                     //节点的链路断了,通知客户端关闭重连
                     closeClientIDs.forEach((id) => {
                         //特定命令协议 
-                        // this.router.callback(id, chain, { "cmd":"close" })
-                        logger.info('Close Client',chain,id)
+                        global.conWs[id].ws.terminate()
+                        delete global.conWs[id]
+                        logger.info('Close Client', chain, id)
                     })
                 }
             )
@@ -86,12 +91,20 @@ class Messengers {
     }
 
     wsClient(id, chain, pid) {
-        const { ws, request } = global.conWs[id];
-        global.conWs[id] = { ws, request, chain, pid };
+        const {
+            ws,
+            request
+        } = global.conWs[id];
+        global.conWs[id] = {
+            ws,
+            request,
+            chain,
+            pid
+        };
         global.conWs[id].ws.on('message', (message) => {
             try {
                 if (!(message.trim()))
-                return
+                    return
                 let params = fromJSON(message)
                 if (isUnsafe(params)) {
                     global.conWs[id].ws.send(JSON.stringify({
@@ -112,7 +125,10 @@ class Messengers {
             } catch (e) {
                 global.conWs[id].ws.send(JSON.stringify({
                     "jsonrpc": "2.0",
-                    "error": {"code":-32700,"message":"Parse error"},
+                    "error": {
+                        "code": -32700,
+                        "message": "Parse error"
+                    },
                     "id": null
                 }))
                 logger.error('send message error ', chain, message, e)
@@ -132,8 +148,8 @@ class Messengers {
     }
 
     wsClose(id, chain) {
-        for(let method in this.unsubscription_msg[id]) {
-            for(let subId of this.unsubscription_msg[id][method]) {
+        for (let method in this.unsubscription_msg[id]) {
+            for (let subId of this.unsubscription_msg[id][method]) {
                 this.messengers[chain].send({
                     "id": id,
                     "chain": chain,
@@ -151,7 +167,9 @@ class Messengers {
     }
 
     httpClient(id, chain, request, callback) {
-        this.http[id] = { callback }
+        this.http[id] = {
+            callback
+        }
         this.messengers[chain].send({
             "id": id,
             "chain": chain,
@@ -163,7 +181,7 @@ class Messengers {
         try {
             if (global.conWs[id] && global.conWs[id].request) {
                 let request = global.conWs[id].request
-                let ip = (request.headers['x-forwarded-for'] ? request.headers['x-forwarded-for'].split(/\s*,\s/[0]) : null) || request.socket.remoteAddress || ''
+                let ip = (request.headers['x-forwarded-for'] ? request.headers['x-forwarded-for'].split(/\s*,\s/ [0]) : null) || request.socket.remoteAddress || ''
 
                 kafka.stat({
                     'key': 'request',
@@ -173,9 +191,9 @@ class Messengers {
                         ip: ip,
                         chain: global.conWs[id].chain,
                         pid: global.conWs[id].pid,
-                        method: response.method?response.method:'system_health',
+                        method: response.method ? response.method : 'system_health',
                         req: '',
-                        resp: '',//暂时用不上，省空间 message,
+                        resp: '', //暂时用不上，省空间 message,
                         code: 200,
                         bandwidth: toJSON(response).length,
                         start: (new Date()).getTime(),
