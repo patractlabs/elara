@@ -13,7 +13,7 @@ let accept = async function (id) {
 
         let check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})
         if (0 != check.body.code) {
-            global.conWs[id].ws.send(JSON.stringify(check.body)) // 这一行代码app会消费它的数据吗
+            global.conWs[id].ws.send(JSON.stringify(check.body))
             global.conWs[id].ws.terminate()
             delete global.conWs[id]
             logger.error(chain, pid, check.body)
