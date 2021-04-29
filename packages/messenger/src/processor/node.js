@@ -9,46 +9,41 @@ class Node {
         this.replacement_msg = {}
         this.subscription_msg = {}
         this.router = router
-        this.pool = new Pool('chain', chain, async (message) => {
+        this.pool = new Pool(
+            'chain',
+            chain,
+            async (message) => {
             //console.log('back',chain,message)
             message = fromJSON(message)
             if (message.params && message.params.subscription) {//订阅消息
                 let subscription_id = message.params.subscription
                 if (this.subscription_msg[subscription_id]) {
-                    //message.id = this.subscription_msg[subscription_id].request.id
-                    let id = this.subscription_msg[subscription_id].id
-                    let chain = this.subscription_msg[subscription_id].chain
+                    const { id, chain } = this.subscription_msg[subscription_id]
                     this.router.callback(id, chain, message)
                 }
             }
             else if (message.id) {//常规消息
                 let replacement_id = message.id.toString()
                 if (this.replacement_msg[replacement_id]) {
-                    message.id = this.replacement_msg[replacement_id].request.id
-                    let id = this.replacement_msg[replacement_id].id
-                    let chain = this.replacement_msg[replacement_id].chain
+                    let { id, chain, request} = this.replacement_msg[replacement_id]
+                    message.id = request.id
                     this.router.callback(id, chain, message)
-                    if (message.result && isSubscription(chain, this.replacement_msg[replacement_id].request)) {
+                    if (message.result && isSubscription(chain, request)) {
                         this.subscription_msg[message.result] = this.replacement_msg[replacement_id]
                     }
                 }
                 delete this.replacement_msg[replacement_id]
             }
 
-        }, async (closeClientIDs) => {
-            if (!closeClientIDs)
-                return
-
-            //节点的链路断了,通知客户端关闭重连
-            closeClientIDs.forEach((id) => {
-                //特定命令协议 
-                this.router.callback(id, chain, {
-                    "cmd": "close"
+            }, 
+            async (closeClientIDs) => {
+                if (!closeClientIDs) return
+                //节点的链路断了,通知客户端关闭重连
+                closeClientIDs.forEach((id) => {
+                    this.router.callback(id, chain, { "cmd": "close" })
+                    logger.info('Close Client', chain, id)
                 })
-                logger.info('Close Client', chain, id)
             })
-
-        })
     }
     name() {
         return 'node'

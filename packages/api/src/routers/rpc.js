@@ -31,7 +31,7 @@ let api = async (ctx, next) => {
         let id = crypto.randomBytes(16).toString('hex');
         ctx.response.body = await (function () {
             return new Promise((resolve, reject) => {
-                messengers.httpClient(id, chain, pid, req, async (resp) => {
+                global.messengers.httpClient(id, chain, req, async (resp) => {
                     end = (new Date()).getTime()
                     resolve(resp)
                 })

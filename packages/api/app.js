@@ -10,7 +10,6 @@ const { accept } = require('./src/routers/ws')
 const crypto = require("crypto");
 const kafka = require("../lib/kafka");
 const Messengers=require("./src/api/messenger")
-global.message = {}
 
 app.keys = config.keys
 app
@@ -53,7 +52,8 @@ app.on('error', error => {
     logger.error(error)
 })
 
-global.messengers=new Messengers()
+global.messengers = new Messengers()
+global.conWs = {}
 
 let server = app.listen(config.port)
 let wss = new WebSocketServer({ server: server, clientTracking: true });
@@ -68,19 +68,17 @@ wss.on('connection', function (ws, request) {
         }
     });
     let id = crypto.randomBytes(16).toString('hex');
-    global.message[id] = []
-    ws.on('message', function (m) {
-        global.message[id].push(m)
-    })
-
-    accept(id, ws, request)
+    global.conWs[id] = {ws, request}
+    accept(id)
 })
+
 
 wss.on('error', (error) => {
     logger.error('wss error', error)
 })
 
 wss.on('close', () => {
+    clearInterval(interval);
     logger.info('wss close')
 })
 

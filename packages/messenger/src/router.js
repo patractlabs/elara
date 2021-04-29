@@ -34,16 +34,6 @@ class Router {
         }
         return processors['node'] //node处理器做兜底
     }
-    callback(id, chain, response) {
-        let ids = id.split('-')
-        if (this.clients[ids[1]]) {
-            this.clients[ids[1]].send(toJSON({
-                "id": ids[0],
-                "chain": chain,
-                "response": response
-            }))
-        }
-    }
     //分发消息
     async router(message) {
         let processor = this.choose(message);
@@ -51,7 +41,6 @@ class Router {
             message.processor = 'node'
             this.router(message)//重新路由
         }
-        //console.log('router',message)
     }
     accept(client_id, ws) {
         this.clients[client_id] = ws
@@ -71,16 +60,31 @@ class Router {
         })
 
         this.clients[client_id].on('close', (code, reason) => {
+            // messenger 服务断开，通知api close和kv
+            // this.clients[client_id].send(toJSON({
+            //     "id": client_id
+            // }))
+            this.clients[client_id].terminate()
             this.clients[client_id] = null
         })
         this.clients[client_id].on('error', (error) => {
+            // 有问题
             this.clients[client_id].terminate()
             this.clients[client_id] = null
             logger.error('client ws error ', error)
         })
+    }
 
-
-
+    // 回传消息到 api service
+    callback(id, chain, response) {
+        let ids = id.split('-')
+        if (this.clients[ids[1]]) {
+            this.clients[ids[1]].send(toJSON({
+                "id": ids[0],
+                "chain": chain,
+                "response": response
+            }))
+        }
     }
 }
 

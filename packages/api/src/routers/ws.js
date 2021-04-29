@@ -2,9 +2,10 @@ const url = require('url')
 const { logger } = require('../../../lib/log')
 const superagent = require('superagent')
 
-let accept = async function (id, ws, request) {
+let accept = async function (id) {
     let reg = /^\/([a-zA-Z]{0,20})\/([a-z0-9]{32})$/
-    let path = url.parse(request.url).path
+    console.log(global.conWs[id].request.url);
+    let path = url.parse(global.conWs[id].request.url).path
     if (reg.test(path)) {
         let chain_pid = reg.exec(path)
         let chain = chain_pid[1].toLowerCase()
@@ -12,20 +13,23 @@ let accept = async function (id, ws, request) {
 
         let check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})
         if (0 != check.body.code) {
-            ws.send(JSON.stringify(check.body))
-            ws.terminate()
+            global.conWs[id].ws.send(JSON.stringify(check.body)) // 这一行代码app会消费它的数据吗
+            global.conWs[id].ws.terminate()
+            delete global.conWs[id]
             logger.error(chain, pid, check.body)
             return
         }
         try {
-            messengers.wsClient(id, ws, chain, pid, request)
+            global.messengers.wsClient(id, chain, pid)
         } catch (e) {
-            ws.terminate()
+            global.conWs[id].ws.terminate()
+            delete global.conWs[id]
             logger.error("Socket Error", e)
         }
     }
     else {
-        ws.terminate()
+        global.conWs[id].ws.terminate()
+        delete global.conWs[id]
         logger.error("Path Error", path)
     }
 }

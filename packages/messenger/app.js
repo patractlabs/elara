@@ -46,7 +46,7 @@ wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
     
     let id = crypto.randomBytes(16).toString('hex');
-    router.accept(id,ws)
+    router.accept(id, ws)
 })
 
 wss.on('error', (error) => {
