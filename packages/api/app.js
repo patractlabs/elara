@@ -1,19 +1,26 @@
 const Koa = require('koa')
 const koaBody = require('koa-body')
 const router = require('./router')
-const { logger, accessLogger } = require('../lib/log')
+const {
+    logger,
+    accessLogger
+} = require('../lib/log')
 const Result = require('../lib/result')
 const config = global.config = require('./config/index')()
 const app = new Koa()
 const WebSocketServer = require('ws').Server;
-const { accept } = require('./src/routers/ws')
+const {
+    accept
+} = require('./src/routers/ws')
 const crypto = require("crypto");
 const kafka = require("../lib/kafka");
-const Messengers=require("./src/api/messenger")
+const Messengers = require("./src/api/messenger")
 
 app.keys = config.keys
 app
-    .use(koaBody({ multipart: true }))
+    .use(koaBody({
+        multipart: true
+    }))
     .use(accessLogger())
     .use(async (ctx, next) => {
         const start = ctx[Symbol.for('request-received.startTime')] ? ctx[Symbol.for('request-received.startTime')].getTime() : Date.now()
@@ -56,19 +63,25 @@ global.messengers = new Messengers()
 global.conWs = {}
 
 let server = app.listen(config.port)
-let wss = new WebSocketServer({ server: server, clientTracking: true });
+let wss = new WebSocketServer({
+    server: server,
+    clientTracking: true
+});
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
     kafka.stat({
         'key': 'connections',
         'message': {
             protocol: 'websocket',
-            pid: process.pid,//考虑多进程
+            pid: process.pid, //考虑多进程
             connections: wss.clients.size
         }
     });
     let id = crypto.randomBytes(16).toString('hex');
-    global.conWs[id] = {ws, request}
+    global.conWs[id] = {
+        ws,
+        request
+    }
     accept(id)
 })
 
@@ -78,7 +91,6 @@ wss.on('error', (error) => {
 })
 
 wss.on('close', () => {
-    clearInterval(interval);
     logger.info('wss close')
 })
 
@@ -89,5 +101,3 @@ process.on('uncaughtException', function (e) {
     logger.error('uncaughtException', e)
 })
 logger.info(config.name, ' started listen on ', config.port)
-
-

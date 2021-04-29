@@ -32,7 +32,7 @@ class Messengers {
                             //特定的关闭客户端命令 关闭连接
                             this.wsClose(message.id, message.chain)
                             logger.info('Close Client', message.id)
-                        } else if (global.conWs[message.id].ws) {
+                        } else {
                             try {
                                 global.conWs[message.id].ws.send(toJSON(message.response))
                                 this.report(message.id, message.response) //上报
@@ -51,8 +51,6 @@ class Messengers {
                                 //console.log(e)
                                 this.sendUnSubscription(message)
                             }
-                        } else {
-                            delete global.conWs[message.id]
                         }
                         //上报
                     } else {
