@@ -1,5 +1,7 @@
 const url = require('url')
-const { logger } = require('../../../lib/log')
+const {
+    logger
+} = require('../../../lib/log')
 const superagent = require('superagent')
 
 let accept = async function (id) {
@@ -10,8 +12,15 @@ let accept = async function (id) {
         let chain_pid = reg.exec(path)
         let chain = chain_pid[1].toLowerCase()
         let pid = chain_pid[2]
+        let check = null
+        try {
+            check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})
+        } catch (error) {
+            global.conWs[id].ws.terminate()
+            delete global.conWs[id]
+            logger.error("stat server error", '/limit')
+        }
 
-        let check = await superagent.get(config.statServer + '/limit/' + chain + '/' + pid).query({})
         if (0 != check.body.code) {
             global.conWs[id].ws.send(JSON.stringify(check.body))
             global.conWs[id].ws.terminate()
@@ -26,8 +35,7 @@ let accept = async function (id) {
             delete global.conWs[id]
             logger.error("Socket Error", e)
         }
-    }
-    else {
+    } else {
         global.conWs[id].ws.terminate()
         delete global.conWs[id]
         logger.error("Path Error", path)
@@ -35,4 +43,4 @@ let accept = async function (id) {
 }
 module.exports = {
     accept
-} 
+}
