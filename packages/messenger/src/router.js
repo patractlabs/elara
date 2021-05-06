@@ -12,6 +12,7 @@ class Router {
     constructor() {
         this.clients = {}
         this.processors = {}
+        this.unsubscription_msg = {}
         //加载所有处理器
         for (chain in config.chain) {
             let processors = config.chain[chain].processors
@@ -56,6 +57,7 @@ class Router {
         }
     }
     accept(client_id, ws) {
+        let chain = ''
         this.clients[client_id] = ws
         this.clients[client_id].removeAllListeners('message')
         this.clients[client_id].on('message', (message) => {
@@ -65,6 +67,7 @@ class Router {
             try {
                 //{"id":uid,"chain":''polkadot,"request":{content....}}
                 let msg = JSON.parse(message)
+                chain = msg.chain
                 msg.id += '-' + client_id
                 this.router(msg)
             } catch (e) {
@@ -73,10 +76,25 @@ class Router {
         })
 
         this.clients[client_id].on('close', (code, reason) => {
-            // todo messenger 服务断开，通知api close和kv
-            // this.clients[client_id].send(toJSON({
-            //     "id": client_id
-            // }))
+            // api服务断开，删除本地订阅缓存
+            // this.router(msg)
+            for (let id in this.unsubscription_msg[client_id]) {
+                for (let method in this.unsubscription_msg[client_id][id]) {
+                    for (let subId of this.unsubscription_msg[client_id][id][method]) {
+                        this.router({
+                            "id": id,
+                            "chain": chain,
+                            "request": {
+                                "jsonrpc": '2.0',
+                                "method": method,
+                                "params": [subId],
+                                "id": 1
+                            }
+                        })
+                    }
+                }
+            }
+            delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
             this.clients[client_id] = null
         })
@@ -92,11 +110,27 @@ class Router {
     callback(id, chain, response) {
         let ids = id.split('-')
         if (this.clients[ids[1]]) {
-            this.clients[ids[1]].send(toJSON({
-                "id": ids[0],
-                "chain": chain,
-                "response": response
-            }))
+            if (this.clients[ids[1]].readyState === WebSocket.OPEN) {
+                this.clients[ids[1]].send(toJSON({
+                    "id": ids[0],
+                    "chain": chain,
+                    "response": response
+                }))
+            } else {
+                delete this.clients[ids[1]]
+            }
+        }
+        if (response && response.params) {
+            if (!this.unsubscription_msg[ids[1]]) {
+                this.unsubscription_msg[ids[1]] = {}
+            }
+            if (!this.unsubscription_msg[ids[1]][id]) {
+                this.unsubscription_msg[ids[1]][id] = {}
+            }
+            if (!this.unsubscription_msg[ids[1]][id][config['un-subscription'][response.method]]) {
+                this.unsubscription_msg[ids[1]][id][config['un-subscription'][response.method]] = new Set()
+            }
+            this.unsubscription_msg[ids[1]][id][config['un-subscription'][response.method]].add(response.params.subscription)
         }
     }
 }

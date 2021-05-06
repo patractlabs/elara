@@ -82,7 +82,9 @@ class Node {
             }
         }
 
-        return this.pool.send(msg.id, req)
+        const res =  this.pool.send(msg.id, req)
+        if(!res) delete this.replacement_msg[replacement.toString()]
+        return res
     }
 }
 module.exports = Node

@@ -78,7 +78,7 @@ class Messengers {
                     "id": message.id,
                     "chain": message.chain,
                     "request": {
-                        "jsonrpc": message.jsonrpc,
+                        "jsonrpc": message.response.jsonrpc,
                         "method": unSubscription(message.response.method),
                         "params": [message.response.params.subscription],
                         "id": 1
@@ -160,6 +160,7 @@ class Messengers {
                 })
             }
         }
+        delete this.unsubscription_msg[id]
         global.conWs[id].ws.terminate()
         delete global.conWs[id]
     }
