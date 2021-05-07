@@ -48,7 +48,7 @@ class Router {
                 this.router(message) //重新路由
             } else {
                 // notify app break ws connect
-                const [id, chain] = message
+                const {id, chain} = message
                 this.callback(id, chain, {
                     'cmd': 'close'
                 })
