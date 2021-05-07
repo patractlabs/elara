@@ -96,12 +96,12 @@ class Router {
             }
             delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
-            this.clients[client_id] = null
+            delete this.clients[client_id]
         })
         this.clients[client_id].on('error', (error) => {
             // 有问题
             this.clients[client_id].terminate()
-            this.clients[client_id] = null
+            delete this.clients[client_id]
             logger.error('client ws error ', error)
         })
     }
