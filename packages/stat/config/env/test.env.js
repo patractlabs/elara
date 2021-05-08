@@ -23,7 +23,9 @@ module.exports = {
         'plasm': {},
         'stafi': {},
         'mandala': {},
-        'westend': {}
+        'westend': {},
+        'subsocial': {},
+        'moonbase': {},
     },
     test:false,
     // redis配置

@@ -69,6 +69,16 @@ module.exports = {
             'ws': ['wss://westend.elara.patract.io'],
             'processors': ['node', 'cache']
         },
+        'subsocial': {
+            'rpc': ['https://subsocial.elara.patract.io'],
+            'ws': ['wss://subsocial.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
+        'moonbase': {
+            'rpc': ['https://moonbase.elara.patract.io'],
+            'ws': ['wss://moonbase.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
     },
     history: {
     },
