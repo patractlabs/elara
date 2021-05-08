@@ -12,7 +12,9 @@ module.exports = {
     },
     chain: {
         'polkadot': {},
-        'westend': {}
+        'westend': {},
+        'subsocial': {},
+        'moonbase': {},
     },
     test: false,
     // redis配置

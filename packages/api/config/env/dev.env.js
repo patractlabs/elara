@@ -6,7 +6,9 @@ module.exports = {
     messengers: {
             'polkadot': ['ws://127.0.0.1:7004'],
             'kusama': ['ws://127.0.0.1:7004'],
-            'westend': ['ws://127.0.0.1:7004']
+            'westend': ['ws://127.0.0.1:7004'],
+            'subsocial': ['ws://127.0.0.1:7004'],
+            'moonbase': ['ws://127.0.0.1:7004']
     },
     kafka:{
         'kafkaHost':'127.0.0.1:9092',
