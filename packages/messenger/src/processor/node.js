@@ -51,7 +51,7 @@ class Node {
 
             },
             (closeClientIDs) => {
-                if (!closeClientIDs) return
+                if (closeClientIDs.size === 0) return
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
                     this.router.callback(id, chain, {

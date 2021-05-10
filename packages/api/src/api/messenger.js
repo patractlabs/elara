@@ -58,13 +58,16 @@ class Messengers {
                     }
                 },
                 (closeClientIDs) => {
-                    if (!closeClientIDs) return
+                    if (closeClientIDs.size === 0) return
                     //节点的链路断了,通知客户端关闭重连
                     closeClientIDs.forEach((id) => {
-                        //特定命令协议 
-                        global.conWs[id].ws.terminate()
-                        delete global.conWs[id]
-                        logger.info('Close Client', chain, id)
+                        //特定命令协议
+                        if(global.conWs[id]) {
+                            global.conWs[id].ws.terminate()
+                            delete global.conWs[id]
+                            logger.info('Close Client', chain, id)
+                        }
+                       
                     })
                 }
             )
@@ -133,19 +136,20 @@ class Messengers {
             }
         })
 
-        global.conWs[id].ws.on('close', (code, reason) => {
+        global.conWs[id].ws.on('close', () => {
             // when apps is broken, delete cache value
             // 通知 messenger断开连接，删除内存空间
             this.wsClose(id, chain)
         })
 
-        global.conWs[id].ws.on('error', function (error) {
+        global.conWs[id].ws.on('error', (error) => {
             this.wsClose(id, chain)
             logger.error('client ws error ', error)
         })
     }
 
     wsClose(id, chain) {
+        
         for (let method in this.unsubscription_msg[id]) {
             for (let subId of this.unsubscription_msg[id][method]) {
                 this.messengers[chain].send({

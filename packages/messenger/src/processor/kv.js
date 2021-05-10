@@ -61,7 +61,7 @@ class KV {
 
             },
             (closeClientIDs) => {
-                if (!closeClientIDs) return
+                if (closeClientIDs.size === 0) return
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
                     //特定命令协议 该协议会回传消息取消订阅
