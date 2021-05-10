@@ -61,8 +61,11 @@ class Messengers {
                     if (closeClientIDs.size === 0) return
                     //节点的链路断了,通知客户端关闭重连
                     closeClientIDs.forEach((id) => {
+                        
                         //特定命令协议
                         if(global.conWs[id]) {
+                            delete this.unsubscription_msg[id]
+                            global.conWs[id].ws.removeAllListeners()
                             global.conWs[id].ws.terminate()
                             delete global.conWs[id]
                             logger.info('Close Client', chain, id)
@@ -138,7 +141,6 @@ class Messengers {
 
         global.conWs[id].ws.on('close', () => {
             // when apps is broken, delete cache value
-            // 通知 messenger断开连接，删除内存空间
             this.wsClose(id, chain)
         })
 
@@ -165,6 +167,7 @@ class Messengers {
             }
         }
         delete this.unsubscription_msg[id]
+        global.conWs[id].ws.removeAllListeners()
         global.conWs[id].ws.terminate()
         delete global.conWs[id]
     }

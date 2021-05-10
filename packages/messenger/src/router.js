@@ -99,7 +99,7 @@ class Router {
             delete this.clients[client_id]
         })
         this.clients[client_id].on('error', (error) => {
-            // 有问题
+            delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
             delete this.clients[client_id]
             logger.error('client ws error ', error)

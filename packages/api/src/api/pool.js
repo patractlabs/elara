@@ -27,7 +27,7 @@ class Pool {
             logger.error('server ws error ', error, index, chain, path)
         })
         mess.on('close', async (error) => {
-            logger.error('server ws error ', error)
+            logger.error('server ws close ', error)
             const {
                 channel_clientID,
                 ws
@@ -54,6 +54,7 @@ class Pool {
         } = this.messengers[index]
         channel_clientID.add(msg.id)
         if (ws.readyState !== WebSocket.OPEN) {
+            global.conWs[msg.id].ws.removeAllListeners()
             global.conWs[msg.id].ws.terminate()
             delete global.conWs[msg.id]
             logger.error('api ws error', 'check the messenger ws server')
