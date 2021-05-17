@@ -96,11 +96,13 @@ class Router {
             }
             delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
+            this.clients[client_id].removeAllListeners()
             delete this.clients[client_id]
         })
         this.clients[client_id].on('error', (error) => {
             delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
+            this.clients[client_id].removeAllListeners()
             delete this.clients[client_id]
             logger.error('client ws error ', error)
         })
@@ -117,6 +119,8 @@ class Router {
                     "response": response
                 }))
             } else {
+                this.clients[ids[1]].terminate()
+                this.clients[ids[1]].removeAllListeners()
                 delete this.clients[ids[1]]
             }
         }
