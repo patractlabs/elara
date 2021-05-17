@@ -32,9 +32,10 @@ class Pool {
                 channel_clientID,
                 ws
             } = this.messengers[index]
-            this.oncloseCallback(channel_clientID)
-            ws.terminate()
+            ws.removeAllListeners()
+            ws.close()
             await sleep(5000)
+            this.oncloseCallback(channel_clientID)
             channel_clientID.clear()
             this.messengers[index].ws = this.initConnect(index, chain, path) //重连
             console.log('reconnect ', index, chain, path)
@@ -54,10 +55,7 @@ class Pool {
         } = this.messengers[index]
         channel_clientID.add(msg.id)
         if (ws.readyState !== WebSocket.OPEN) {
-            global.conWs[msg.id].ws.removeAllListeners()
-            global.conWs[msg.id].ws.terminate()
-            delete global.conWs[msg.id]
-            logger.error('api ws error', 'check the messenger ws server')
+            ws.close()
             return
         }
         ws.send(toJSON(msg))

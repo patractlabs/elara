@@ -66,11 +66,10 @@ class Messengers {
                         if(global.conWs[id]) {
                             delete this.unsubscription_msg[id]
                             global.conWs[id].ws.removeAllListeners()
-                            global.conWs[id].ws.terminate()
+                            global.conWs[id].ws.close()
                             delete global.conWs[id]
-                            logger.info('Close Client', chain, id)
+                            logger.info('Close & Del Client', chain, id)
                         }
-                       
                     })
                 }
             )
@@ -168,7 +167,7 @@ class Messengers {
         }
         delete this.unsubscription_msg[id]
         global.conWs[id].ws.removeAllListeners()
-        global.conWs[id].ws.terminate()
+        global.conWs[id].ws.close()
         delete global.conWs[id]
     }
 

@@ -35,10 +35,11 @@ class Pool {
                 ws,
                 channel_clientID
             } = this.servers[index]
-            ws.terminate()
-            this.closeCallback(channel_clientID) //回调通知
+            ws.removeAllListeners()
+            ws.close()
             //定时，不要即时
             await sleep(5000)
+            this.closeCallback(channel_clientID) //回调通知
             channel_clientID.clear()
             this.servers[index].ws = this.connect(index, name, chain, path)
             console.log('reconnect ', index, name, chain, path)
@@ -57,6 +58,7 @@ class Pool {
             channel_clientID
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
+            ws.close()
             return false
         }
         channel_clientID.add(id) //更新集合
@@ -72,6 +74,7 @@ class Pool {
             channel_clientID
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
+            ws.close()
             return false
         }
         channel_clientID.add(id) //更新集合
