@@ -34,7 +34,7 @@ class Pool {
             } = this.messengers[index]
             ws.removeAllListeners()
             ws.close()
-            await sleep(5000)
+            await sleep(20000)
             this.oncloseCallback(channel_clientID)
             channel_clientID.clear()
             this.messengers[index].ws = this.initConnect(index, chain, path) //重连
