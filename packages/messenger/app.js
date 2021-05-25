@@ -1,16 +1,20 @@
 const Koa = require('koa')
 const koaBody = require('koa-body')
-const { logger, accessLogger } = require('../lib/log')
+const {
+    logger,
+    accessLogger
+} = require('../lib/log')
 const Result = require('../lib/result')
 global.config = require('./config/index')()
 const app = new Koa()
 const WebSocketServer = require('ws').Server;
 const crypto = require("crypto");
-const Router=require('./src/router');
-
+const Router = require('./src/router');
 
 app
-    .use(koaBody({ multipart: true }))
+    .use(koaBody({
+        multipart: true
+    }))
     .use(accessLogger())
     .use(async (ctx, next) => {
         const start = ctx[Symbol.for('request-received.startTime')] ? ctx[Symbol.for('request-received.startTime')].getTime() : Date.now()
@@ -39,14 +43,17 @@ app.on('error', error => {
     logger.error(error)
 })
 
-let router=new Router();
+let router = new Router();
 let server = app.listen(config.port)
-let wss = new WebSocketServer({ server: server, clientTracking: true });
+let wss = new WebSocketServer({
+    server: server,
+    clientTracking: true
+});
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)
     
     let id = crypto.randomBytes(16).toString('hex');
-    router.accept(id,ws)
+    router.accept(id, ws)
 })
 
 wss.on('error', (error) => {
@@ -64,5 +71,3 @@ process.on('uncaughtException', function (e) {
     logger.error('uncaughtException', e)
 })
 logger.info(config.name, ' started listen on ', config.port)
-
-

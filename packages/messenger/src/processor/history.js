@@ -100,6 +100,7 @@ class History {
         })
 
     }
+
     async _stateQueryStorageAt(request, replacement_id) {
         //state_queryStorageAt
         /*
@@ -217,6 +218,7 @@ class History {
             return false
         }
     }
+
     async _stateGetStorage(request, replacement_id) {
         //state_getStorage
 
@@ -292,6 +294,7 @@ class History {
         delete this.replacement_msg[replacement_id]
         return false
     }
+    
     async _chainGetBlockHash(request, replacement_id) {
         //chain_getBlockHash
         let params = [];

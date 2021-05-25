@@ -7,7 +7,7 @@ module.exports = {
         'polkadot': {
             'rpc': ['https://polkadot.elara.patract.io'],
             'ws': ['wss://polkadot.elara.patract.io'],
-            'processors':['node','cache','history']//处理器列表
+            'processors':['node','cache','history','kv']//处理器列表
         },
         'kusama': {
             'rpc': ['https://kusama.elara.patract.io'],
@@ -33,6 +33,14 @@ module.exports = {
     history:{
         'polkadot':'postgres://postgres:123@localhost/polkadot_db'
        
+    },
+    kv:{
+        'polkadot':{
+            'ws':['ws://127.0.0.1:9002']
+        },
+        'kusama':{
+            'ws':['ws://127.0.0.1:9002']
+        }
     },
     pool:1
 }
