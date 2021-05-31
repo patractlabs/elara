@@ -12,7 +12,6 @@ class Router {
     constructor() {
         this.clients = {}
         this.processors = {}
-        this.unsubscription_msg = {}
         //加载所有处理器
         for (chain in config.chain) {
             let processors = config.chain[chain].processors
@@ -78,29 +77,11 @@ class Router {
         this.clients[client_id].on('close', (code, reason) => {
             // api服务断开，删除本地订阅缓存
             // this.router(msg)
-            for (let id in this.unsubscription_msg[client_id]) {
-                for (let method in this.unsubscription_msg[client_id][id]) {
-                    for (let subId of this.unsubscription_msg[client_id][id][method]) {
-                        this.router({
-                            "id": id,
-                            "chain": chain,
-                            "request": {
-                                "jsonrpc": '2.0',
-                                "method": method,
-                                "params": [subId],
-                                "id": 1
-                            }
-                        })
-                    }
-                }
-            }
-            delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
             this.clients[client_id].removeAllListeners()
             delete this.clients[client_id]
         })
         this.clients[client_id].on('error', (error) => {
-            delete this.unsubscription_msg[client_id]
             this.clients[client_id].terminate()
             this.clients[client_id].removeAllListeners()
             delete this.clients[client_id]
@@ -123,18 +104,6 @@ class Router {
                 this.clients[ids[1]].removeAllListeners()
                 delete this.clients[ids[1]]
             }
-        }
-        if (response && response.params) {
-            if (!this.unsubscription_msg[ids[1]]) {
-                this.unsubscription_msg[ids[1]] = {}
-            }
-            if (!this.unsubscription_msg[ids[1]][id]) {
-                this.unsubscription_msg[ids[1]][id] = {}
-            }
-            if (!this.unsubscription_msg[ids[1]][id][config['un-subscription'][response.method]]) {
-                this.unsubscription_msg[ids[1]][id][config['un-subscription'][response.method]] = new Set()
-            }
-            this.unsubscription_msg[ids[1]][id][config['un-subscription'][response.method]].add(response.params.subscription)
         }
     }
 }
