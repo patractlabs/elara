@@ -90,5 +90,5 @@ module.exports = {
             'ws':['ws://127.0.0.1:9002']
         }
     },
-    pool: 10
+    pool: 100
 }
