@@ -56,9 +56,6 @@ let requests = async (ctx, next) => {
 }
 
 let requestsOfPeriod = async (ctx, next) => {
-    if( !checkAuthenticated(ctx)){
-        return next()
-    }
     let days = ctx.request.params.days
     ctx.response.body = (new Result(0, '', await Stat.getTotalRequestByRange(days))).toString()
     return next()
