@@ -69,7 +69,7 @@ class Node {
         return false
     }
     async process(msg) {
-        //console.log('Node',toJSON(msg))
+        console.log(`replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
         this.replacement_msg[replacement.toString()] = msg
 
