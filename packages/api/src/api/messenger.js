@@ -16,6 +16,7 @@ class Messengers {
     constructor() {
         this.http = {}
         this.messengers = {}
+        this.unsubscription_msg = {}
         //加载所有消息通道
         for (let chain in config.messengers) {
             this.messengers[chain] = new Pool(
@@ -29,11 +30,21 @@ class Messengers {
                     } else if (global.conWs[message.id]) {
                         if (message.id && message.response.cmd == 'close' && global.conWs[message.id].ws) {
                             //特定的关闭客户端命令 关闭连接
-                            this.wsClose(message.id)
+                            this.wsClose(message.id, message.chain)
                             logger.info('Close Client', message.id)
                         } else {
                             try {
                                 global.conWs[message.id].ws.send(toJSON(message.response))
+                                // 订阅映射，用于app主动断开时，取消messenger内存空间
+                                if (message.response.params && message.response.params.subscription) {
+                                    if (!this.unsubscription_msg[message.id]) {
+                                        this.unsubscription_msg[message.id] = {}
+                                    }
+                                    if (!this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]]) {
+                                        this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]] = new Set()
+                                    }
+                                    this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]].add(message.response.params.subscription)
+                                }
                                 this.report(message.id, message.response) //上报
                             } catch (e) {
                                 //这里如果出错，就要去messenger取消订阅
@@ -53,6 +64,7 @@ class Messengers {
                         
                         //特定命令协议
                         if(global.conWs[id]) {
+                            delete this.unsubscription_msg[id]
                             global.conWs[id].ws.removeAllListeners()
                             global.conWs[id].ws.close()
                             delete global.conWs[id]
@@ -82,6 +94,7 @@ class Messengers {
     }
 
     wsClient(id, chain, pid) {
+        console.log(`unsubscription_msg: ${Object.keys(this.unsubscription_msg).length}`)
         const {
             ws,
             request
@@ -128,16 +141,31 @@ class Messengers {
 
         global.conWs[id].ws.on('close', () => {
             // when apps is broken, delete cache value
-            this.wsClose(id)
+            this.wsClose(id, chain)
         })
 
         global.conWs[id].ws.on('error', (error) => {
-            this.wsClose(id)
+            this.wsClose(id, chain)
             logger.error('client ws error ', error)
         })
     }
 
-    wsClose(id) {
+    wsClose(id, chain) {
+        for (let method in this.unsubscription_msg[id]) {
+            for (let subId of this.unsubscription_msg[id][method]) {
+                this.messengers[chain].send({
+                    "id": id,
+                    "chain": chain,
+                    "request": {
+                        "jsonrpc": '2.0',
+                        "method": method,
+                        "params": [subId],
+                        "id": 1
+                    }
+                })
+            }
+        }
+        delete this.unsubscription_msg[id]
         global.conWs[id].ws.removeAllListeners()
         global.conWs[id].ws.close()
         delete global.conWs[id]
