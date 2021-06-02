@@ -55,6 +55,12 @@ let requests = async (ctx, next) => {
     return next()
 }
 
+let requestsOfPeriod = async (ctx, next) => {
+    let days = ctx.request.params.days
+    ctx.response.body = (new Result(0, '', await Stat.getTotalRequestByRange(days))).toString()
+    return next()
+}
+
 let dashboard=async (ctx, next) => {
     ctx.response.body = (new Result(0, '', await Stat.dashboard())).toString()
     return next()
@@ -66,6 +72,7 @@ module.exports = {
     'GET /stat/week/:pid([a-z0-9]{32})': week, //项目的周统计信息
     'GET /stat/month/:pid([a-z0-9]{32})': month, //项目的今天统计信息
     'GET /stat/requests': requests, // last request
-    'GET /stat/dashboard': dashboard
+    'GET /stat/dashboard': dashboard,
+    'GET /stat/requests/:days': requestsOfPeriod
 }
 
