@@ -8,6 +8,7 @@ module.exports = {
     DELAY: (pid, date) => pid + '_delay_' + date,
     REQUEST: (pid, date) => pid + '_request_' + date,
     REQUEST_UPDATETIME: (pid, date) => pid + '_request_updatetime_' + date,
+    REQUEST_DAILY: (date) => 'request_' + date,
     METHOD: (pid, date) => pid + '_method_' + date,
     TOTAL: (chain) => chain + '_total',
     BANDWIDTH: (pid, date) => pid + '_bandwidth_' + date,

@@ -1,7 +1,13 @@
-const { logger } = require('../../../lib/log');
+const {
+    logger
+} = require('../../../lib/log');
 const redis = require('../../../lib/redis')
-const { now, formateDate } = require('../../../lib/helper/assist');
+const {
+    now,
+    formateDate
+} = require('../../../lib/helper/assist');
 const KEY = require('./KEY')
+const Project = require('./project')
 /**
  *  统计
  */
@@ -13,26 +19,27 @@ class Stat {
     static async request(info) {
 
         let protocol = info.protocol
-        let header = info.header/*请求头 */
+        let header = info.header /*请求头 */
         let chain = info.chain
         let pid = info.pid
         let method = info.method
-        let req = info.req/*请求体 */
-        let resp = info.resp/*响应体 */
+        let req = info.req /*请求体 */
+        let resp = info.resp /*响应体 */
         let code = info.code
-        let bandwidth = info.bandwidth/*响应带宽*/
+        let bandwidth = info.bandwidth /*响应带宽*/
         let start = parseInt(info.start)
         let end = parseInt(info.end)
         let delay = ((end - start) > config.timeout) ? config.timeout : (end - start)
 
-        await Stat._request_response(info)//最新1000个请求记录
-        await Stat._timeout(pid, parseInt(delay))//
-        await Stat._today_request(pid)　//今日请求数统计
+        await Stat._request_response(info) //最新1000个请求记录
+        await Stat._timeout(pid, parseInt(delay)) //
+        await Stat._today_request(pid) //今日请求数统计
         await Stat._method(pid, method) //每日调用方法分类统计
-        await Stat._bandwidth(pid, bandwidth)//每日带宽统计
-        await Stat._code(pid, code)//每日调用响应码分类统计
-        await Stat._header(header, pid)//请求头分析统计
+        await Stat._bandwidth(pid, bandwidth) //每日带宽统计
+        await Stat._code(pid, code) //每日调用响应码分类统计
+        await Stat._header(header, pid) //请求头分析统计
         await Stat._chain(chain) //链的总请求数统计
+        await Stat._requestByDay(chain)
 
         logger.info('pid=', pid, ',protocol=', protocol, ',chain=', chain, ',method=', method, ',code=', code, ',bandwidth=', bandwidth, ',delay=', delay)
     }
@@ -47,12 +54,11 @@ class Stat {
         if (delay >= config.timeout)
             await redis.incr(KEY.TIMEOUT(pid, date))
         let average = parseInt(await redis.get(KEY.DELAY(pid, date)))
-        if (average) {//算平均
+        if (average) { //算平均
             let requests = parseInt(await redis.get(KEY.REQUEST(pid, date)))
             average = ((requests * average + delay) / (requests + 1)).toFixed(2)
             await redis.set(KEY.DELAY(pid, date), average)
-        }
-        else {
+        } else {
             await redis.set(KEY.DELAY(pid, date), delay)
         }
     }
@@ -72,6 +78,12 @@ class Stat {
     static async _chain(chain) {
         await redis.incr(KEY.TOTAL(chain))
     }
+
+    static async _requestByDay() {
+        let date = formateDate(new Date())
+        await redis.incr(KEY.REQUEST_DAILY(date))
+    }
+
     static async _bandwidth(pid, bandwidth) {
         let date = formateDate(new Date())
         await redis.incrby(KEY.BANDWIDTH(pid, date), parseInt(bandwidth))
@@ -108,6 +120,20 @@ class Stat {
             total[chain] = count ? count : "0"
         }
         return total
+    }
+
+    // 过去n天，当天所有链请求总数
+    static async getTotalRequestByRange(days) {
+        let oneday = 24 * 60 * 60 * 1000
+        let today = (new Date()).getTime()
+
+        let data = {}
+        for (var i = 0; i < parseInt(days); i++) {
+            let date = formateDate(new Date(today - i * oneday))
+            data[date] = await redis.get(KEY.REQUEST_DAILY(date)) || "0"
+        }
+
+        return data
     }
 
     //账户下的项目总数
@@ -177,8 +203,7 @@ class Stat {
                     for (var j = 0; j < requests[i].ip.length; j++) {
                         requests[i].ip[j] = requests[i].ip[j].replace(/^(\d*)\.(\d*)/, '***.***')
                     }
-                }
-                else if (requests[i].ip) {
+                } else if (requests[i].ip) {
                     requests[i].ip = requests[i].ip.replace(/^(\d*)\.(\d*)/, '***.***')
                 }
             }
