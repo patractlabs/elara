@@ -39,7 +39,7 @@ class Stat {
         await Stat._code(pid, code) //每日调用响应码分类统计
         await Stat._header(header, pid) //请求头分析统计
         await Stat._chain(chain) //链的总请求数统计
-        await Stat._requestByDay(chain)
+        await Stat._requestByDay()
 
         logger.info('pid=', pid, ',protocol=', protocol, ',chain=', chain, ',method=', method, ',code=', code, ',bandwidth=', bandwidth, ',delay=', delay)
     }
