@@ -7,12 +7,12 @@ module.exports = {
         'polkadot': {
             'rpc': ['https://polkadot.elara.patract.io'],
             'ws': ['wss://polkadot.elara.patract.io'],
-            'processors': ['node', 'cache','kv']//处理器列表
+            'processors': ['node', 'cache']//处理器列表
         },
         'kusama': {
             'rpc': ['https://kusama.elara.patract.io'],
             'ws': ['wss://kusama.elara.patract.io'],
-            'processors': ['node', 'cache','kv']
+            'processors': ['node', 'cache']
         },
         'jupiter': {
             'rpc': ['https://jupiter-poa.elara.patract.io'],
@@ -64,6 +64,11 @@ module.exports = {
             'ws': ['wss://mandala.elara.patract.io'],
             'processors': ['node', 'cache']
         },
+        'chainx': {
+            'rpc': ['https://chainx.elara.patract.io'],
+            'ws': ['wss://chainx.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
         'westend': {
             'rpc': ['https://westend.elara.patract.io'],
             'ws': ['wss://westend.elara.patract.io'],
@@ -79,6 +84,16 @@ module.exports = {
             'ws': ['wss://moonbase.elara.patract.io'],
             'processors': ['node', 'cache']
         },
+        'statemine': {
+            'rpc': ['https://statemine.kusama.elara.patract.io'],
+            'ws': ['wss://statemine.kusama.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
+        'westmint': {
+            'rpc': ['https://westmint.westend.elara.patract.io'],
+            'ws': ['wss://westmint.westend.elara.patract.io'],
+            'processors': ['node', 'cache']
+        }
     },
     history: {
     },
