@@ -16,7 +16,6 @@ class Messengers {
     constructor() {
         this.http = {}
         this.messengers = {}
-        this.unsubscription_msg = {}
         //加载所有消息通道
         for (let chain in config.messengers) {
             this.messengers[chain] = new Pool(
@@ -37,13 +36,13 @@ class Messengers {
                                 global.conWs[message.id].ws.send(toJSON(message.response))
                                 // 订阅映射，用于app主动断开时，取消messenger内存空间
                                 if (message.response.params && message.response.params.subscription) {
-                                    if (!this.unsubscription_msg[message.id]) {
-                                        this.unsubscription_msg[message.id] = {}
+                                    if (!global.conWs[message.id].unsubscription_msg) {
+                                        global.conWs[message.id].unsubscription_msg = {}
                                     }
-                                    if (!this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]]) {
-                                        this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]] = new Set()
+                                    if (!global.conWs[message.id].unsubscription_msg[config['un-subscription'][message.response.method]]) {
+                                        global.conWs[message.id].unsubscription_msg[config['un-subscription'][message.response.method]] = new Set()
                                     }
-                                    this.unsubscription_msg[message.id][config['un-subscription'][message.response.method]].add(message.response.params.subscription)
+                                    global.conWs[message.id].unsubscription_msg[config['un-subscription'][message.response.method]].add(message.response.params.subscription)
                                 }
                                 this.report(message.id, message.response) //上报
                             } catch (e) {
@@ -64,7 +63,6 @@ class Messengers {
                         
                         //特定命令协议
                         if(global.conWs[id]) {
-                            delete this.unsubscription_msg[id]
                             global.conWs[id].ws.removeAllListeners()
                             global.conWs[id].ws.close()
                             delete global.conWs[id]
@@ -94,7 +92,7 @@ class Messengers {
     }
 
     wsClient(id, chain, pid) {
-        console.log(`unsubscription_msg: ${Object.keys(this.unsubscription_msg).length}`)
+        console.log(`consWs: ${Object.keys(global.conWs).length}`)
         const {
             ws,
             request
@@ -151,8 +149,8 @@ class Messengers {
     }
 
     wsClose(id, chain) {
-        for (let method in this.unsubscription_msg[id]) {
-            for (let subId of this.unsubscription_msg[id][method]) {
+        for (let method in global.conWs[id].unsubscription_msg) {
+            for (let subId of global.conWs[id].unsubscription_msg[method]) {
                 this.messengers[chain].send({
                     "id": id,
                     "chain": chain,
@@ -165,7 +163,6 @@ class Messengers {
                 })
             }
         }
-        delete this.unsubscription_msg[id]
         global.conWs[id].ws.removeAllListeners()
         global.conWs[id].ws.close()
         delete global.conWs[id]
