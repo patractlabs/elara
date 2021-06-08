@@ -17,7 +17,6 @@
     "autorestart": true,
     "error_file": "./logs/app-err.log",
     "out_file": "./logs/app-out.log",
-    "node_args": "--max-new-space-size=2048",
     "env": {
         "NODE_ENV": "dev"
     },

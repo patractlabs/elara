@@ -57,7 +57,6 @@ class Router {
     }
     accept(client_id, ws) {
         let chain = ''
-        console.log("length of this.clients", Object.keys(this.clients).length)
         this.clients[client_id] = ws
         this.clients[client_id].removeAllListeners('message')
         this.clients[client_id].on('message', (message) => {
