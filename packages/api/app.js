@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const koaBody = require('koa-body')
 const router = require('./router')
+const heapdump = require('heapdump');
 const {
     logger,
     accessLogger
@@ -60,7 +61,6 @@ app.on('error', error => {
 })
 
 global.messengers = new Messengers()
-global.conWs = {}
 
 let server = app.listen(config.port)
 let wss = new WebSocketServer({
@@ -78,11 +78,7 @@ wss.on('connection', function (ws, request) {
         }
     });
     let id = crypto.randomBytes(16).toString('hex');
-    global.conWs[id] = {
-        ws,
-        request
-    }
-    accept(id)
+    accept(id, ws, request)
 })
 
 

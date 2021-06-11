@@ -5,6 +5,7 @@
     "async-redis": "^1.1.7",
     "crypto": "^1.0.1",
     "extend": "^3.0.2",
+    "heapdump": "^0.3.15",
     "ioredis": "^4.17.3",
     "kafka-node": "^5.0.0",
     "koa": "^2.13.0",
