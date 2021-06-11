@@ -27,33 +27,24 @@ class Messengers {
                         this.http[message.id].callback(message.response)
                         delete this.http[message.id]
                     } else if (global.conWs[message.id]) {
-                        if (message.id && message.response.cmd == 'close' && global.conWs[message.id].ws) {
+                        if (message.response.cmd == 'close' && global.conWs[message.id].ws) {
                             //特定的关闭客户端命令 关闭连接
-                            this.wsClose(message.id, message.chain)
+                            this.wsClose(message.id)
                             logger.info('Close Client', message.id)
                         } else {
                             try {
                                 global.conWs[message.id].ws.send(toJSON(message.response))
-                                // 订阅映射，用于app主动断开时，取消messenger内存空间
-                                if (message.response.params && message.response.params.subscription) {
-                                    if (!global.conWs[message.id].unsubscription_msg) {
-                                        global.conWs[message.id].unsubscription_msg = {}
-                                    }
-                                    if (!global.conWs[message.id].unsubscription_msg[config['un-subscription'][message.response.method]]) {
-                                        global.conWs[message.id].unsubscription_msg[config['un-subscription'][message.response.method]] = new Set()
-                                    }
-                                    global.conWs[message.id].unsubscription_msg[config['un-subscription'][message.response.method]].add(message.response.params.subscription)
-                                }
                                 this.report(message.id, message.response) //上报
                             } catch (e) {
                                 //这里如果出错，就要去messenger取消订阅
                                 //console.log(e)
-                                this.sendUnSubscription(message)
+                                this.wsClose(message.id)
+                                console.log('ws send error', e)
                             }
                         }
                         //上报
                     } else {
-                        this.sendUnSubscription(message)
+                        console.log('unexceptionMsg', JSON.stringify(message))
                     }
                 },
                 (closeClientIDs) => {
@@ -63,31 +54,12 @@ class Messengers {
                         
                         //特定命令协议
                         if(global.conWs[id]) {
-                            global.conWs[id].ws.removeAllListeners()
-                            global.conWs[id].ws.close()
-                            delete global.conWs[id]
+                            this.wsClose(id)
                             logger.info('Close & Del Client', chain, id)
                         }
                     })
                 }
             )
-        }
-    }
-    sendUnSubscription(message) {
-        if (message.response.params && message.response.params.subscription) {
-            if (unSubscription(message.response.method)) {
-                // delete this.subscription_msg[message.response.params.subscription]
-                this.messengers[message.chain].send({
-                    "id": message.id,
-                    "chain": message.chain,
-                    "request": {
-                        "jsonrpc": message.response.jsonrpc,
-                        "method": unSubscription(message.response.method),
-                        "params": [message.response.params.subscription],
-                        "id": 1
-                    }
-                })
-            }
         }
     }
 
@@ -139,30 +111,22 @@ class Messengers {
 
         global.conWs[id].ws.on('close', () => {
             // when apps is broken, delete cache value
-            this.wsClose(id, chain)
+            this.wsClose(id)
         })
 
         global.conWs[id].ws.on('error', (error) => {
-            this.wsClose(id, chain)
+            this.wsClose(id)
             logger.error('client ws error ', error)
         })
     }
 
-    wsClose(id, chain) {
-        for (let method in global.conWs[id].unsubscription_msg) {
-            for (let subId of global.conWs[id].unsubscription_msg[method]) {
-                this.messengers[chain].send({
-                    "id": id,
-                    "chain": chain,
-                    "request": {
-                        "jsonrpc": '2.0',
-                        "method": method,
-                        "params": [subId],
-                        "id": 1
-                    }
-                })
-            }
-        }
+    wsClose(id) {
+        const { chain } = global.conWs[id]
+        this.messengers[chain].send({
+            "id": id,
+            "chain": chain,
+            "request": { gc: true }
+        })
         global.conWs[id].ws.removeAllListeners()
         global.conWs[id].ws.close()
         delete global.conWs[id]

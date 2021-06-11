@@ -71,7 +71,7 @@ class Cache {
             //console.log('get cache',message.request.method,this.key(message.request.method, message.request.params))
             let data = fromJSON(toJSON(resp))
             data.id = message.request.id
-            this.router.callback(message.id, this.chain, data)
+            this.router.callback(message.id, data)
             return true
         }
 

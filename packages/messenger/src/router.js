@@ -47,8 +47,8 @@ class Router {
                 this.router(message) //重新路由
             } else {
                 // notify app break ws connect
-                const {id, chain} = message
-                this.callback(id, chain, {
+                const { id } = message
+                this.callback(id, {
                     'cmd': 'close'
                 })
             }
@@ -56,7 +56,6 @@ class Router {
         }
     }
     accept(client_id, ws) {
-        let chain = ''
         this.clients[client_id] = ws
         this.clients[client_id].removeAllListeners('message')
         this.clients[client_id].on('message', (message) => {
@@ -66,7 +65,6 @@ class Router {
             try {
                 //{"id":uid,"chain":''polkadot,"request":{content....}}
                 let msg = JSON.parse(message)
-                chain = msg.chain
                 msg.id += '-' + client_id
                 this.router(msg)
             } catch (e) {
@@ -90,13 +88,12 @@ class Router {
     }
 
     // 回传消息到 api service
-    callback(id, chain, response) {
+    callback(id, response) {
         let ids = id.split('-')
         if (this.clients[ids[1]]) {
             if (this.clients[ids[1]].readyState === WebSocket.OPEN) {
                 this.clients[ids[1]].send(toJSON({
                     "id": ids[0],
-                    "chain": chain,
                     "response": response
                 }))
             } else {

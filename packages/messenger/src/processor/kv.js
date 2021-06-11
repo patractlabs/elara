@@ -34,11 +34,10 @@ class KV {
                     if (this.replacement_msg[replacement_id]) {
                         const {
                             id,
-                            chain,
                             request
                         } = this.replacement_msg[replacement_id]
                         message.id = request.id
-                        this.router.callback(id, chain, message)
+                        this.router.callback(id, message)
                         if (message.result && true !== message.result) {
                             this.subscription_msg[message.result] = this.replacement_msg[replacement_id]
                         }
@@ -49,11 +48,8 @@ class KV {
                     let subscription_id = message.params.subscription
                     if (this.subscription_msg[subscription_id]) {
                         //message.id = this.subscription_msg[subscription_id].request.id
-                        let {
-                            id,
-                            chain
-                        } = this.subscription_msg[subscription_id]
-                        this.router.callback(id, chain, message)
+                        let { id } = this.subscription_msg[subscription_id]
+                        this.router.callback(id, message)
                     }
                 } else {
                     console.log('Cant Process', message)
@@ -65,7 +61,7 @@ class KV {
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
                     //特定命令协议 该协议会回传消息取消订阅
-                    this.router.callback(id, chain, {
+                    this.router.callback(id, {
                         'cmd': 'close'
                     })
                     logger.info('Close Client', chain, id)

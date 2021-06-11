@@ -16,6 +16,8 @@ class Node {
     constructor(router, chain) {
         this.replacement_msg = {}
         this.subscription_msg = {}
+        this.clientsSubscriptionMap = {}
+        this.chain = chain
         this.router = router
         this.pool = new Pool(
             'chain',
@@ -26,24 +28,22 @@ class Node {
                 if (message.params && message.params.subscription) { //订阅消息
                     let subscription_id = message.params.subscription
                     if (this.subscription_msg[subscription_id]) {
-                        const {
-                            id,
-                            chain
-                        } = this.subscription_msg[subscription_id]
-                        this.router.callback(id, chain, message)
+                        const id  = this.subscription_msg[subscription_id]
+                        this.router.callback(id, message)
                     }
                 } else if (message.id) { //常规消息
-                    let replacement_id = message.id.toString()
+                    let replacement_id = message.id
                     if (this.replacement_msg[replacement_id]) {
-                        let {
-                            id,
-                            chain,
-                            request
-                        } = this.replacement_msg[replacement_id]
-                        message.id = request.id
-                        this.router.callback(id, chain, message)
-                        if (message.result && isSubscription(chain, request)) {
-                            this.subscription_msg[message.result] = this.replacement_msg[replacement_id]
+                        let { id, originId, method } = this.replacement_msg[replacement_id]
+                        message.id = originId
+                        this.router.callback(id, message)
+                        if (isSubscription(method) && message.result) {
+                            this.subscription_msg[message.result] = id
+                            // 这里的赋值与clietID绑定，心跳检测client是否保活，失活就删除clietID对应内存
+                            if(!this.clientsSubscriptionMap[id]) {
+                                this.clientsSubscriptionMap[id] = new Set()
+                            }
+                            this.clientsSubscriptionMap[id].add(message.result)
                         }
                     }
                     delete this.replacement_msg[replacement_id]
@@ -54,7 +54,7 @@ class Node {
                 if (closeClientIDs.size === 0) return
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
-                    this.router.callback(id, chain, {
+                    this.router.callback(id, {
                         'cmd': 'close'
                     })
                     logger.info('Close Client', chain, id)
@@ -69,21 +69,31 @@ class Node {
         return false
     }
     async process(msg) {
-        console.log(`replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
-        let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
-        this.replacement_msg[replacement.toString()] = msg
-
-        let req = fromJSON(toJSON(msg.request))
-        req.id = replacement
-        //这里处理下取消订阅时更新 this.subscription_msg
-        if (isUnSubscription(req.method) && (req.params)) {
-            for (var i = 0; i < req.params.length; i++) {
-                delete this.subscription_msg[req.params[i]]
+        // gc，回收由于用户断开的缓存
+        if(msg.request.gc) {
+            const startTime = new Date().getTime()
+            for(let id in this.clientsSubscriptionMap) {
+                if(id === msg.id) {
+                    for(let subID of this.clientsSubscriptionMap[id]) {
+                        delete this.subscription_msg[subID]
+                    }
+                    delete this.clientsSubscriptionMap[id]
+                }
             }
+            console.log(`gc Time: ${(new Date().getTime() - startTime)}; chain: ${this.chain};  replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}; clientsSubscriptionMap: ${Object.keys(this.clientsSubscriptionMap).length}`)
+            return true
         }
 
-        const res =  this.pool.send(msg.id, req)
-        if(!res) delete this.replacement_msg[replacement.toString()]
+        let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
+        const { id, request } = msg
+        const replacement_id = `${id}-${replacement}`
+        this.replacement_msg[replacement_id] = {id, originId: request.id, method: request.method}
+
+        let req = fromJSON(toJSON(msg.request))
+        req.id = replacement_id
+
+        const res =  this.pool.send(id, req)
+        if(!res) delete this.replacement_msg[replacement_id]
         return res
     }
 }
