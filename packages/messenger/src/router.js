@@ -23,6 +23,7 @@ class Router {
             }
         }
         console.log(this.processors)
+        setInterval(()=> this.logTotal(), 30000)
     }
     //匹配处理器
     choose(message) {
@@ -47,8 +48,11 @@ class Router {
                 this.router(message) //重新路由
             } else {
                 // notify app break ws connect
-                const { id } = message
-                this.callback(id, {
+                const {
+                    id,
+                    chain
+                } = message
+                this.callback(id, chain, {
                     'cmd': 'close'
                 })
             }
@@ -88,12 +92,13 @@ class Router {
     }
 
     // 回传消息到 api service
-    callback(id, response) {
+    callback(id, chain, response) {
         let ids = id.split('-')
         if (this.clients[ids[1]]) {
             if (this.clients[ids[1]].readyState === WebSocket.OPEN) {
                 this.clients[ids[1]].send(toJSON({
                     "id": ids[0],
+                    "chain": chain,
                     "response": response
                 }))
             } else {
@@ -102,6 +107,21 @@ class Router {
                 delete this.clients[ids[1]]
             }
         }
+    }
+
+    logTotal() {
+        let total_replacement_msg = 0, total_subscription_msg = 0, total_clientsSubscriptionMap = 0;
+        for (let chain in this.processors) {
+            for (let processor in this.processors[chain]) {
+                const {
+                    replacement_msg = {}, subscription_msg = {}, clientsSubscriptionMap = {}
+                } = this.processors[chain][processor]
+                total_replacement_msg += Object.keys(replacement_msg).length
+                total_subscription_msg += Object.keys(subscription_msg).length
+                total_clientsSubscriptionMap += Object.keys(clientsSubscriptionMap).length
+            }
+        }
+        console.log(`--- total_clientsSubscriptionMap: ${total_clientsSubscriptionMap}, total_replacement_msg:${total_replacement_msg} , total_subscription_msg:${total_subscription_msg} ---` );
     }
 }
 

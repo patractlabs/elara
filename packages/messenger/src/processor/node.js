@@ -28,15 +28,15 @@ class Node {
                 if (message.params && message.params.subscription) { //订阅消息
                     let subscription_id = message.params.subscription
                     if (this.subscription_msg[subscription_id]) {
-                        const id  = this.subscription_msg[subscription_id]
-                        this.router.callback(id, message)
+                        const id = this.subscription_msg[subscription_id]
+                        this.router.callback(id, chain, message)
                     }
                 } else if (message.id) { //常规消息
-                    let replacement_id = message.id
+                    let replacement_id = message.id.toString()
                     if (this.replacement_msg[replacement_id]) {
                         let { id, originId, method } = this.replacement_msg[replacement_id]
                         message.id = originId
-                        this.router.callback(id, message)
+                        this.router.callback(id, chain, message)
                         if (isSubscription(method) && message.result) {
                             this.subscription_msg[message.result] = id
                             // 这里的赋值与clietID绑定，心跳检测client是否保活，失活就删除clietID对应内存
@@ -54,10 +54,10 @@ class Node {
                 if (closeClientIDs.size === 0) return
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
-                    this.router.callback(id, {
+                    this.router.callback(id, this.chain, {
                         'cmd': 'close'
                     })
-                    logger.info('Close Client', chain, id)
+                    logger.info('Close Client', this.chain, id)
                 })
             })
     }
@@ -80,7 +80,7 @@ class Node {
                     delete this.clientsSubscriptionMap[id]
                 }
             }
-            console.log(`gc Time: ${(new Date().getTime() - startTime)}; chain: ${this.chain};  replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}; clientsSubscriptionMap: ${Object.keys(this.clientsSubscriptionMap).length}`)
+            console.log(`gc Time: ${(new Date().getTime() - startTime)};  clientsSubscriptionMap: ${Object.keys(this.clientsSubscriptionMap).length}; chain: ${this.chain};  replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length};`)
             return true
         }
 
@@ -91,6 +91,12 @@ class Node {
 
         let req = fromJSON(toJSON(msg.request))
         req.id = replacement_id
+        //这里处理下取消订阅时更新 this.subscription_msg
+        if (isUnSubscription(req.method) && (req.params)) {
+            for (var i = 0; i < req.params.length; i++) {
+                delete this.subscription_msg[req.params[i]]
+            }
+        }
 
         const res =  this.pool.send(id, req)
         if(!res) delete this.replacement_msg[replacement_id]

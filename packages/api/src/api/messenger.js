@@ -47,7 +47,6 @@ class Messengers {
                     } else {
                         // 取消订阅的消息
                         this.sendUnSubscription(message)
-                        console.log('unexceptionMsg', JSON.stringify(message))
                     }
                 },
                 (closeClientIDs) => {
@@ -81,6 +80,9 @@ class Messengers {
                     }
                 })
             }
+            console.log('unexceptionMsg', message.id, message.response.params.subscription)
+        } else {
+            console.log('unexceptionMsg', message.id, JSON.stringify(message))
         }
     }
 
@@ -162,6 +164,13 @@ class Messengers {
             "chain": chain,
             "request": request
         })
+        // rescue for rpc error
+        const timer = setTimeout(()=>{
+            if(this.http[id]) {
+                delete this.http[id]
+            }
+            clearTimeout(timer)
+        }, 10000)
     }
 
     report(id, response) {

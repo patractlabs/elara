@@ -201,7 +201,8 @@ class History {
                         message.result = result
                         message.id = this.replacement_msg[replacement_id].request.id
                         let id = this.replacement_msg[replacement_id].id
-                        this.router.callback(id, message)
+                        let chain = this.replacement_msg[replacement_id].chain
+                        this.router.callback(id, chain, message)
 
                     }
                     delete this.replacement_msg[replacement_id]
@@ -280,7 +281,8 @@ class History {
                     }
                     message.id = this.replacement_msg[replacement_id].request.id
                     let id = this.replacement_msg[replacement_id].id
-                    this.router.callback(id, message)
+                    let chain = this.replacement_msg[replacement_id].chain
+                    this.router.callback(id, chain, message)
 
                 }
                 delete this.replacement_msg[replacement_id]
@@ -318,7 +320,8 @@ class History {
                 }
                 message.id = this.replacement_msg[replacement_id].request.id
                 let id = this.replacement_msg[replacement_id].id
-                this.router.callback(id, message)
+                let chain = this.replacement_msg[replacement_id].chain
+                this.router.callback(id, chain, message)
             }
             delete this.replacement_msg[replacement_id]
         })
