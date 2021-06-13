@@ -1,3 +1,4 @@
+const WebSocket = require('ws')
 const {
     logger
 } = require('../../../lib/log')
@@ -63,6 +64,16 @@ class Messengers {
                 }
             )
         }
+        setInterval(()=> {
+            const startTime = new Date().getTime()
+            for(let id in this.conWs) {
+                if(this.conWs[id].ws.readyState !== WebSocket.OPEN) {
+                    console.log('ws status error', this.conWs[id].ws.readyState);
+                    this.wsClose(id)
+                }
+            }
+            console.log('api gc time:', new Date().getTime() - startTime)
+        }, 30000)
     }
 
     sendUnSubscription(message) {
@@ -87,19 +98,20 @@ class Messengers {
     }
 
     wsClient(id, ws, request, chain, pid) {
+        console.log(`wsClient: ${Object.keys(this.conWs).length}; http: ${Object.keys(this.http).length};`)
         this.conWs[id] = {
             ws,
             request,
             chain,
             pid
         };
-        this.conWs[id].ws.on('message', (message) => {
+        ws.on('message', (message) => {
             try {
                 if (!(message.trim()))
                     return
                 let params = fromJSON(message)
                 if (isUnsafe(params)) {
-                    this.conWs[id].ws.send(JSON.stringify({
+                    ws.send(JSON.stringify({
                         "jsonrpc": params.jsonrpc,
                         "error": CODE.UNSAFE_METHOD,
                         "id": params.id
@@ -115,7 +127,7 @@ class Messengers {
                     })
                 }
             } catch (e) {
-                this.conWs[id].ws.send(JSON.stringify({
+                ws.send(JSON.stringify({
                     "jsonrpc": "2.0",
                     "error": {
                         "code": -32700,
@@ -127,12 +139,12 @@ class Messengers {
             }
         })
 
-        this.conWs[id].ws.on('close', () => {
+        ws.on('close', () => {
             // when apps is broken, delete cache value
             this.wsClose(id)
         })
 
-        this.conWs[id].ws.on('error', (error) => {
+        ws.on('error', (error) => {
             this.wsClose(id)
             logger.error('client ws error ', error)
         })
@@ -140,7 +152,8 @@ class Messengers {
 
     wsClose(id) {
         const {
-            chain
+            chain,
+            ws
         } = this.conWs[id]
         this.messengers[chain].send({
             "id": id,
@@ -149,10 +162,10 @@ class Messengers {
                 gc: true
             }
         })
-        console.log(`conWs: ${Object.keys(this.conWs).length}; http: ${Object.keys(this.http).length};`)
-        this.conWs[id].ws.removeAllListeners()
-        this.conWs[id].ws.close()
+        ws.removeAllListeners()
+        ws.close()
         delete this.conWs[id]
+        console.log(`wsClose: ${Object.keys(this.conWs).length}; http: ${Object.keys(this.http).length};`)
     }
 
     httpClient(id, chain, request, callback) {
