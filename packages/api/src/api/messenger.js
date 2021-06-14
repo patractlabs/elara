@@ -33,6 +33,18 @@ class Messengers {
                             //特定的关闭客户端命令 关闭连接
                             this.wsClose(message.id)
                             logger.info('Close Client', message.id)
+                        } else if(message.response.cmd == 'teardown' && this.conWs[message.id].ws) {
+                            let clients = new Set()
+                            for(let item of message.response.data) {
+                                clients.add(item.split("-")[0])
+                            }
+                            for(let id in this.conWs) {
+                                if(!clients.has(id)) {
+                                    this.conWs[id].ws.removeAllListeners()
+                                    delete this.conWs[id]
+                                    console.log('teardown')
+                                }
+                            }
                         } else {
                             try {
                                 this.conWs[message.id].ws.send(toJSON(message.response))

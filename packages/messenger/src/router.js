@@ -110,18 +110,30 @@ class Router {
     }
 
     logTotal() {
-        let total_replacement_msg = 0, total_subscription_msg = 0, total_clientsSubscriptionMap = 0;
+        let total_replacement_msg = {}, total_subscription_msg = {}, total_clientsSubscriptionMap = {}
         for (let chain in this.processors) {
             for (let processor in this.processors[chain]) {
                 const {
                     replacement_msg = {}, subscription_msg = {}, clientsSubscriptionMap = {}
                 } = this.processors[chain][processor]
-                total_replacement_msg += Object.keys(replacement_msg).length
-                total_subscription_msg += Object.keys(subscription_msg).length
-                total_clientsSubscriptionMap += Object.keys(clientsSubscriptionMap).length
+                total_replacement_msg = Object.assign({}, total_replacement_msg, replacement_msg)
+                total_subscription_msg = Object.assign({}, total_subscription_msg, subscription_msg)
+                total_clientsSubscriptionMap = Object.assign({}, total_clientsSubscriptionMap, clientsSubscriptionMap)
             }
         }
-        console.log(`--- total_clientsSubscriptionMap: ${total_clientsSubscriptionMap}, total_replacement_msg:${total_replacement_msg} , total_subscription_msg:${total_subscription_msg} ---` );
+        const id = Object.keys(total_clientsSubscriptionMap)[0]
+        if(id) {
+            this.callback(id, '', {
+                cmd: 'teardown',
+                data: Object.keys(total_clientsSubscriptionMap)
+            })
+        }
+        
+        console.log(`
+            total_clientsSubscriptionMap: ${Object.keys(total_clientsSubscriptionMap).length},
+            total_replacement_msg:${Object.keys(total_replacement_msg).length} ,
+            total_subscription_msg:${Object.keys(total_subscription_msg).length}
+        `);
     }
 }
 
