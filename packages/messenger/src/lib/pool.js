@@ -59,6 +59,7 @@ class Pool {
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
             ws.close()
+            console.log('pool node send error', Object.keys(channel_clientID))
             return false
         }
         channel_clientID.add(id) //更新集合
@@ -75,6 +76,7 @@ class Pool {
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
             ws.close()
+            console.log('pool kv send error', Object.keys(channel_clientID))
             return false
         }
         channel_clientID.add(id) //更新集合

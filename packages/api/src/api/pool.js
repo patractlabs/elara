@@ -53,11 +53,11 @@ class Pool {
             channel_clientID,
             ws
         } = this.messengers[index]
-        channel_clientID.add(msg.id)
         if (ws.readyState !== WebSocket.OPEN) {
             ws.close()
             return
         }
+        channel_clientID.add(msg.id)
         ws.send(toJSON(msg))
     }
 }

@@ -98,13 +98,13 @@ class Messengers {
     }
 
     wsClient(id, ws, request, chain, pid) {
-        console.log(`wsClient: ${Object.keys(this.conWs).length}; http: ${Object.keys(this.http).length};`)
         this.conWs[id] = {
             ws,
             request,
             chain,
             pid
         };
+        console.log(`wsClient: ${Object.keys(this.conWs).length}; http: ${Object.keys(this.http).length};`)
         ws.on('message', (message) => {
             try {
                 if (!(message.trim()))
