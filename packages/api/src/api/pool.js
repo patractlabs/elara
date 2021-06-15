@@ -42,7 +42,7 @@ class Pool {
         })
         mess.on('open', async () => {
             console.log(chain + " messenger open")
-            mess.on('message', this.callback)
+            mess.on('message', (data) => this.callback(data, index))
         })
 
         return mess

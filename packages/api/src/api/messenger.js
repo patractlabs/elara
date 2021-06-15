@@ -23,7 +23,7 @@ class Messengers {
             this.messengers[chain] = new Pool(
                 chain,
                 config.messengers[chain][0],
-                (message) => {
+                (message, index) => {
                     message = fromJSON(message)
                     if (this.http[message.id]) {
                         this.http[message.id].callback(message.response)
@@ -33,25 +33,6 @@ class Messengers {
                             //特定的关闭客户端命令 关闭连接
                             this.wsClose(message.id)
                             logger.info('Close Client', message.id)
-                        } else if(message.response.cmd == 'teardown' && this.conWs[message.id].ws) {
-                            const startTime = new Date().getTime()
-                            let clients = new Set()
-                            for(let item of message.response.data) {
-                                clients.add(item.split("-")[0])
-                            }
-                            for(let id in this.conWs) {
-                                if(!clients.has(id)) {
-                                    const { ws, chain } = this.conWs[id]
-                                    ws.removeAllListeners()
-                                    delete this.conWs[id]
-                                    for(let messenger of this.messengers[chain].messengers) {
-                                        if(messenger.channel_clientID.has(id)) {
-                                            messenger.channel_clientID.delete(id)
-                                        }
-                                    }
-                                } 
-                            }
-                            console.log(`teardown time: ${new Date().getTime() - startTime}ms`)
                         } else {
                             try {
                                 this.conWs[message.id].ws.send(toJSON(message.response))
@@ -64,6 +45,25 @@ class Messengers {
                             }
                         }
                         //上报
+                    } else if (message.response.cmd == 'teardown') {
+                        const startTime = new Date().getTime()
+                        if (message.response.type === 'channel') {
+                            const messengers = this.messengers[chain].messengers
+                            messengers[index].channel_clientID = new Set(message.response.data)
+                        } else {
+                            for (let id in this.conWs) {
+                                if (message.response.data.indexOf(id) === -1) {
+                                    const {
+                                        ws
+                                    } = this.conWs[id]
+                                    ws.removeAllListeners()
+                                    delete this.conWs[id]
+                                }
+                            }
+                        }
+                        console.log(`teardown ${chain} time: ${new Date().getTime() - startTime}ms`)
+
+
                     } else {
                         // 取消订阅的消息
                         this.sendUnSubscription(message)
@@ -83,17 +83,17 @@ class Messengers {
                 }
             )
         }
-        setInterval(()=> {
+        setInterval(() => {
             const startTime = new Date().getTime()
-            for(let id in this.conWs) {
-                if(this.conWs[id].ws.readyState !== WebSocket.OPEN) {
+            for (let id in this.conWs) {
+                if (this.conWs[id].ws.readyState !== WebSocket.OPEN) {
                     console.log('ws status error', this.conWs[id].ws.readyState);
                     this.wsClose(id)
                 }
             }
             let length = 0;
-            for(let chain in config.messengers) {
-                for(let messenger of this.messengers[chain].messengers) {
+            for (let chain in config.messengers) {
+                for (let messenger of this.messengers[chain].messengers) {
                     length += messenger.channel_clientID.size
                 }
             }
@@ -185,6 +185,12 @@ class Messengers {
                 gc: true
             }
         })
+        for (let messenger of this.messengers[chain].messengers) {
+            if (messenger.channel_clientID.has(id)) {
+                messenger.channel_clientID.delete(id)
+                break;
+            }
+        }
         ws.removeAllListeners()
         ws.close()
         delete this.conWs[id]
@@ -201,8 +207,8 @@ class Messengers {
             "request": request
         })
         // rescue for rpc error
-        const timer = setTimeout(()=>{
-            if(this.http[id]) {
+        const timer = setTimeout(() => {
+            if (this.http[id]) {
                 delete this.http[id]
             }
             clearTimeout(timer)

@@ -23,7 +23,7 @@ class Router {
             }
         }
         console.log(this.processors)
-        setInterval(()=> this.logTotal(), 30000)
+        setInterval(() => this.logTotal(), 30000)
     }
     //匹配处理器
     choose(message) {
@@ -110,7 +110,9 @@ class Router {
     }
 
     logTotal() {
-        let total_replacement_msg = {}, total_subscription_msg = {}, total_clientsSubscriptionMap = {}
+        let total_replacement_msg = {},
+            total_subscription_msg = {},
+            total_clientsSubscriptionMap = {}
         for (let chain in this.processors) {
             for (let processor in this.processors[chain]) {
                 const {
@@ -121,14 +123,37 @@ class Router {
                 total_clientsSubscriptionMap = Object.assign({}, total_clientsSubscriptionMap, clientsSubscriptionMap)
             }
         }
-        const id = Object.keys(total_clientsSubscriptionMap)[0]
-        if(id) {
-            this.callback(id, '', {
-                cmd: 'teardown',
-                data: Object.keys(total_clientsSubscriptionMap)
-            })
+        const apiIds = {}
+        const allIds = []
+        for (let id in total_clientsSubscriptionMap) {
+            const [clientID, apiID] = id.split('-')
+            if (!apiIds[apiID]) {
+                apiIds[apiID] = []
+            }
+            allIds.push(clientID)
+            apiIds[apiID].push(clientID)
         }
-        
+
+        // 选取一个api es client
+        for (let id in apiIds) {
+            const data = toJSON({
+                response: {
+                    cmd: 'teardown',
+                    type: 'channel',
+                    data: apiIds[id]
+                }
+            })
+            this.clients[id].send(data)
+        }
+
+        this.clients[Object.keys(apiIds)[0]].send(toJSON({
+            response: {
+                cmd: 'teardown',
+                type: 'ws',
+                data: allIds
+            }
+        }))
+
         console.log(`
             total_clientsSubscriptionMap: ${Object.keys(total_clientsSubscriptionMap).length},
             total_replacement_msg:${Object.keys(total_replacement_msg).length} ,
