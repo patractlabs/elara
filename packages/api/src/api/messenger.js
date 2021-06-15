@@ -34,17 +34,24 @@ class Messengers {
                             this.wsClose(message.id)
                             logger.info('Close Client', message.id)
                         } else if(message.response.cmd == 'teardown' && this.conWs[message.id].ws) {
+                            const startTime = new Date().getTime()
                             let clients = new Set()
                             for(let item of message.response.data) {
                                 clients.add(item.split("-")[0])
                             }
                             for(let id in this.conWs) {
                                 if(!clients.has(id)) {
-                                    this.conWs[id].ws.removeAllListeners()
+                                    const { ws, chain } = this.conWs[id]
+                                    ws.removeAllListeners()
                                     delete this.conWs[id]
-                                    console.log('teardown')
-                                }
+                                    for(let messenger of this.messengers[chain].messengers) {
+                                        if(messenger.channel_clientID.has(id)) {
+                                            messenger.channel_clientID.delete(id)
+                                        }
+                                    }
+                                } 
                             }
+                            console.log(`teardown time: ${new Date().getTime() - startTime}ms`)
                         } else {
                             try {
                                 this.conWs[message.id].ws.send(toJSON(message.response))
@@ -84,7 +91,13 @@ class Messengers {
                     this.wsClose(id)
                 }
             }
-            console.log('api gc time:', new Date().getTime() - startTime)
+            let length = 0;
+            for(let chain in config.messengers) {
+                for(let messenger of this.messengers[chain].messengers) {
+                    length += messenger.channel_clientID.size
+                }
+            }
+            console.log(`api gc time: ${new Date().getTime() - startTime}, clients: ${length}`)
         }, 30000)
     }
 
@@ -104,8 +117,6 @@ class Messengers {
                 })
             }
             console.log('unexceptionMsg', message.id, message.response.params.subscription)
-        } else {
-            console.log('unexceptionMsg', message.id, JSON.stringify(message))
         }
     }
 
