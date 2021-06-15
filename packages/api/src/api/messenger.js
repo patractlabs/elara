@@ -53,11 +53,7 @@ class Messengers {
                         } else {
                             for (let id in this.conWs) {
                                 if (message.response.data.indexOf(id) === -1) {
-                                    const {
-                                        ws
-                                    } = this.conWs[id]
-                                    ws.removeAllListeners()
-                                    delete this.conWs[id]
+                                    this.wsClose(id)
                                 }
                             }
                         }
