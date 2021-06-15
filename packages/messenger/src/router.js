@@ -143,10 +143,10 @@ class Router {
                     data: apiIds[id]
                 }
             })
-            this.clients[id].send(data)
+            this.clients[id] && this.clients[id].send(data)
         }
 
-        this.clients[Object.keys(apiIds)[0]].send(toJSON({
+        this.clients[Object.keys(apiIds)[0]] && this.clients[Object.keys(apiIds)[0]].send(toJSON({
             response: {
                 cmd: 'teardown',
                 type: 'ws',
