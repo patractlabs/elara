@@ -65,7 +65,10 @@ global.messengers = new Messengers()
 let server = app.listen(config.port)
 let wss = new WebSocketServer({
     server: server,
-    clientTracking: true
+    clientTracking: true,
+    perMessageDeflate: {
+        threshold: Math.pow(2, 53) - 1
+    },
 });
 wss.on('connection', function (ws, request) {
     logger.info('wss connection ', wss.clients.size)

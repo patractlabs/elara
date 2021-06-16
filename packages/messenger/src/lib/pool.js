@@ -25,7 +25,11 @@ class Pool {
         }
     }
     connect(index, name, chain, path) {
-        let server = new WebSocket(path)
+        let server = new WebSocket(path, { 
+            perMessageDeflate: {
+                threshold: Math.pow(2, 53) - 1
+            },
+        })
         server.on('error', async (error) => {
             logger.error('server ws error ', error, index, name, chain, path)
         })
