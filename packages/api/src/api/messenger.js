@@ -35,7 +35,37 @@ class Messengers {
                             logger.info('Close Client', message.id)
                         } else {
                             try {
-                                this.conWs[message.id].ws.send(toJSON(message.response))
+                                const msg = toJSON(message.response)
+                                const len = Buffer.from(msg).length;
+                                const maxReceivedMessageSize = 1024 * 1024;
+                                const maxBufferLen = 1024 * 64;
+                                if (len > maxReceivedMessageSize) {
+                                    const buffer = Buffer.from(msg);
+                                    for (
+                                        let i = 0; i <= Math.floor(len % maxBufferLen); i++
+                                    ) {
+                                        if (i !== Math.floor(len % maxBufferLen)) {
+                                            const str = buffer
+                                                .slice(
+                                                    i * maxBufferLen,
+                                                    (i + 1) * maxBufferLen
+                                                )
+                                                .toString();
+                                            this.conWs[message.id].ws.send(str, {
+                                                fin: false,
+                                            });
+                                        } else {
+                                            const str = buffer
+                                                .slice(i * maxBufferLen)
+                                                .toString();
+                                            this.conWs[message.id].ws.send(str, {
+                                                fin: true,
+                                            });
+                                        }
+                                    }
+                                } else {
+                                    this.conWs[message.id].ws.send(msg);
+                                }
                                 this.report(message.id, message.response) //上报
                             } catch (e) {
                                 //这里如果出错，就要去messenger取消订阅
