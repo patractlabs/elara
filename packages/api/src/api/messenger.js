@@ -28,6 +28,7 @@ class Messengers {
                     if (this.http[message.id]) {
                         this.http[message.id].callback(message.response)
                         delete this.http[message.id]
+                        this.messengers[chain].messengers[index].channel_clientID.delete(message.id)
                     } else if (this.conWs[message.id]) {
                         if (message.response.cmd == 'close' && this.conWs[message.id].ws) {
                             //特定的关闭客户端命令 关闭连接
@@ -84,6 +85,7 @@ class Messengers {
                             for (let id in this.conWs) {
                                 if (message.response.data.indexOf(id) === -1) {
                                     this.wsClose(id)
+                                    console.log('teardown ws');
                                 }
                             }
                         }
@@ -235,7 +237,15 @@ class Messengers {
         // rescue for rpc error
         const timer = setTimeout(() => {
             if (this.http[id]) {
+                console.log('rescue: delete http id');
                 delete this.http[id]
+            }
+            for (let messenger of this.messengers[chain].messengers) {
+                if (messenger.channel_clientID.has(id)) {
+                    console.log('rescue: delete http channel_clientID');
+                    messenger.channel_clientID.delete(id)
+                    break;
+                }
             }
             clearTimeout(timer)
         }, 10000)
