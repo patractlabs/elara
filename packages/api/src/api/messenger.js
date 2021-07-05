@@ -187,6 +187,12 @@ class Messengers {
                 })
             }
         }
+        for (let messenger of this.messengers[chain].messengers) {
+            if (messenger.channel_clientID.has(id)) {
+                messenger.channel_clientID.delete(id)
+                break;
+            }
+        }
         this.conWs[id].ws.removeAllListeners()
         this.conWs[id].ws.close()
         delete this.conWs[id]
