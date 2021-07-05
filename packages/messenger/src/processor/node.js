@@ -16,6 +16,7 @@ class Node {
     constructor(router, chain) {
         this.replacement_msg = {}
         this.subscription_msg = {}
+        this.chain = chain
         this.router = router
         this.pool = new Pool(
             'chain',
@@ -54,10 +55,10 @@ class Node {
                 if (closeClientIDs.size === 0) return
                 //节点的链路断了,通知客户端关闭重连
                 closeClientIDs.forEach((id) => {
-                    this.router.callback(id, chain, {
+                    this.router.callback(id, this.chain, {
                         'cmd': 'close'
                     })
-                    logger.info('Close Client', chain, id)
+                    logger.info('Close Client', this.chain, id)
                 })
             })
     }
@@ -69,7 +70,7 @@ class Node {
         return false
     }
     async process(msg) {
-        console.log(`replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
+        console.log(`${this.chain}: replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
         this.replacement_msg[replacement.toString()] = msg
 
