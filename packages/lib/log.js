@@ -6,12 +6,14 @@ log4js.configure({
         access: {
             type: 'dateFile',
             pattern: '-yyyy-MM-dd.log',
-            filename: path.join('./logs/', 'access.log')
+            filename: path.join('./logs/', 'access.log'),
+            daysToKeep: 5
         },
         application: {
             type: 'dateFile',
             pattern: '-yyyy-MM-dd.log',
-            filename: path.join('./logs/', 'app.log')
+            filename: path.join('./logs/', 'app.log'),
+            daysToKeep: 5
         },
         out: {
             type: 'console'

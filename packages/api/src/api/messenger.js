@@ -82,10 +82,8 @@ class Messengers {
                         
                         //特定命令协议
                         if(this.conWs[id]) {
-                            this.conWs[id].ws.removeAllListeners()
-                            this.conWs[id].ws.close()
-                            delete this.conWs[id]
-                            logger.info('Close & Del Client', chain, id)
+                            this.wsClose(id, chain)
+                            logger.info('reportClose', chain)
                         }
                     })
                 }
