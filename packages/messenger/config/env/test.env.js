@@ -93,6 +93,16 @@ module.exports = {
             'rpc': ['https://westmint.westend.elara.patract.io'],
             'ws': ['wss://westmint.westend.elara.patract.io'],
             'processors': ['node', 'cache']
+        },
+        'karura': {
+            'rpc': ['https://karura.kusama.elara.patract.io'],
+            'ws': ['wss://karura.kusama.elara.patract.io'],
+            'processors': ['node', 'cache']
+        },
+        'moonriver': {
+            'rpc': ['https://moonriver.kusama.elara.patract.io'],
+            'ws': ['wss://moonriver.kusama.elara.patract.io'],
+            'processors': ['node', 'cache']
         }
     },
     history: {

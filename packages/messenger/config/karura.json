@@ -1,0 +1,37 @@
+{
+    "processor": {
+        "cache": [
+                "system_name",
+                "system_version",
+                "system_chain",
+                "system_chainType",
+                "system_properties",
+                "system_networkState",
+                "author_pendingExtrinsics",
+                
+                "chain_getHeader", 
+                "chain_getBlock", 
+                "chain_getBlockHash", 
+                "chain_getFinalizedHead",
+                "state_getMetadata", 
+                "state_getRuntimeVersion", 
+                "system_peers",
+                "system_syncState",
+                "system_health",
+
+                "rpc_methods"
+        ],
+        "subscription": [
+            "state_subscribeStorage",
+            "state_unsubscribeStorage",
+            "chain_subscribeNewHeads",
+            "chain_unsubscribeNewHeads",
+            "chain_subscribeAllHeads",
+            "chain_unsubscribeAllHeads",
+            "chain_subscribeFinalizedHeads",
+            "chain_unsubscribeFinalizedHeads"
+        ],
+        "history": [
+        ]
+    }
+}
