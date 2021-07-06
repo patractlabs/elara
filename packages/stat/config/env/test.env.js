@@ -28,7 +28,9 @@ module.exports = {
         'subsocial': {},
         'moonbase': {},
         'statemine': {},
-        'westmint': {}
+        'westmint': {},
+        'karura': {},
+        'moonriver': {}
     },
     test:false,
     // redis配置
