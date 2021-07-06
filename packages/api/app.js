@@ -78,11 +78,7 @@ wss.on('connection', function (ws, request) {
         }
     });
     let id = crypto.randomBytes(16).toString('hex');
-    global.conWs[id] = {
-        ws,
-        request
-    }
-    accept(id)
+    accept(id, ws, request)
 })
 
 
