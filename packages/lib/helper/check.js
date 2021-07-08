@@ -17,8 +17,8 @@ function isUnSubscription(method){
     return false
 }
 
-function isSubscription(chain,request){
-    if( -1 == config['subscription'].indexOf(request.method)  ){
+function isSubscription(method){
+    if( -1 == config['subscription'].indexOf(method)  ){
         return false
     }
 

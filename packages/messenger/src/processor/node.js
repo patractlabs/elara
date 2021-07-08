@@ -38,12 +38,13 @@ class Node {
                     if (this.replacement_msg[replacement_id]) {
                         let {
                             id,
-                            chain,
-                            request
+                            method,
+                            originId
                         } = this.replacement_msg[replacement_id]
-                        message.id = request.id
+                        message.id = originId
                         this.router.callback(id, chain, message)
-                        if (message.result && isSubscription(chain, request)) {
+                        if (message.result && isSubscription(method)) {
+                            this.replacement_msg[replacement_id]['subscription_msg'] = message.result
                             this.subscription_msg[message.result] = this.replacement_msg[replacement_id]
                         }
                     }
@@ -61,6 +62,10 @@ class Node {
                     logger.info('Close Client', this.chain, id)
                 })
             })
+
+        setInterval(() => {
+            console.log(`${this.chain}: replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}`)
+        }, 60000)
     }
     name() {
         return 'node'
@@ -70,9 +75,8 @@ class Node {
         return false
     }
     async process(msg) {
-        console.log(`${this.chain}: replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
-        this.replacement_msg[replacement.toString()] = msg
+        this.replacement_msg[replacement.toString()] = {id: msg.id, originId: msg.request.id, method: msg.request.method}
 
         let req = fromJSON(toJSON(msg.request))
         req.id = replacement
@@ -84,7 +88,12 @@ class Node {
         }
 
         const res =  this.pool.send(msg.id, req)
-        if(!res) delete this.replacement_msg[replacement.toString()]
+        setTimeout(()=>{
+            if(this.replacement_msg[replacement.toString()]) {
+                delete this.replacement_msg[replacement.toString()]
+                console.log('replacement error');
+            }
+        },20000)
         return res
     }
 }

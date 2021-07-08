@@ -194,7 +194,6 @@ class Messengers {
         this.conWs[id].ws.removeAllListeners()
         this.conWs[id].ws.close()
         delete this.conWs[id]
-        console.log(`wsClose: ${Object.keys(this.conWs).length}`)
     }
 
     httpClient(id, chain, request, callback) {
@@ -206,6 +205,16 @@ class Messengers {
             "chain": chain,
             "request": request
         })
+        setTimeout(()=>{
+            delete this.http[id]
+            for (let messenger of this.messengers[chain].messengers) {
+                if (messenger.channel_clientID.has(id)) {
+                    messenger.channel_clientID.delete(id)
+                    break;
+                }
+            }
+            logger.warn('no response', request)
+        }, 20000)
         console.log(`httpClients: ${Object.keys(this.http).length};`)
     }
 
