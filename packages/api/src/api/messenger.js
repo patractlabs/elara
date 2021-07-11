@@ -96,7 +96,7 @@ class Messengers {
                     length += messenger.channel_clientID.size
                 }
             }
-            console.log(`channel_clientID: ${length}`)
+            console.log(`channel_clientID: ${length}; wsClients: ${Object.keys(this.conWs).length}; httpClients: ${Object.keys(this.http).length};`)
         }, 10000)
     }
     sendUnSubscription(message) {
@@ -124,7 +124,6 @@ class Messengers {
             chain,
             pid
         };
-        console.log(`wsClients: ${Object.keys(this.conWs).length}`)
         this.conWs[id].ws.on('message', (message) => {
             try {
                 if (!(message.trim()))
@@ -194,7 +193,6 @@ class Messengers {
         this.conWs[id].ws.removeAllListeners()
         this.conWs[id].ws.close()
         delete this.conWs[id]
-        console.log(`wsClose: ${Object.keys(this.conWs).length}`)
     }
 
     httpClient(id, chain, request, callback) {
@@ -206,7 +204,6 @@ class Messengers {
             "chain": chain,
             "request": request
         })
-        console.log(`httpClients: ${Object.keys(this.http).length};`)
     }
 
     report(id, response) {

@@ -24,7 +24,9 @@ module.exports = {
         ];
 
         producer.send(payloads, function (err, data) {
-            logger.info(err, data)
+            if(err) {
+                logger.error(err, data)
+            }
         });
     }
 } 
