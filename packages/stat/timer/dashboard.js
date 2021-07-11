@@ -80,7 +80,6 @@ async function data(date) {
             }
 
             await redis.set(KEY.DASHBOARD(), JSON.stringify(week))
-            console.log(JSON.stringify(week))
         }
     } catch (e) {
         logger.error('update dashboard error!', e)

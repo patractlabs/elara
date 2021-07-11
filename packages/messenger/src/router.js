@@ -22,7 +22,6 @@ class Router {
                 this.processors[chain][p.name()] = p
             }
         }
-        console.log(this.processors)
     }
     //匹配处理器
     choose(message) {

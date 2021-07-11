@@ -7,13 +7,15 @@ log4js.configure({
             type: 'dateFile',
             pattern: '-yyyy-MM-dd.log',
             filename: path.join('./logs/', 'access.log'),
-            daysToKeep: 5
+            daysToKeep: 3,
+            compress: true
         },
         application: {
             type: 'dateFile',
             pattern: '-yyyy-MM-dd.log',
             filename: path.join('./logs/', 'app.log'),
-            daysToKeep: 5
+            daysToKeep: 3,
+            compress: true
         },
         out: {
             type: 'console'
