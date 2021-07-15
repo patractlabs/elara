@@ -11,7 +11,7 @@
     ],
     "merge_logs": true,
     "log_date_format": "YYYY-MM-DD HH:mm Z",
-    "instances": 4,
+    "instances": 2,
     "exec_mode": "cluster",
     "autorestart": true,
     "error_file": "./logs/app-err.log",
