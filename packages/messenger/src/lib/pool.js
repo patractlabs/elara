@@ -58,7 +58,7 @@ class Pool {
             channel_clientID
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
-            ws.close()
+            // ws.close()
             return false
         }
         channel_clientID.add(id) //更新集合
@@ -74,7 +74,7 @@ class Pool {
             channel_clientID
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
-            ws.close()
+            // ws.close()
             return false
         }
         channel_clientID.add(id) //更新集合

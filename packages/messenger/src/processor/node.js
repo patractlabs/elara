@@ -70,7 +70,6 @@ class Node {
         return false
     }
     async process(msg) {
-        console.log(`${this.chain}: replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
         let replacement = (Buffer.from(crypto.randomBytes(16))).readUIntLE(0, 4)
         this.replacement_msg[replacement.toString()] = msg
 
@@ -79,6 +78,7 @@ class Node {
         //这里处理下取消订阅时更新 this.subscription_msg
         if (isUnSubscription(req.method) && (req.params)) {
             for (var i = 0; i < req.params.length; i++) {
+                console.log(`${this.chain}: replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
                 delete this.subscription_msg[req.params[i]]
             }
         }
