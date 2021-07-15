@@ -170,20 +170,20 @@ class Messengers {
     }
 
     wsClose(id, chain) {
+        const subIds = []
         for (let method in this.conWs[id].unsubscription_msg) {
-            for (let subId of this.conWs[id].unsubscription_msg[method]) {
-                this.messengers[chain].send({
-                    "id": id,
-                    "chain": chain,
-                    "request": {
-                        "jsonrpc": '2.0',
-                        "method": method,
-                        "params": [subId],
-                        "id": 1
-                    }
-                })
-            }
+            subIds.push(...this.conWs[id].unsubscription_msg[method])
         }
+        this.messengers[chain].send({
+            "id": id,
+            "chain": chain,
+            "request": {
+                "jsonrpc": '2.0',
+                "method": 'state_unsubscribeStorage',
+                "params": subIds,
+                "id": 1
+            }
+        })
         for (let messenger of this.messengers[chain].messengers) {
             if (messenger.channel_clientID.has(id)) {
                 messenger.channel_clientID.delete(id)
