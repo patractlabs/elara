@@ -80,8 +80,8 @@ module.exports = {
             'processors': ['node', 'cache']
         },
         'moonbase': {
-            'rpc': ['https://moonbase.elara.patract.io'],
-            'ws': ['wss://moonbase.elara.patract.io'],
+            'rpc': ['https://moonbase.moonbeam.elara.patract.io'],
+            'ws': ['wss://moonbase.moonbeam.elara.patract.io'],
             'processors': ['node', 'cache']
         },
         'statemine': {

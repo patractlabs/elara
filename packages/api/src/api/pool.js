@@ -47,17 +47,21 @@ class Pool {
 
         return mess
     }
-    send(msg) {
+    send(msg, isUnsubReq) {
         let index = (Buffer.from(msg.id).readUIntLE(0, 4)) % this.messengers.length
         const {
             channel_clientID,
             ws
         } = this.messengers[index]
         if (ws.readyState !== WebSocket.OPEN) {
-            ws.close()
+            // ws.close
+            this.oncloseCallback(new Set([msg.id]))
             return
         }
-        channel_clientID.add(msg.id)
+
+        if(!isUnsubReq) {
+            channel_clientID.add(msg.id)
+        }
         ws.send(toJSON(msg))
     }
 }

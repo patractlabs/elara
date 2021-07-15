@@ -112,7 +112,7 @@ class Messengers {
                         "params": [message.response.params.subscription],
                         "id": 1
                     }
-                })
+                }, true)
             }
         }
     }
@@ -174,16 +174,19 @@ class Messengers {
         for (let method in this.conWs[id].unsubscription_msg) {
             subIds.push(...this.conWs[id].unsubscription_msg[method])
         }
-        this.messengers[chain].send({
-            "id": id,
-            "chain": chain,
-            "request": {
-                "jsonrpc": '2.0',
-                "method": 'state_unsubscribeStorage',
-                "params": subIds,
-                "id": 1
-            }
-        })
+        if( subIds.length > 0 ) {
+            this.messengers[chain].send({
+                "id": id,
+                "chain": chain,
+                "request": {
+                    "jsonrpc": '2.0',
+                    "method": 'state_unsubscribeStorage',
+                    "params": subIds,
+                    "id": 1
+                }
+            }, true)
+        }
+
         for (let messenger of this.messengers[chain].messengers) {
             if (messenger.channel_clientID.has(id)) {
                 messenger.channel_clientID.delete(id)
