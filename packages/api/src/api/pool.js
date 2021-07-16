@@ -27,13 +27,10 @@ class Pool {
             logger.error('server ws error ', error, index, chain, path)
         })
         mess.on('close', async (error) => {
-            logger.error('server ws close ', error)
+            logger.error('server ws close ', error, index, chain, path)
             const {
-                channel_clientID,
-                ws
+                channel_clientID
             } = this.messengers[index]
-            ws.removeAllListeners()
-            ws.close()
             await sleep(20000)
             this.oncloseCallback(channel_clientID)
             channel_clientID.clear()
@@ -55,11 +52,11 @@ class Pool {
         } = this.messengers[index]
         if (ws.readyState !== WebSocket.OPEN) {
             // ws.close
-            this.oncloseCallback(new Set([msg.id]))
+            logger.error('send error', msg)
             return
         }
 
-        if(!isUnsubReq) {
+        if (!isUnsubReq) {
             channel_clientID.add(msg.id)
         }
         ws.send(toJSON(msg))
