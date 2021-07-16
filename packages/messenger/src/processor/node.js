@@ -1,5 +1,3 @@
-const { Worker } = require('worker_threads');
-const path = require('path')
 const crypto = require("crypto");
 const {
     toJSON,
@@ -63,11 +61,6 @@ class Node {
                 })
             })
 
-        this.worker = new Worker(path.join(__dirname,'../lib/worker.js'))   
-        this.worker.on('message', (res) => {
-            console.log(`after worker-${this.chain} ${Object.keys(res).length}`);
-            this.subscription_msg = res
-        })
     }
     name() {
         return 'node'
@@ -85,8 +78,10 @@ class Node {
         
         //这里处理下取消订阅时更新 this.subscription_msg
         if (isUnSubscription(req.method) && (req.params)) {
-            console.log(`${this.chain}: ${req.params.length}; replacement_msg: ${Object.keys(this.replacement_msg).length};  subscription_msg: ${Object.keys(this.subscription_msg).length}` )
-            this.worker.postMessage({ req, subscription_msg: this.subscription_msg }) // cpu密集计算
+            console.log(`${req.params.length} of ${this.chain}; replacement_msg: ${Object.keys(this.replacement_msg).length}; subscription_msg: ${Object.keys(this.subscription_msg).length}` )
+            for (var i = 0; i < req.params.length; i++) {
+                delete this.subscription_msg[req.params[i]]
+            }
         }
 
         const res =  this.pool.send(msg.id, req)
