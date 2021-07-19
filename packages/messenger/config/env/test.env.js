@@ -5,8 +5,8 @@ module.exports = {
     port: 7005,
     chain: {
         'polkadot': {
-            'rpc': ['https://polkadot.elara.patract.io'],
-            'ws': ['wss://polkadot.elara.patract.io'],
+            'rpc': ['http://127.0.0.1:9933'],
+            'ws': ['ws://127.0.0.1:9944'],
             'processors': ['node', 'cache']//处理器列表
         },
         'kusama': {
@@ -80,8 +80,8 @@ module.exports = {
             'processors': ['node', 'cache']
         },
         'moonbase': {
-            'rpc': ['https://moonbase.elara.patract.io'],
-            'ws': ['wss://moonbase.elara.patract.io'],
+            'rpc': ['https://moonbase.moonbeam.elara.patract.io'],
+            'ws': ['wss://moonbase.moonbeam.elara.patract.io'],
             'processors': ['node', 'cache']
         },
         'statemine': {

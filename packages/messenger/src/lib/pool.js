@@ -30,13 +30,10 @@ class Pool {
             logger.error('server ws error ', error, index, name, chain, path)
         })
         server.on('close', async (error) => {
-            logger.error('server ws close ', error)
+            logger.error('server ws close ', error, index, name, chain, path)
             let {
-                ws,
                 channel_clientID
             } = this.servers[index]
-            ws.removeAllListeners()
-            ws.close()
             //定时，不要即时
             await sleep(20000)
             this.closeCallback(channel_clientID) //回调通知
@@ -58,7 +55,7 @@ class Pool {
             channel_clientID
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
-            ws.close()
+            // ws.close()
             return false
         }
         channel_clientID.add(id) //更新集合
@@ -74,7 +71,7 @@ class Pool {
             channel_clientID
         } = this.servers[index]
         if (WebSocket.OPEN != ws.readyState) {
-            ws.close()
+            // ws.close()
             return false
         }
         channel_clientID.add(id) //更新集合
