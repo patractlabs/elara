@@ -30,7 +30,8 @@ module.exports = {
         'statemine': {},
         'westmint': {},
         'karura': {},
-        'moonriver': {}
+        'moonriver': {},
+        'bifrost': {}
     },
     test:false,
     // redis配置

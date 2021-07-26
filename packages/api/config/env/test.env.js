@@ -23,7 +23,8 @@ module.exports = {
         'statemine': ['ws://127.0.0.1:7005'],
         'westmint': ['ws://127.0.0.1:7005'],
         'karura': ['ws://127.0.0.1:7005'],
-        'moonriver': ['ws://127.0.0.1:7005']
+        'moonriver': ['ws://127.0.0.1:7005'],
+        'bifrost': ['ws://127.0.0.1:7005']
     },
     kafka: {
         'kafkaHost': '127.0.0.1:9092',
