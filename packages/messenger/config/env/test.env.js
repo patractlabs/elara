@@ -103,6 +103,11 @@ module.exports = {
             'rpc': ['https://moonriver.kusama.elara.patract.io'],
             'ws': ['wss://moonriver.kusama.elara.patract.io'],
             'processors': ['node', 'cache']
+        },
+        'bifrost': {
+            'rpc': ['https://bifrost.kusama.elara.patract.io'],
+            'ws': ['wss://bifrost.kusama.elara.patract.io'],
+            'processors': ['node', 'cache']
         }
     },
     history: {
